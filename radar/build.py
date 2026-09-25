@@ -205,22 +205,68 @@ def load_krei(con):
     return out
 
 
+KW = re.compile(r'가격|수입|수출|반입|출하|시세')
+
+
+def ts_family(title, unit, sub):
+    """월보 표 제목 → (묶음 키, 표시 제목, 단위, 하위구분) · 표가 아닌 문장이 잡힌 경우 None"""
+    t = re.sub(r'[❙\uf06c\uf06e•■]', '', title or '').strip()
+    t = re.sub(r'\s+', ' ', t)
+    if (not KW.search(t) or len(t) > 40 or '%' in t or re.search(r'(다|음|함|됨|임)\s*\.?\s*$', t)
+            or re.match(r'^(연도|구분|\d)', t) or re.search(r'\d{1,3},\d{3}', t) or '주1' in t or '일일' in t):
+        return None
+    sub = (sub or '').strip()
+    if len(sub) > 8 or re.search(r'[\d,•.%]', sub) or sub.startswith('평년'):
+        return None
+    unit = (unit or '').strip()
+    if ',' in unit:                                   # 가격 · 물량이 한 표에 섞인 경우
+        if sub == '중량':
+            unit, sub, t = '톤', '', t + ' (중량)'
+        elif sub == '금액':
+            unit, sub, t = '천 달러', '', t + ' (금액)'
+        else:
+            return None
+    key = re.sub(r'\s+', '', t)
+    key = re.sub(r'\((등급\s*:\s*)?상(품)?(기준)?\)', '', key)
+    for w in ('월별', '동향', '현황', '추이', '월평균', '실적', '의'):
+        key = key.replace(w, '')
+    key = key.replace('소비자가격', '소비지가격')
+    return key, re.sub(r'\s*(실적|동향)$', '', t.replace('월별 ', '')).strip(), unit, sub
+
+
 def load_krei_ts(con):
-    """item → [{tkey, title, unit, subs:{sub:{ym:v}}}] (최근 18개월 안에 값이 있는 표만)"""
+    """item → [{title, unit, subs:{sub:{ym:v}}}] - 제목 표현이 달라도 같은 표는 한 시계열로 묶고,
+    최근 18개월 안에 값이 있고 12개월 이상 쌓인 표만 사용"""
     out = defaultdict(dict)
     try:
-        rows = con.execute('SELECT item,tkey,title,unit,sub,ym,value,src FROM krei_ts').fetchall()
+        rows = con.execute('SELECT item,title,unit,sub,ym,value,src FROM krei_ts ORDER BY src').fetchall()
     except Exception:
         return {}
-    for item, k, title, unit, sub, ym, v, src in rows:
-        d = out[item].setdefault(k, {'tkey': k, 'title': title, 'unit': unit, 'src': src, 'subs': defaultdict(dict)})
+    for item, title, unit, sub, ym, v, src in rows:
+        f = ts_family(title, unit, sub)
+        if not f:
+            continue
+        key, disp, unit2, sub2 = f
+        d = out[item].setdefault(key, {'title': disp, 'unit': unit2, 'src': src, 'subs': defaultdict(dict)})
         if src >= d['src']:
-            d['title'], d['unit'], d['src'] = title, unit or d['unit'], src
-        d['subs'][sub][ym] = v
+            d['title'], d['unit'], d['src'] = disp, unit2 or d['unit'], src
+        d['subs'][sub2][ym] = v
     res = {}
     for item, tabs in out.items():
-        last = max(ym for t in tabs.values() for sd in t['subs'].values() for ym in sd)
-        keep = [t for t in tabs.values() if max(ym for sd in t['subs'].values() for ym in sd) >= ym_add(last, -18)]
+        allym = [ym for t in tabs.values() for sd in t['subs'].values() for ym in sd]
+        if not allym:
+            continue
+        last = max(allym)
+        keep = []
+        for t in tabs.values():
+            n = sum(len(sd) for sd in t['subs'].values())
+            tl = max(ym for sd in t['subs'].values() for ym in sd)
+            if tl >= ym_add(last, -18) and n >= 12:
+                # 너무 드문 하위구분(3개월 미만)은 뺌
+                # 3개월 미만이거나 1년 넘게 끊긴 하위구분(옛 서식의 잔재)은 뺌
+                t['subs'] = {k: v for k, v in t['subs'].items() if len(v) >= 3 and max(v) >= ym_add(tl, -12)}
+                if t['subs']:
+                    keep.append(t)
         keep.sort(key=lambda t: (0 if '가격' in t['title'] else 1 if '수입' in t['title'] else 2 if '수출' in t['title'] else 3, t['title']))
         res[item] = keep
     return res
@@ -266,7 +312,7 @@ def ts_cards(item_key, KT):
               % (''.join('<th>%d월</th>' % m for m in range(1, 13)), ''.join(body)))
         o.append('<div class="card span"><div class="sec">KREI MONTHLY</div><div class="h2">%s</div>'
                  '<div class="cap">단위 : %s · %s ~ %s · 농경연 임업관측 월보 표에서 추출(같은 달은 최신 호 값 사용, 평년 행 제외)</div>'
-                 '%s%s%s</div>' % (esc(t['title'].lstrip('\uf06c ').strip()), esc(t['unit'] or '-'), xs[0].replace('-', '.'),
+                 '%s%s%s</div>' % (esc(t['title']), esc(t['unit'] or '-'), xs[0].replace('-', '.'),
                                     last.replace('-', '.'), lg, chart, tb))
     return '<div class="grid">%s</div>' % ''.join(o)
 
