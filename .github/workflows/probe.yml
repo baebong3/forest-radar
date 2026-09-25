@@ -1,6 +1,9 @@
 name: probe-krei
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/probe_krei.py', '.github/workflows/probe.yml']
 permissions:
   contents: write
 jobs:
@@ -17,4 +20,4 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add probe
           git commit -m "probe: KREI 게시판 구조 점검" || echo none
-          git push
+          git pull --rebase -q origin main && git push
