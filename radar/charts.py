@@ -205,6 +205,9 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
                 if len(sg) > 1:
                     o.append('<path d="M%.1f,%.1f %s L%.1f,%.1f Z" fill="url(#%s)"/>'
                              % (sg[0][0], T + ph, ' '.join('L%.1f,%.1f' % p for p in sg), sg[-1][0], T + ph, gid))
+        for a_, b_ in zip(pts, pts[1:]):                        # 결측 구간은 점선으로 이어 줌
+            o.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-width="1.4" stroke-dasharray="3 3" stroke-opacity=".75"/>'
+                     % (a_[-1][0], a_[-1][1], b_[0][0], b_[0][1], s['color']))
         for sg in pts:
             if len(sg) == 1:
                 o.append('<circle cx="%.1f" cy="%.1f" r="2.2" fill="%s"/>' % (sg[0][0], sg[0][1], s['color']))
