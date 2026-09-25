@@ -1,30 +1,66 @@
 [
  {
-  "cat": "",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://www.krei.re.kr/",
+  "status": 200,
+  "final": "https://www.krei.re.kr/krei/index.do",
+  "ctype": "text/html;charset=UTF-8",
+  "bytes": 122054,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n\t<meta charset=\"UTF-8\">\r\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\"/>\r\n\t<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"/>\r\n    <title>한국농촌경제연구원</title>\r\n    <link rel=\"shortcut icon\" href="
  },
  {
-  "cat": "밤",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://www.krei.re.kr/krei/page/21",
+  "status": 200,
+  "final": "https://www.krei.re.kr/krei/page/21",
+  "ctype": "text/html;charset=UTF-8",
+  "bytes": 98173,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">    \r\n<head>\r\n\t<meta charset=\"UTF-8\">\r\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\"/>\r\n\t<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"/>\r\n    <title>임업관측정보 : 한국농촌경제연구원</title>\r\n    <link "
  },
  {
-  "cat": "떫은감",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://krei.re.kr/krei/page/21",
+  "status": 200,
+  "final": "https://krei.re.kr/krei/page/21",
+  "ctype": "text/html;charset=UTF-8",
+  "bytes": 98173,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">    \r\n<head>\r\n\t<meta charset=\"UTF-8\">\r\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\"/>\r\n\t<meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"/>\r\n    <title>임업관측정보 : 한국농촌경제연구원</title>\r\n    <link "
  },
  {
-  "cat": "표고버섯",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://www.krei.re.kr/krei/selectBbsNttList.do?key=81&bbsNo=74&searchCtgry=%EB%96%AB%EC%9D%80%EA%B0%90&searchCnd=all",
+  "status": 404,
+  "ctype": "text/html",
+  "bytes": 1972,
+  "server": null,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">\r\n    <title>오류페이지|KREI</title>\r"
  },
  {
-  "cat": "호두",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://www.krei.re.kr/krei/selectBbsNttList.do?bbsNo=74&key=81",
+  "status": 404,
+  "ctype": "text/html",
+  "bytes": 1972,
+  "server": null,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">\r\n    <title>오류페이지|KREI</title>\r"
  },
  {
-  "cat": "대추",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://krei.re.kr/krei/selectBbsNttView2.do?bbsNo=74&integrDeptCode=&key=81&nttNo=74028&pageIndex=9&searchCnd=all&searchCtgry=%ED%91%9C%EA%B3%A0%EB%B2%84%EC%84%AF&searchKrwd=",
+  "status": 404,
+  "ctype": "text/html",
+  "bytes": 1972,
+  "server": null,
+  "head": "<!DOCTYPE html>\r\n<html lang=\"ko\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no\">\r\n    <title>오류페이지|KREI</title>\r"
  },
  {
-  "cat": "잣",
-  "error": "HTTP Error 404: Not Found"
+  "url": "https://krei.re.kr/attach/observ/2026/07/03/2f4606da-f57f-429f-bf5e-cb7ec23e91b6.pdf",
+  "status": 200,
+  "final": "https://krei.re.kr/attach/observ/2026/07/03/2f4606da-f57f-429f-bf5e-cb7ec23e91b6.pdf",
+  "ctype": "application/pdf",
+  "bytes": 1137861,
+  "head": "%PDF"
+ },
+ {
+  "url": "https://aglook.krei.re.kr/",
+  "status": 200,
+  "final": "https://aglook.krei.re.kr/",
+  "ctype": "text/html;charset=UTF-8",
+  "bytes": 110,
+  "head": "\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n<html>\r\n<body>\r\n\r\n<script>\r\n\r\n\tlocation.href=\"/main\";\r\n\r\n\r\n</script>\r\n</body>\r\n</html>\r\n"
  }
 ]
