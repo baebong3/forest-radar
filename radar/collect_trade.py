@@ -145,7 +145,7 @@ def main():
     first_err = None
     # 접속 점검 : 공공데이터포털이 응답하지 않으면(해외 서버 차단 · 장애) 오래 붙잡지 말고 바로 끝냄
     try:
-        code, msg, rows = parse(fetch(key, '080241', '%04d-01' % (now.year - 1), '%04d-03' % (now.year - 1), tries=1, timeout=25))
+        code, msg, rows = parse(fetch(key, '080241', '%04d-01' % (now.year - 1), '%04d-03' % (now.year - 1), tries=3, timeout=40))
         print('접속 점검 : 결과코드 %s %s · 행 %d' % (code, msg, len(rows)))
     except Exception as ex:
         body = ''
