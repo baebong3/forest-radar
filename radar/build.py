@@ -74,7 +74,11 @@ a{color:inherit;text-decoration:none}
 .kpi:first-child{border-left:0}
 .kv{font-size:27px;font-weight:800;letter-spacing:-.8px;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
 .kv small{font-size:13px;font-weight:600;color:var(--muted);margin-left:2px;letter-spacing:0}
-.kv.i{color:var(--green)}.kv.e{color:var(--org-d)}
+.kv.i{color:var(--green)}.kv.e{color:var(--org-d)}.kv.p{color:var(--moss)}
+.part{display:flex;align-items:baseline;gap:10px;margin:34px 0 14px;padding-bottom:10px;border-bottom:2px solid var(--green)}
+.part b{font-size:13px;font-weight:800;color:#fff;background:var(--green);border-radius:3px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.part span{font-size:21px;font-weight:800;letter-spacing:-.6px}
+.part small{font-size:12px;color:var(--muted);margin-left:auto;text-align:right}
 .kl{font-size:12.5px;font-weight:700;margin-top:5px}
 .ks{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .ks .up{color:#C0392B;font-weight:700}.ks .dn{color:#2E6DA4;font-weight:700}
@@ -289,8 +293,12 @@ TS_COL = ['#1F3D2B', '#B8742A', '#6E8F5E', '#A9BBA2']
 TS_COL5 = ['#1F3D2B', '#B8742A', '#6E8F5E', '#8C5518', '#A9BBA2']
 
 
-def ts_cards(item_key, KT):
+def ts_cards(item_key, KT, kind=None):
     tabs = KT.get(item_key) or []
+    if kind == 'trade':
+        tabs = [t for t in tabs if re.search(r'수입|수출', t['title'])]
+    elif kind == 'price':
+        tabs = [t for t in tabs if not re.search(r'수입|수출', t['title'])]
     if not tabs:
         return ''
     o = []
@@ -661,27 +669,32 @@ def wait_card():
             '다음 자동 실행 때 2016년 1월부터 채워짐</div>')
 
 
+def part(no, title, sub=''):
+    return '<div class="part"><b>%02d</b><span>%s</span>%s</div>' % (no, title, ('<small>%s</small>' % sub) if sub else '')
+
+
+def news_card(key, lab, news):
+    return ('<div class="card span"><div class="sec">NEWS</div><div class="h2">%s 최근 뉴스</div>'
+            '<div class="cap">최근 %d일 · 제목에 품목 핵심어가 있는 기사만 · 최신순</div>%s</div>'
+            % (esc(lab), NEWS_DAYS, news_list(key, news)))
+
+
 def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
+    """품목 탭 : ① 주요 수치 → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     key, lab = it['key'], it['label']
     S = T.get(key, {})
     g = lambda ym: S.get(ym, {'exp_kg': 0, 'exp_usd': 0, 'imp_kg': 0, 'imp_usd': 0})
     o = ['<section class="pane p-%s">' % key]
+    pk = PICK.get(key)
+    eb, h1 = ('%s · 핵심 이슈 · %s · %s' % (lab, pk[0], pk[1]), pk[2]) if pk else ('%s 수급 레이더' % lab, '%s 수급 레이더' % lab)
+    o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1></div>' % (esc(eb), esc(h1)))
+    ply, plv, plp = prod_latest(key, PD)
+    has_trade = bool(ref and S)
 
-    prod = P.get(it['prod'], {}) or P.get(lab, {})
-    if not ref or not S:
-        pk = PICK.get(key)
-        eb, h1 = ('%s · 핵심 이슈 · %s · %s' % (lab, pk[0], pk[1]), pk[2]) if pk else ('%s 수급 레이더' % lab, '%s 수급 레이더' % lab)
-        o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1></div>' % (esc(eb), esc(h1)))
-        o.append(krei_card(key, K))
-        o.append(ts_cards(key, KT))
-        o.append('<div class="grid">%s</div>' % prod_cards(key, lab, PD))
-        o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
-    else:
+    # ① 주요 수치
+    o.append(part(1, '주요 수치', ('관세청 %s년 %d월 기준 · 생산은 %s년' % (ref[:4], int(ref[5:]), ply)) if has_trade and ply else ''))
+    if has_trade:
         y, m = int(ref[:4]), int(ref[5:])
-        ms13 = [ym_add(ref, -k) for k in range(12, -1, -1)]
-        last12 = ms13[1:]
-        imp12 = sum(t_(g(x)['imp_kg']) for x in last12)
-        exp12 = sum(t_(g(x)['exp_kg']) for x in last12)
         allv = [t_(g(x)['imp_kg']) for x in S] + [t_(g(x)['exp_kg']) for x in S]
         nd = nd_for(allv)
         ndk = nd_for([k_(g(x)['imp_usd']) for x in S] + [k_(g(x)['exp_usd']) for x in S])
@@ -691,45 +704,38 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
         yi, yip = sum(t_(g(x)['imp_kg']) for x in ytd), sum(t_(g(x)['imp_kg']) for x in ytdp)
         ye, yep = sum(t_(g(x)['exp_kg']) for x in ytd), sum(t_(g(x)['exp_kg']) for x in ytdp)
         up_ = lambda d: (d['imp_usd'] / d['imp_kg']) if d['imp_kg'] else None
-        main_imp = imp12 >= exp12
-        fl, cur, pv = ('수입', t_(now['imp_kg']), t_(prev['imp_kg'])) if main_imp else ('수출', t_(now['exp_kg']), t_(prev['exp_kg']))
-        p = pct(cur, pv)
-        if p is None:
-            h1 = '%s %s %d월 %s톤' % (lab, fl, m, fmt(cur, nd))
-        else:
-            h1 = '%s %s %d월 %s톤, 전년 동월 대비 %s%% %s' % (lab, fl, m, fmt(cur, nd), fmt(abs(p), 1),
-                                                     '증가' if rnd(p, 1) > 0 else ('감소' if rnd(p, 1) < 0 else '보합'))
         rng = '1~%d월' % m if m > 1 else '1월'
-        dek = ['%s 누계 수입 %s톤(전년 동기 대비 %s) · 수출 %s톤(%s)' % (rng, fmt(yi, nd), fmt_pct(pct(yi, yip)),
-                                                               fmt(ye, nd), fmt_pct(pct(ye, yep)))]
-        if up_(now):
-            dek.append('%d월 수입 단가 kg당 %s달러%s' % (m, fmt(up_(now), 2),
-                                                  ('(전년 동월 %s달러)' % fmt(up_(prev), 2)) if up_(prev) else ''))
-        if news:
-            dek.append('최근 기사 : <a href="%s" target="_blank" rel="noopener">%s</a>' % (esc(news[0]['url']), esc(news[0]['title'])))
-        pk = PICK.get(key)
-        if pk:
-            eb, h1 = '%s · 핵심 이슈 · %s · %s' % (lab, pk[0], pk[1]), pk[2]
-        else:
-            eb = '%s · 관세청 수출입실적 %d년 %d월 기준' % (lab, y, m)
-        o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1></div>' % (esc(eb), esc(h1)))
-
-        ply, plv, plp = prod_latest(key, PD)
-        if not ply and prod:
-            ply = max(prod); plv = prod[ply]; plp = pct(plv, prod.get(ply - 1))
-        pi, pe = pct(t_(now['imp_kg']), t_(prev['imp_kg'])), pct(t_(now['exp_kg']), t_(prev['exp_kg']))
         o.append('<div class="kpis">%s%s%s%s%s%s</div>' % (
-            kpi('%d월 수입량' % m, fmt(t_(now['imp_kg']), nd), '톤', '전년 동월 대비 %s' % arrow(pi), 'i'),
-            kpi('%d월 수출량' % m, fmt(t_(now['exp_kg']), nd), '톤', '전년 동월 대비 %s' % arrow(pe), 'e'),
+            kpi('연간 생산량' + (' (%d년)' % ply if ply else ''), fmt(plv, nd_for([plv])) if ply else '-', '톤' if ply else '',
+                ('전년 대비 %s' % arrow(plp)) if ply else '임산물생산조사 수집 대기', 'p'),
             kpi('%s 수입 누계' % rng, fmt(yi, nd), '톤', '전년 동기 대비 %s' % arrow(pct(yi, yip)), 'i'),
             kpi('%s 수출 누계' % rng, fmt(ye, nd), '톤', '전년 동기 대비 %s' % arrow(pct(ye, yep)), 'e'),
+            kpi('%d월 수입량' % m, fmt(t_(now['imp_kg']), nd), '톤', '전년 동월 대비 %s' % arrow(pct(t_(now['imp_kg']), t_(prev['imp_kg']))), 'i'),
+            kpi('%d월 수출량' % m, fmt(t_(now['exp_kg']), nd), '톤', '전년 동월 대비 %s' % arrow(pct(t_(now['exp_kg']), t_(prev['exp_kg']))), 'e'),
             kpi('%d월 수입 단가' % m, fmt(up_(now), 2) if up_(now) else '-', '달러/kg',
-                ('전년 동월 %s달러' % fmt(up_(prev), 2)) if up_(prev) else '전년 동월 수입 없음'),
-            kpi('연간 생산량' + (' (%d년)' % ply if ply else ''), fmt(plv, nd_for([plv])) if ply else '-', '톤' if ply else '',
-                ('전년 대비 %s' % arrow(plp)) if ply else '임산물생산조사 수집 대기')))
+                ('전년 동월 %s달러' % fmt(up_(prev), 2)) if up_(prev) else '전년 동월 수입 없음')))
+    elif ply:
+        o.append('<div class="kpis">%s</div>' % kpi('연간 생산량 (%d년)' % ply, fmt(plv, nd_for([plv])), '톤', '전년 대비 %s' % arrow(plp), 'p'))
 
-        o.append(krei_card(key, K))
-        o.append(ts_cards(key, KT))
+    # ② 최근 뉴스 · 동향 (뉴스 + 농경연 관측 + 가격 시계열)
+    o.append(part(2, '최근 뉴스 · 동향', '뉴스 · 농경연 임업관측 · 가격'))
+    o.append('<div class="grid">%s</div>' % news_card(key, lab, news))
+    o.append(krei_card(key, K))
+    o.append(ts_cards(key, KT, kind='price'))
+
+    # ③ 생산량
+    pc = prod_cards(key, lab, PD)
+    if pc:
+        o.append(part(3, '생산량', '산림청 임산물생산조사 · 전국 추이 · 시도 · 주산지'))
+        o.append('<div class="grid">%s</div>' % pc)
+
+    # ④ 수출입
+    o.append(part(4 if pc else 3, '수출입', '관세청 수출입실적 · 농경연 월보 수출입 표'))
+    if not has_trade:
+        o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
+        o.append(ts_cards(key, KT, kind='trade'))
+    else:
+        ms13 = [ym_add(ref, -k) for k in range(12, -1, -1)]
         labs = [mlabel(x, i == 0) for i, x in enumerate(ms13)]
         mob = ['%s.%s' % (x[2:4], x[5:]) for x in ms13]
         si = [{'name': '수입량', 'color': IMP, 'light': IMP_L, 'values': [t_(g(x)['imp_kg']) for x in ms13]}]
@@ -741,7 +747,6 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
         o.append('<div class="card"><div class="sec">MONTHLY EXPORT</div><div class="h2">최근 13개월 수출량</div>'
                  '<div class="cap">단위 : 톤 · %s ~ %s</div>%s</div>' % (ms13[0].replace('-', '.'), ref.replace('-', '.'),
                                                                      dual(labs, se, nd, mob_labels=mob)))
-        # 연도별 같은 기간 누계 (최근 8년)
         first_year = int(min(S)[:4])
         yrs = [yy for yy in range(max(first_year, y - 7), y + 1)]
         sp = lambda yy, f: sum(t_(g('%04d-%02d' % (yy, k))[f]) for k in range(1, m + 1))
@@ -751,9 +756,8 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
                  '<div class="cap">단위 : 톤 · 해마다 같은 기간(%s)끼리 비교</div>%s%s</div>'
                  % (rng, rng, legend(sy), dual([('%d년' % yy, '') for yy in yrs], sy, nd, w=1180, h=250,
                                                mob_labels=['%d년' % yy for yy in yrs])))
-        o.append(prod_cards(key, lab, PD))
-
-        # 월별 상세표 (최근 24개월, 최신이 위)
+        o.append('</div>')
+        o.append(ts_cards(key, KT, kind='trade'))
         rows = [ym_add(ref, -k) for k in range(0, 24) if ym_add(ref, -k) >= min(S)]
         cols = []
         for x in rows:
@@ -773,67 +777,115 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
             more = ('<label class="mbtn" for="tm-%s"><span class="o">24개월 전체 보기</span><span class="c">접기</span></label>' % key)
             tb = '<input class="more" type="checkbox" id="tm-%s">' % key + tb
         hsn = ' · '.join('%s %s' % (hs, esc(sk or fm)) for hs, (sk, fm) in sorted(forms.get(key, {}).items()))
-        o.append('<div class="card span"><div class="sec">MONTHLY TABLE</div><div class="h2">월별 수출입 상세</div>'
+        o.append('<div class="grid"><div class="card span"><div class="sec">MONTHLY TABLE</div><div class="h2">월별 수출입 상세</div>'
                  '<div class="cap">최근 24개월 · 최신 월이 위 · 무역수지 = 수출액 - 수입액</div>%s%s'
-                 '<div class="hsn">HS 부호 · 관세청 품목명 : %s</div></div>' % (tb, more, hsn))
-        o.append('</div>')
-
-    o.append('<div class="grid"><div class="card span"><div class="sec">NEWS</div><div class="h2">%s 최근 뉴스</div>'
-             '<div class="cap">최근 %d일 · 제목에 품목 핵심어가 있는 기사만 · 최신순</div>%s</div></div>'
-             % (esc(lab), NEWS_DAYS, news_list(key, news)))
+                 '<div class="hsn">HS 부호 · 관세청 품목명 : %s</div></div></div>' % (tb, more, hsn))
     o.append('</section>')
     return ''.join(o)
 
 
-def summary_pane(T, P, ref, allnews, K, PICK=None):
+def summary_pane(T, P, ref, allnews, K, PICK=None, PD=None):
+    """종합 탭 : ① 주요 수치 → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
+    PD = PD or {}
     o = ['<section class="pane p-all">']
+    best = max((v for v in (PICK or {}).values() if v), key=lambda v: v[3], default=None)
+    eb, h1 = '임산물 수급 레이더 · 종합', '임산물 5개 품목 수출입 · 생산 · 뉴스 모니터링'
+    if best:
+        eb, h1 = '임산물 수급 레이더 · 오늘의 핵심 이슈 · %s · %s' % (best[0], best[1]), best[2]
+    o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1></div>' % (esc(eb), esc(h1)))
+    y = m = None
+    if ref:
+        y, m = int(ref[:4]), int(ref[5:])
+    rng = ('1~%d월' % m if m > 1 else '1월') if m else ''
+
+    # ① 주요 수치 : 품목마다 생산 · 수입 · 수출 · 핵심 이슈
+    rows = []
+    for it in ITEMS:
+        S = T.get(it['key'], {})
+        g = lambda ym, f: (S.get(ym) or {}).get(f, 0) / 1000.0
+        ply, plv, plp = prod_latest(it['key'], PD)
+        yi = yip = ye = yep = None
+        if m:
+            yi = sum(g('%04d-%02d' % (y, k), 'imp_kg') for k in range(1, m + 1))
+            yip = sum(g('%04d-%02d' % (y - 1, k), 'imp_kg') for k in range(1, m + 1))
+            ye = sum(g('%04d-%02d' % (y, k), 'exp_kg') for k in range(1, m + 1))
+            yep = sum(g('%04d-%02d' % (y - 1, k), 'exp_kg') for k in range(1, m + 1))
+        pk = (PICK or {}).get(it['key'])
+        rows.append([it['label'], fmt(plv, 1) if ply else '-', arrow(plp) if ply else '-',
+                     fmt(yi, 1) if yi is not None else '-', arrow(pct(yi, yip)) if yi is not None else '-',
+                     fmt(ye, 1) if ye is not None else '-', arrow(pct(ye, yep)) if ye is not None else '-',
+                     esc(pk[2]) if pk else '-'])
+    ws = [span_w([re.sub('<[^>]+>', '', r[j]) for r in rows]) for j in range(7)]
+    body = ''.join('<tr><td class="l"><b>%s</b></td>%s<td class="l w">%s</td></tr>'
+                   % (r[0], ''.join(numtd(r[j], ws[j]) for j in range(1, 7)), r[7]) for r in rows)
+    ply0 = max([prod_latest(it['key'], PD)[0] or 0 for it in ITEMS]) or None
+    o.append(part(1, '주요 수치', ('생산 %s년 · 수출입 %s년 %d월 기준' % (ply0, y, m)) if (ply0 and m) else ''))
+    o.append('<div class="grid"><div class="card span"><div class="sec">KEY FIGURES</div><div class="h2">품목별 주요 수치</div>'
+             '<div class="cap">단위 : 톤 · 생산은 임산물생산조사 최근 연도 · 수출입은 올해 누계와 전년 같은 기간 대비</div>'
+             '<div class="tw"><table class="t"><thead><tr><th class="l">품목</th><th>연간<br>생산량</th><th>전년<br>대비</th>'
+             '<th>%s<br>수입 누계</th><th>전년<br>동기 대비</th><th>%s<br>수출 누계</th><th>전년<br>동기 대비</th>'
+             '<th class="l">핵심 이슈</th></tr></thead><tbody>%s</tbody></table></div></div></div>' % (rng, rng, body))
+
+    # ② 최근 뉴스 · 동향
+    o.append(part(2, '최근 뉴스 · 동향', '임업 정책 · 품목 뉴스 · 농경연 임업관측'))
+    o.append('<div class="grid"><div class="card span"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
+             '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 최신순</div>%s</div></div>'
+             % (NEWS_DAYS, news_list('all', allnews, 12, item_chip=True)))
+    o.append(krei_overview(K))
+
+    # ③ 생산량 : 품목별 최근 5년 전국 생산량 + 1위 주산지
+    prow = []
+    yrs_all = sorted({yy for it in ITEMS for sub in (PD.get(it['key']) or {}).values() for yy, v in sub['nat'].items() if v})[-5:]
+    for it in ITEMS:
+        subs = PD.get(it['key']) or {}
+        d = subs.get('') or subs.get('생표고')
+        if not d:
+            continue
+        vals = [d['nat'].get(yy) for yy in yrs_all]
+        ly, lv, lp = prod_latest(it['key'], PD)
+        dm = subs.get('') if subs.get('') and subs['']['sgg'] else subs.get('생표고')
+        top = ''
+        if dm and dm['sgg']:
+            yy = max(dm['sgg'])
+            (sd_, sg_), tv = max(dm['sgg'][yy].items(), key=lambda kv: kv[1])
+            nat_ = dm['nat'].get(yy) or 0
+            top = '%s %s (%s%%)' % (sd_, sg_, fmt(tv / nat_ * 100, 1)) if nat_ else '%s %s' % (sd_, sg_)
+        prow.append([it['label']] + [fmt(v, 0) if v else '-' for v in vals] + [arrow(lp) if ly else '-', esc(top)])
+    if prow:
+        nc = len(yrs_all) + 1
+        ws = [span_w([re.sub('<[^>]+>', '', r[j + 1]) for r in prow]) for j in range(nc)]
+        body = ''.join('<tr><td class="l"><b>%s</b></td>%s<td class="l">%s</td></tr>'
+                       % (r[0], ''.join(numtd(r[j + 1], ws[j]) for j in range(nc)), r[-1]) for r in prow)
+        o.append(part(3, '생산량', '산림청 임산물생산조사'))
+        o.append('<div class="grid"><div class="card span"><div class="sec">PRODUCTION</div><div class="h2">품목별 연간 생산량</div>'
+                 '<div class="cap">단위 : 톤 · 표고버섯은 생 · 건 합계 · 1위 주산지는 최근 연도 시군구와 전국 대비 비중</div>'
+                 '<div class="tw"><table class="t"><thead><tr><th class="l">품목</th>%s<th>전년<br>대비</th><th class="l">1위 주산지</th>'
+                 '</tr></thead><tbody>%s</tbody></table></div></div></div>'
+                 % (''.join('<th>%d년</th>' % yy for yy in yrs_all), body))
+
+    # ④ 수출입
+    o.append(part(4 if prow else 3, '수출입', '관세청 수출입실적'))
     if not ref:
-        o.append('<div class="hero"><div class="eyebrow">임산물 수급 레이더 · 종합</div><h1>임산물 5개 품목 수출입 · 생산 · 뉴스 모니터링</h1>'
-                 '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 표고버섯 · 떫은감을 각각 확인</li>'
-                 '<li>뉴스는 매일, 관세청 수출입 통계는 매월 자동 갱신</li></ul></div>')
-        o.append(krei_overview(K))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
     else:
-        y, m = int(ref[:4]), int(ref[5:])
-        rng = '1~%d월' % m if m > 1 else '1월'
         last12 = [ym_add(ref, -k) for k in range(11, -1, -1)]
-        rows, i12, e12, movers = [], [], [], []
+        rows, i12, e12 = [], [], []
         for it in ITEMS:
             S = T.get(it['key'], {})
             g = lambda ym: S.get(ym, {'exp_kg': 0, 'exp_usd': 0, 'imp_kg': 0, 'imp_usd': 0})
             nd = 1                                              # 요약표는 열마다 소수 1자리로 통일
             now, prev = g(ref), g(ym_add(ref, -12))
-            yi = sum(t_(g('%04d-%02d' % (y, k))['imp_kg']) for k in range(1, m + 1))
-            yip = sum(t_(g('%04d-%02d' % (y - 1, k))['imp_kg']) for k in range(1, m + 1))
-            ye = sum(t_(g('%04d-%02d' % (y, k))['exp_kg']) for k in range(1, m + 1))
-            yep = sum(t_(g('%04d-%02d' % (y - 1, k))['exp_kg']) for k in range(1, m + 1))
             rows.append([it['label'], fmt(t_(now['imp_kg']), nd), arrow(pct(t_(now['imp_kg']), t_(prev['imp_kg']))),
-                         fmt(t_(now['exp_kg']), nd), arrow(pct(t_(now['exp_kg']), t_(prev['exp_kg']))),
-                         fmt(yi, nd), arrow(pct(yi, yip)), fmt(ye, nd), arrow(pct(ye, yep))])
+                         fmt(t_(now['exp_kg']), nd), arrow(pct(t_(now['exp_kg']), t_(prev['exp_kg'])))])
             i12.append((it['label'], sum(t_(g(x)['imp_kg']) for x in last12)))
             e12.append((it['label'], sum(t_(g(x)['exp_kg']) for x in last12)))
-            pp = pct(yi, yip)
-            if pp is not None and yip >= 1:
-                movers.append((abs(pp), it['label'], pp))
-        movers.sort(reverse=True)
-        h1 = '임산물 5개 품목 수출입 동향 - %d년 %d월 기준' % (y, m)
-        best = max((v for v in (PICK or {}).values() if v), key=lambda v: v[3], default=None)
-        dek = ['%s 수입 누계 전년 동기 대비 변화가 가장 큰 품목 : %s' % (
-            rng, ' · '.join('%s %s' % (lb, fmt_pct(pp)) for _, lb, pp in movers[:3]) or '-'),
-            '품목 탭에서 월별 추이 · 연도별 누계 · 생산량 · 최근 뉴스를 확인']
-        eb = '임산물 수급 레이더 · 종합'
-        if best:
-            eb, h1 = '임산물 수급 레이더 · 오늘의 핵심 이슈 · %s · %s' % (best[0], best[1]), best[2]
-        o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1></div>' % (esc(eb), esc(h1)))
-        ws = [span_w([re.sub('<[^>]+>', '', r[j]) for r in rows]) for j in range(9)]
-        body = ''.join('<tr><td class="l"><b>%s</b></td>%s</tr>' % (r[0], ''.join(numtd(r[j], ws[j]) for j in range(1, 9)))
+        ws = [span_w([re.sub('<[^>]+>', '', r[j]) for r in rows]) for j in range(5)]
+        body = ''.join('<tr><td class="l"><b>%s</b></td>%s</tr>' % (r[0], ''.join(numtd(r[j], ws[j]) for j in range(1, 5)))
                        for r in rows)
-        o.append(krei_overview(K))
-        o.append('<div class="grid"><div class="card span"><div class="sec">OVERVIEW</div><div class="h2">품목별 수출입 요약</div>'
-                 '<div class="cap">단위 : 톤 · 증감률은 전년 같은 달 · 같은 기간 대비</div><div class="tw"><table class="t"><thead>'
-                 '<tr><th class="l">품목</th><th>%d월<br>수입량</th><th>전년<br>동월 대비</th><th>%d월<br>수출량</th><th>전년<br>동월 대비</th>'
-                 '<th>%s<br>수입 누계</th><th>전년<br>동기 대비</th><th>%s<br>수출 누계</th><th>전년<br>동기 대비</th></tr></thead>'
-                 '<tbody>%s</tbody></table></div></div>' % (m, m, rng, rng, body))
+        o.append('<div class="grid"><div class="card span"><div class="sec">TRADE · %d월</div><div class="h2">품목별 %d월 수출입</div>'
+                 '<div class="cap">단위 : 톤 · 증감률은 전년 같은 달 대비 · 올해 누계는 ① 주요 수치 표 참고</div><div class="tw"><table class="t"><thead>'
+                 '<tr><th class="l">품목</th><th>%d월<br>수입량</th><th>전년<br>동월 대비</th><th>%d월<br>수출량</th><th>전년<br>동월 대비</th></tr></thead>'
+                 '<tbody>%s</tbody></table></div></div>' % (m, m, m, m, body))
         for title, arr, col, sec in (('최근 12개월 수입량', i12, IMP, 'IMPORT'), ('최근 12개월 수출량', e12, EXP, 'EXPORT')):
             arr = sorted(arr, key=lambda x: -x[1])              # 값이 큰 품목이 위
             nd = nd_for([v for _, v in arr])
@@ -842,9 +894,6 @@ def summary_pane(T, P, ref, allnews, K, PICK=None):
                      % (sec, title, last12[0].replace('-', '.'), ref.replace('-', '.'),
                         hbars([a for a, _ in arr], [{'name': title, 'color': col, 'light': (IMP_L if col == IMP else EXP_L), 'hl': [0], 'values': [v for _, v in arr]}], nd, w=560)))
         o.append('</div>')
-    o.append('<div class="grid"><div class="card span"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
-             '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 최신순</div>%s</div></div>'
-             % (NEWS_DAYS, news_list('all', allnews, 12, item_chip=True)))
     o.append('</section>')
     return ''.join(o)
 
@@ -901,7 +950,7 @@ def main():
     for it in ITEMS:
         PICK[it['key']] = pick_headline(it['label'], trade_cand(it['key'], it['label'], T, ref), K.get(it['key']),
                                         news[it['key']], today)
-    body = [summary_pane(T, P, ref, allnews, K, PICK)]
+    body = [summary_pane(T, P, ref, allnews, K, PICK, PD)]
     body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
     tabs = '<nav class="tabs"><label for="t-all">종합</label>%s</nav>' % ''.join(
