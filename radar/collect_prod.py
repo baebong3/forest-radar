@@ -131,7 +131,7 @@ def opener():
     op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
     op.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124'), ('Accept-Language', 'ko-KR'),
                      ('X-Requested-With', 'XMLHttpRequest')]
-    op.open(B + '/ptl/article/articleList.do?curMenu=9847&bbsId=ptlPdsMntProdReq', timeout=60).read()
+    op.open(B + '/ptl/article/articleList.do?curMenu=9847&bbsId=ptlPdsMntProdReq', timeout=120).read()
     return op
 
 
@@ -192,9 +192,18 @@ def main():
         con.commit()
         print('행 %d' % len(rows))
         return
+    op = arts = None
+    for i in range(3):                                  # 산림임업통계플랫폼이 가끔 응답이 늦음 → 재시도
+        try:
+            op = opener()
+            arts = articles(op)
+            break
+        except Exception as ex:
+            err = ex
+            time.sleep(20 * (i + 1))
     try:
-        op = opener()
-        arts = articles(op)
+        if arts is None:
+            raise err
     except Exception as ex:
         print('목록 실패 : %s' % ex)
         con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('prod_err', '목록 실패 : %s' % str(ex)[:300]))
