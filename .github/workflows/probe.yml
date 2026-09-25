@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install -q pdfplumber openpyxl xlrd
+      - run: pip install -q pdfplumber openpyxl xlrd && sudo apt-get install -y -q poppler-utils >/dev/null
       - run: for f in tools/probe_*.py; do python "$f" || true; done
       - run: |
           git config user.name  "forest-radar-bot"
