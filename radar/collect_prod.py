@@ -113,7 +113,7 @@ def pdf_text(op, seq):
                             urllib.parse.urlencode({'workPath': 'Article', 'workSeq': seq}), timeout=60).read()).get('data') or []
     pdfs = [f for f in fl if (f.get('fileNm') or '').lower().endswith('.pdf')]
     if not pdfs:
-        return None
+        raise RuntimeError('PDF 없음 : ' + ' | '.join('%s(%s)' % (f.get('fileNm'), f.get('fileSize')) for f in fl))
     f = max(pdfs, key=lambda f: f.get('fileSize') or 0)
     b = op.open(B + '/ptl/article/articleFileDown.do?' + urllib.parse.urlencode({'fileSeq': f['fileSeq'], 'workSeq': seq}),
                 timeout=600).read()
@@ -149,6 +149,8 @@ def main():
         arts = articles(op)
     except Exception as ex:
         print('목록 실패 : %s' % ex)
+        con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('prod_err', '목록 실패 : %s' % str(ex)[:300]))
+        con.commit()
         return
     done = {r[0] for r in con.execute('SELECT year FROM prod_done WHERE rows > 0')}
     for y in sorted(arts):
@@ -160,6 +162,9 @@ def main():
             rows = parse(t) if t else []
         except Exception as ex:
             print('[%d] 실패 : %s' % (y, ex))
+            con.execute('INSERT OR REPLACE INTO prod_done(year,article,rows,at) VALUES(?,?,?,?)',
+                        (y, ('실패 : %s' % ex)[:500], 0, datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
+            con.commit()
             continue
         if not rows and t:                                  # 서식이 달라 못 읽은 해 : 점검용 발췌를 남김
             os.makedirs(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug'), exist_ok=True)
