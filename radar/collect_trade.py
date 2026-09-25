@@ -148,6 +148,13 @@ def main():
         code, msg, rows = parse(fetch(key, '080241', '%04d-01' % (now.year - 1), '%04d-03' % (now.year - 1), tries=1, timeout=25))
         print('접속 점검 : 결과코드 %s %s · 행 %d' % (code, msg, len(rows)))
     except Exception as ex:
+        body = ''
+        if hasattr(ex, 'read'):
+            try:
+                body = ex.read()[:300].decode('utf-8', 'ignore')
+            except Exception:
+                pass
+        ex = '%s %s' % (ex, re.sub(r'\s+', ' ', body))
         print('접속 점검 실패 → 수출입 수집 중단 : %s' % ex)
         con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('trade_err', '공공데이터포털 접속 실패 : %s' % str(ex)[:200]))
         con.commit()
