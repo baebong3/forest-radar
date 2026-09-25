@@ -43,7 +43,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1
 a{color:inherit;text-decoration:none}
 .mast{background:#fff;border-bottom:1px solid var(--rule)}
 .mast .in{max-width:1240px;margin:0 auto;padding:14px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.wm{font-size:19px;font-weight:800;letter-spacing:-.6px;color:var(--green)}
+.logos{display:flex;align-items:center;gap:12px}
+.lg-sp{height:24px;width:auto;display:block}
+.lg-kf{height:32px;width:auto;display:block}
+.logos .x{font-size:14px;color:var(--muted);font-weight:600}
 .wm b{color:var(--org)}
 .vr{width:1px;height:28px;background:var(--rule)}
 .team{display:flex;flex-direction:column;line-height:1.25}
@@ -145,7 +148,7 @@ table.t{width:100%%;border-collapse:collapse;font-size:13px}
   .kpis{grid-template-columns:repeat(2,1fr)}
   .kpi{border-left:0!important;border-top:1px solid var(--rule2)}.kpi:nth-child(-n+2){border-top:0}
   .kpi:nth-child(even){border-left:1px solid var(--rule2)!important}
-  .upd{margin-left:0;text-align:left;width:100%%}.vr{display:none}
+  .upd{margin-left:0;text-align:left;width:100%%}.vr{display:none}.lg-sp{height:20px}.lg-kf{height:27px}
   .card{padding:14px}.tabs label{padding:7px 13px;font-size:13.5px}
   .ch-d{display:none}.ch-m{display:block}
   table.t{font-size:12px}.t th{font-size:11px}.t th,.t td{padding-left:4px;padding-right:4px}}
@@ -690,8 +693,9 @@ def main():
            '<meta name="viewport" content="width=device-width,initial-scale=1">'
            '<title>임산물 수급 레이더</title>'
            '<meta name="description" content="밤 · 호두 · 대추 · 표고버섯 · 떫은감 월별 수출입, 연간 생산량, 최근 뉴스">%s</head><body>'
-           '<header class="mast"><div class="in"><div class="wm">SOUTHERN<b>POST</b></div><div class="vr"></div>'
-           '<div class="team"><span class="t1">(주)서던포스트</span><span class="t2">임산물 수급 레이더</span></div>'
+           '<header class="mast"><div class="in"><div class="logos"><img class="lg-sp" src="assets/logo_southernpost.png" alt="서던포스트">'
+           '<span class="x">×</span><img class="lg-kf" src="assets/logo_kofpi.png" alt="한국임업진흥원"></div><div class="vr"></div>'
+           '<div class="team"><span class="t1">품목별 수출입 · 가격 · 전망 · 뉴스</span><span class="t2">임산물 수급 레이더</span></div>'
            '<div class="upd">페이지 갱신 <b>%s</b><br>수출입 기준월 <b>%s</b></div></div>'
            '<div class="ribbon"><i></i><i></i><i></i></div></header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
