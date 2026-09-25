@@ -1,28 +1,35 @@
 # -*- coding: utf-8 -*-
-"""임산물생산조사 자료 위치 점검 (1회성) → probe/prod/"""
-import os, re, json, html, urllib.request, urllib.parse
-OUT = 'probe/prod'; os.makedirs(OUT, exist_ok=True)
-UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36',
-      'Accept-Language': 'ko-KR,ko;q=0.9'}
-URLS = {
- 'kfss_list': 'https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=9847&bbsId=ptlPdsMntProdReq',
- 'kosis_h004': 'https://stat.kosis.kr/statHtml_host/statHtml.do?orgId=136&tblId=DT_136034_H004&dbUser=NSI_IN_136',
- 'forest_cms': 'https://www.forest.go.kr/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&cmsId=FC_000076',
- 'index1302': 'https://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1302',
-}
+"""산림임업통계플랫폼 임산물생산조사 게시판 목록 · 상세 · 첨부 점검 (1회성)"""
+import os, re, json, urllib.request, urllib.parse, http.cookiejar
+OUT = 'probe/prod2'; os.makedirs(OUT, exist_ok=True)
+B = 'https://kfss.forest.go.kr/stat'
+cj = http.cookiejar.CookieJar()
+op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+op.addheaders = [('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124'), ('Accept-Language', 'ko-KR'),
+                 ('X-Requested-With', 'XMLHttpRequest')]
+def get(u):
+    with op.open(u, timeout=40) as r:
+        return r.read(), r.headers.get('Content-Type', ''), r.headers.get('Content-Disposition', '')
 log = {}
-def get(u, data=None):
-    req = urllib.request.Request(u, data=data, headers=UA)
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return r.read(), r.geturl(), r.headers.get('Content-Type', '')
-for k, u in URLS.items():
+get(B + '/ptl/article/articleList.do?curMenu=9847&bbsId=ptlPdsMntProdReq')
+q = urllib.parse.urlencode({'bbsId': 'ptlPdsMntProdReq', 'curMenu': '9847', 'pageIndex': 1, 'pageUnit': 30, 'recordCountPerPage': 30})
+b, ct, _ = get(B + '/ptl/article/selectArticleList.do?' + q)
+open(OUT + '/list.json', 'wb').write(b)
+try:
+    d = json.loads(b)
+    rows = d.get('data') or []
+    log['rows'] = [{k: r.get(k) for k in list(r)[:30]} for r in rows[:30]]
+except Exception as ex:
+    log['list_err'] = repr(ex) + ' ' + b[:300].decode('utf-8', 'ignore')
+    rows = []
+for r in rows[:3]:
+    seq = r.get('articleSeq') or r.get('seq') or r.get('nttId')
     try:
-        b, final, ct = get(u)
-        t = b.decode('utf-8', 'ignore')
-        open('%s/%s.html' % (OUT, k), 'w', encoding='utf-8').write(t)
-        links = re.findall(r'(?:href|onclick)=["\']([^"\']*(?:download|Down|down|file|atch|\.xlsx|\.xls|\.pdf|\.hwp|articleView|fn_)[^"\']*)["\']', t)
-        log[k] = {'final': final, 'bytes': len(b), 'links': links[:60]}
+        b2, _, _ = get(B + '/ptl/article/articleDtl.do?' + urllib.parse.urlencode({'bbsId': 'ptlPdsMntProdReq', 'curMenu': '9847', 'articleSeq': seq}))
+        t = b2.decode('utf-8', 'ignore')
+        open('%s/dtl_%s.html' % (OUT, seq), 'w', encoding='utf-8').write(t)
+        log['dtl_%s' % seq] = sorted(set(re.findall(r'[\'"]([^\'"]*(?:[Ff]ile|[Dd]own)[^\'"]*)[\'"]', t)))[:40]
     except Exception as ex:
-        log[k] = repr(ex)
-json.dump(log, open(OUT + '/log.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-print(json.dumps(log, ensure_ascii=False, indent=1)[:5000])
+        log['dtl_err_%s' % seq] = repr(ex)
+json.dump(log, open(OUT + '/log.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
+print(json.dumps(log, ensure_ascii=False, indent=1, default=str)[:6000])
