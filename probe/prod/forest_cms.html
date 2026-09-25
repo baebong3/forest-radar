@@ -1,0 +1,4102 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.forest.go.kr/" />
+<meta property="og:title" content="산림청 - 행정정보 &gt; 산림통계 &gt;  임산물생산조사" />
+<meta property="og:image" content="https://www.forest.go.kr/kfs/images/common/og_logo.png" />
+<meta property="og:description" content="산림청 - 행정정보 &gt; 산림통계 &gt;  임산물생산조사" />
+<meta property="twitter:card" content="summary" />
+<meta property="twitter:title" content="산림청" />
+<meta property="twitter:url" content="https://www.forest.go.kr/" />
+<meta property="twitter:description" content="산림청" />
+<meta property="twitter:image" content="https://www.forest.go.kr/kfs/images/common/og_logo.png" />
+
+	
+	
+
+<title>산림청 - 행정정보 &gt; 산림통계 &gt;  임산물생산조사</title>
+<!-- 공통영역 -->
+
+
+
+
+<link rel="shortcut icon" href="/images/common/favicon.ico" title="산림청" />
+
+<!-- <script type="text/javascript" src="/js/kfs/jquery.js"></script> -->
+<script src="/js/kfs/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="/js/kfs/content.js"></script>
+<script type="text/javascript" src="/js/2012/content2.js"></script>
+<!-- <script type="text/javascript" src="/js/kfs/topmenu.js"></script> -->
+<script type="text/javascript" src="/js/kfs/hashlink_fix.js"></script>
+<script type="text/javascript" src="/kfsweb/validator.do"></script>
+<!-- <script type="text/javascript" src="/js/kfs/AnyMagLoader.js"></script> -->
+<script type="text/javascript" src="/js/kfs/loader.js"></script>
+
+<script type="text/javascript" src="/js/kfs/ssbs/jquery.sharer.js"></script>
+<link rel="stylesheet" href="/js/kfs/ssbs/jquery.sharer.css">
+
+<!-- 2018.11.19 추가 -->
+<!-- <link rel="stylesheet" href="/kfs/css/css.css"> -->
+<link rel="stylesheet" href="/kfs/css/sprite.css">
+<link rel="stylesheet" href="/kfs/css/font.css">
+<link rel="stylesheet" href="/kfs/css/common.css">
+<link rel="stylesheet" href="/kfs/css/layout.css?t_=2020041701">
+<link rel="stylesheet" href="/kfs/css/jquery-ui.min.css">
+<link rel="stylesheet" href="/kfs/css/content.css">
+<link rel="stylesheet" href="/kfs/css/board.css">
+<link rel="stylesheet" href="/kfs/css/content.css">
+<link rel="stylesheet" href="/kfs/css/commponent.css">
+<!-- 2020.10.26 추가 -->
+<link rel="stylesheet" href="/kfs/css/2020/add_2021.css">
+<link rel="stylesheet" href="/kfs/css/2020/search_1017.css">
+<link rel="stylesheet" href="/kfs/css/2020/common.css">
+<link rel="stylesheet" href="/css/2020/20.css">
+
+
+<script src="/kfs/js/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="/kfs/js/mCustomScrollbar/jquery.mCustomScrollbar.css">
+<script src="/kfs/js/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/kfs/js/html5shiv.min.js"></script>
+<script src="/kfs/js/UserConfig.js"></script>
+<script src="/kfs/js/clipreport.js"></script>
+<!--
+<script src="/kfs/js/kfs/ssbs/jquery.sharer.css"></script>
+<script src="/kfs/js/kfs/ssbs/jquery.sharer.js"></script>
+ -->
+<script src="/js/addScript.js"></script>
+<script src="/kfs/js/common.js"></script>
+
+<script type="text/javascript">
+
+	/* jQuery(document).ready(function() {
+		
+			
+				jQuery('a[rel^=ov]').hover(function(){imgOv(this)},function(){imgOut(this)});
+			
+		
+	}); */
+
+
+$(document).ready(function(){
+	checkInputNumber($(".datepicker"));
+});
+
+/**
+ * 숫자만 입력 받도록 처리
+ * @param input - targetObject
+ */
+checkInputNumber = function(obj) {
+	
+	obj.css('imeMode','disabled').keypress(function(event) {
+		if(event.which && (event.which < 48 || event.which > 57) ) {
+			event.preventDefault();
+		}
+	}).blur(function() {
+		if( $(this).val() != null && $(this).val() != '' ) {
+			$(this).val( $(this).val().replace(/[^0-9]/g, '') );
+			//날짜 정합성 체크
+			if($(this).val().length > 8) $(this).val($(this).val().substring(0,8));
+			if($(this).val().length < 8){
+				alert("날짜를 잘못 입력하셨습니다.");
+				$(this).val('');
+				$(this).focus();
+				return;
+			}
+			
+			//월
+			if($(this).val().substring(4,6) > 12 || $(this).val().substring(4,6) == "00"){
+				$(this).val($(this).val().substring(0,4) + "0101");
+				alert("월을 잘못 입력하셨습니다.");
+				$(this).focus();
+			}else {
+				
+				if($(this).val().substring(6,8) == "00"){
+					$(this).val($(this).val().substring(0,6) + "01");
+					alert("일을 잘못 입력하셨습니다.");
+					$(this).focus();
+				}else{
+					var month = $(this).val().substring(4, 6);
+					if(month.substring(0, 1) == "0") month = month.substring(1, 2);
+					
+					var d = new Date($(this).val().substring(0,4), month, 0);
+					
+					var lastDay = d.getDate();
+					
+					if($(this).val().substring(6,8) > lastDay){
+						$(this).val($(this).val().substring(0,6) + "01");
+						alert("일을 잘못 입력하셨습니다.");
+						$(this).focus();
+					}
+				}
+				
+			}
+		}
+	});
+};
+
+</script> 
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+
+
+	function fn_memberLoginIs(){
+	 
+		alert("로그인하신후 이용하실수 있습니다.");
+	 	location.href = "/kfsweb/kfi/kfs/mem/memberLoginForm.do;jsessionid=ZVOXDCsfTx6xeVG8DIMF1kdDvi3gJZd4B2onS2qd0stbCaf0Tg0dMzeywAPCuEpN.frswas01_servlet_engine5?mn=KFS_05_12_01";
+	 
+
+	 
+	}
+
+	function fn_satisfaction(){
+		var chk = 0;
+		for(i=0; i<document.satisfactionVO.stsfdg.length; i++){
+			if(document.satisfactionVO.stsfdg[i].checked){
+				chk = 1;
+			}
+		}
+		if(chk < 1){
+			
+				
+				
+					alert('만족도를 선택해주세요.');
+				
+			
+			document.satisfactionVO.est01.focus();
+			return;
+		}
+
+		document.satisfactionVO.action = "/kfsweb/kfi/kfs/sft/insertSatisfaction.do;jsessionid=ZVOXDCsfTx6xeVG8DIMF1kdDvi3gJZd4B2onS2qd0stbCaf0Tg0dMzeywAPCuEpN.frswas01_servlet_engine5";
+		document.satisfactionVO.submit();
+	}
+
+	function fn_resultMsg(){
+		alert("");
+		location.href = ";jsessionid=ZVOXDCsfTx6xeVG8DIMF1kdDvi3gJZd4B2onS2qd0stbCaf0Tg0dMzeywAPCuEpN.frswas01_servlet_engine5";
+	}
+	
+	
+	function shareFB(){
+		window.open("http://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(window.location.href), "shareFB", "toolbar=0,resizable=1,status=0,width=640,height=528");
+	}
+	
+	function shareTW(){
+		window.open("https://twitter.com/intent/tweet?text=TEXT&url="+encodeURIComponent(window.location.href), "shareTW", "toolbar=0,resizable=1,status=0,width=640,height=450");
+	}
+
+	function shareGO(){
+		// 기존코드
+		// window.open("http://www.google.com/bookmarks/mark?op=add&bkmk="+encodeURIComponent(window.location.href), "shareGO", "toolbar=0,resizable=1,status=0,width=600,height=640");
+		// 구글플러스 공유(?)
+		window.open("https://plus.google.com/share?url="+encodeURIComponent(window.location.href), "shareGO", "toolbar=0,resizable=1,status=0,width=600,height=640");
+	}
+
+	function shareNV(){
+//		window.open("https://share.naver.com/web/shareView.nhn?url="+encodeURI(encodeURIComponent(window.location.href))+"&title="+encodeURI("행정정보 &gt; 산림통계 &gt;  임산물생산조사"), "shareNV", "toolbar=0,resizable=1,status=0,width=600,height=640");
+		window.open("https://share.naver.com/web/shareView.nhn?url="+encodeURIComponent(window.location.href)+"&title=행정정보 &gt; 산림통계 &gt;  임산물생산조사", "shareNV", "toolbar=0,resizable=1,status=0,width=600,height=640");
+	}
+
+
+	// 기존계정 (로그인에서 문제가 있어서 유성아 계정으로 변경하였음)
+	//Kakao.init("5633f8b8df24f3f1aa221147bed10167");
+	// 유성아계정
+	Kakao.init('7373997b122cf8727b5b7bcc8ef204ea');
+
+
+	function shareKA() {
+		
+		var strTitle = "";
+		var url = window.location.href;
+
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+			
+				
+			
+		
+		
+		if(strTitle == ""){
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+					
+		        		strTitle = "임산물생산조사";
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+				
+						
+				
+			
+		}
+		
+		// 카카오톡에 공유
+		Kakao.Link.createDefaultButton({
+			container: '#kakaoBtn',
+			objectType: 'feed',
+			content: {
+	          title: strTitle,
+	          description: strTitle,
+	          imageUrl: 'https://www.forest.go.kr/kfs/images/common/og_logo.png',
+	          link: {
+	            mobileWebUrl: url,
+	            webUrl: url
+	          }
+			}
+		});
+
+/* 카카오스토리에 공유
+		Kakao.Story.share({
+			url: url,
+			text: strTitle
+		});
+*/
+/* 기존코드
+		Kakao.Link.sendDefault({
+	    	objectType: 'feed',
+	        content: {
+	          title: strTitle,
+	          description: strTitle,
+	          imageUrl: 'https://www.forest.go.kr/kfs/images/common/og_logo.png',
+	          link: {
+	            mobileWebUrl: url,
+	            webUrl: url
+	          }
+	        },
+	        buttons: [
+	          {
+	            title: '웹으로 보기',
+	            link: {
+	              mobileWebUrl: url,
+	              webUrl: url
+	            }
+	          },
+	          {
+	            title: '앱으로 보기',
+	            link: {
+	              mobileWebUrl: url,
+	              webUrl: url
+	            }
+	          }
+	       ]
+	    });
+*/
+	}
+	
+//]]>
+</script>
+<script>
+	$(function() {
+		
+		ackInit(ackConfig);		
+	});
+</script>
+	<script type="text/javascript">
+	//AKC 설정 값
+	var ackConfig = {
+
+	kwdField : 'kwd',
+	autoSearchFd : 'autoSearch',
+	first_opt_top : 'first_opt_top',
+	last_opt_top : 'last_opt_top',
+	akc_able : 'akc_able',
+	autoSearchOpt : 's',
+	url : '/kfsweb/kfs/ack.do?',
+	max_count : 10,
+	domain_no : 0,
+	topKeywordLst : 'topKeywordLst'
+	};
+
+	// AKC 모듈 초기화
+	function ackInit(ackConfig) {
+
+	// 노드 위치 값 저장
+	ackConfig.searchfd = document.getElementById(ackConfig.kwdField);
+	ackConfig.autoSearch = document.getElementById(ackConfig.autoSearchFd);
+	ackConfig.topKeywordLstFd = document.getElementById(ackConfig.topKeywordLst);
+	ackConfig.akcAbleFd = document.getElementById(ackConfig.akc_able);
+
+	// 마우스 이벤트 리스너 등록
+	document.addEventListener("click", function(event) {
+	autoSrchMouseFun(ackConfig, event);
+	});
+
+	// 키보드 이벤트 리스너 등록
+	ackConfig.searchfd.addEventListener("keyup", function(event) {
+	drawAutoSrch(ackConfig);
+	});
+
+	ackConfig.akc_enable = getCookie("akc_enable");
+
+	}
+
+	// 자동완성 마우스 이벤트 함수
+	function autoSrchMouseFun(ackConfig, event) {
+	switch (event.target.id) {
+	case ackConfig.first_opt_top:
+	ackConfig.autoSearchOpt = 's';
+	drawAutoSrch(ackConfig);
+	ackConfig.topKeywordLstFd.style.display = "block";
+	break;
+
+	case ackConfig.last_opt_top:
+	ackConfig.autoSearchOpt = 'e';
+	drawAutoSrch(ackConfig);
+	ackConfig.topKeywordLstFd.style.display = "block";
+	break;
+
+	case ackConfig.kwdField:
+	drawAutoSrch(ackConfig);
+	ackConfig.topKeywordLstFd.style.display = "block";
+	break;
+
+	case ackConfig.akc_able:
+
+	if (ackConfig.akcAbleFd.text == '끄기') {
+	ackConfig.akcAbleFd.innerHTML = '켜기';
+	ackConfig.akc_enable = 'off';
+	ackConfig.autoSearch.innerHTML = '<li>자동완성 미사용중입니다.</li>';
+	ackConfig.topKeywordLstFd.style.display = "block";
+	} else {
+	ackConfig.akcAbleFd.innerHTML = '끄기';
+	ackConfig.akc_enable = 'on';
+	drawAutoSrch(ackConfig);
+	ackConfig.topKeywordLstFd.style.display = "block";
+	}
+
+	setCookie("akc_enable", ackConfig.akc_enable, 365);
+
+	break;
+	default:
+	ackConfig.topKeywordLstFd.style.display = "none";
+	ackConfig.autoSearch.innerHTML = '';
+	break;
+	}
+	}
+
+	// 자동완성 리스트 그리기 함수
+	function drawAutoSrch(ackConfig) {
+	var kwd = ackConfig.searchfd.value;
+	var hilight_tag = 'strong';
+
+	ackConfig.autoSearch.innerHTML = '';
+
+	if (ackConfig.akc_enable != 'off') {
+	if (kwd == null || kwd == "") {
+	ackConfig.autoSearch.innerHTML = '<li>검색어 자동완성을 사용중입니다.</li>';
+
+	} else {
+	$
+	.ajax({
+	url : ackConfig.url,
+	type : 'get',
+	data : '&kwd=' + encodeURIComponent(kwd).replace(/'/g, "%27").replace(/"/g, "%22") + '&opt=' + ackConfig.autoSearchOpt,
+	dataType : "json",
+	success : function(data) {
+
+	var dataBox = data.suggestions[0];
+	var resultBox = '';
+	var lower_temp_str = '';
+	var t_hilight = '';
+	for (i in dataBox) {
+
+	t_hilight = dataBox[i].toString();
+	lower_temp_str = t_hilight.toLowerCase();
+
+	if (lower_temp_str.indexOf(kwd
+	.toLowerCase()) > -1) {
+
+	if (ackConfig.autoSearchOpt == 's') {
+	t_hilight = "<" + hilight_tag + ">"
+	+ t_hilight.substring(0,
+	kwd.length)
+	+ "</" + hilight_tag + ">"
+	+ t_hilight.substring(
+	kwd.length,
+	t_hilight.length);
+	} else {
+	t_hilight = t_hilight.substring(0,
+	t_hilight.length
+	- kwd.length)
+	+ "<" + hilight_tag + ">"
+	+ t_hilight
+	.substring(
+	t_hilight.length
+	- kwd.length,
+	t_hilight.length)
+	+ "</"
+	+ hilight_tag + ">";
+	}
+	}
+
+	resultBox += "<li><a href=\"javascript:dftSchKwd(\'"+dataBox[i].toString()+"\');\">" + t_hilight + "</a></li>";
+	}
+
+	if (dataBox.length == 0) {
+	ackConfig.autoSearch.innerHTML = '<li>자동완성 단어가 없습니다</li>';
+	} else {
+	ackConfig.autoSearch.innerHTML = resultBox;
+	}
+	}
+	});
+	}
+	} else {
+	ackConfig.autoSearch.innerHTML = '<li>자동완성 미사용중입니다.</li>';
+	ackConfig.akcAbleFd.innerHTML = '켜기';
+	ackConfig.topKeywordLstFd.style.display = "none";
+	}
+
+	}
+
+	function setCookie(name, value, expiredays) {
+	var today = new Date();
+	today.setDate(today.getDate() + expiredays);
+	document.cookie = name + "=" + escape(value) + "; path=/; expires="
+	+ today.toGMTString() + ";";
+	}
+
+	/**
+	* 쿠키값 얻기 @ param name(쿠키명) @ return str(쿠키값)
+	*/
+	function getCookie(name) {
+	cookie = document.cookie;
+	name = name + "=";
+	idx = cookie.indexOf(name);
+	if (cookie && idx >= 0) {
+
+	tmp = cookie.substring(idx, cookie.length);
+	deli = tmp.indexOf(";");
+	if (deli > 0) {
+	return tmp.substring(name.length, deli);
+	} else {
+	return tmp.substring(name.length);
+	}
+	}
+	}
+	function dftSchKwd(kwd) {
+		document.getElementById("kwd").value = kwd;
+	}
+
+	/*
+	function fn_menu_popup(url) {
+  		window.open(url, '', 'width=700, height=800, resizable=yes, scrollbars=yes, status=no');
+  		//return false;
+  	} 
+	*/
+
+	</script>
+
+</head>
+
+
+	
+	
+		<body id="total" class=""><!-- class="type04" -->
+	
+
+	
+
+<div id="skip">
+	<strong class="hide">반복영역 건너뛰기</strong>
+	<a href="#gnb">주메뉴 바로가기</a>
+	<a href="#lnb">보조메뉴 바로가기</a>
+	<a href="#container_wrap" class="itr_skip">본문바로가기</a> 
+	<!-- <a href="#container_wrap">본문 바로가기</a> -->
+</div>
+	
+<div id="wrap">
+	
+		
+		
+			<script type="text/javascript"> 
+//<![CDATA[
+
+     var bCancel = false; 
+
+    function validateMemberLogin(form) {                                                                   
+        if (bCancel) 
+      return true; 
+        else 
+       return validateRequired(form) && validateMaxLength(form); 
+   } 
+
+    function required () { 
+     this.aa = new Array("userId", "아이디은(는) 필수 입력값입니다.", new Function ("varName", "this.maxlength='15';  return this[varName];"));
+     this.ab = new Array("password", "비밀번호은(는) 필수 입력값입니다.", new Function ("varName", "this.maxlength='15';  return this[varName];"));
+    } 
+
+    function maxlength () { 
+     this.aa = new Array("userId", "아이디은(는) 15자 이상 입력할수 없습니다.", new Function ("varName", "this.maxlength='15';  return this[varName];"));
+     this.ab = new Array("password", "비밀번호은(는) 15자 이상 입력할수 없습니다.", new Function ("varName", "this.maxlength='15';  return this[varName];"));
+    } 
+
+
+//]]>
+</script>
+
+<!-- header -->	<!-- 웹로그 분석 추가 삭제금지--><script type="text/javascript" src="https://weblog.forest.go.kr/wlo/js/wl6.js" ></script><div id="header"><!-- 	<div class="layout"> -->		<!-- 탑메뉴 시작 -->																																																																	<!-- 2014.09.21 추가 -->			<script type="text/javascript">
+	
+		function fn_intro_search() {
+ 		if(document.introFrm.kwd.value == ""){
+			alert("검색어를 입력하세요.");
+			return false;
+		
+		}
+		document.introFrm.submit();
+	}
+	
+	function fn_intro_search2() {
+ 		if(document.schFrm.kwd.value == ""){
+			alert("검색어를 입력하세요.");
+			return false;
+		
+		}
+		document.schFrm.submit();
+	}
+	
+function fn_ajax_ASIS_logout(){
+	
+	jQuery.ajax({
+		url: "https://www.forest.go.kr/newkfsweb/kfi/kfs/mem/memberLogout.do?mn=KFS_01",
+		data: $('#memberLoginFrm').serialize(),
+		type: 'post',
+		dataType: 'json',
+		success: function(request) {
+		
+				
+		}, 
+		error: function(request, status, error) {
+			
+		}
+	});
+} 
+
+// 	function fn_menu_popup(url) {
+// 		window.open(url, '', 'width=700, height=800, resizable=yes, scrollbars=yes, status=no');
+// 		return false;
+// 	} 
+</script>
+<div class="eg"><img src="/kfs/images/main/eg_ico.png" alt="태극기" /><span>이 누리집은 대한민국 공식 전자정부 누리집입니다.</span></div>
+	<div class="header_top">
+		<div class="layout">
+           
+			<!-- <a href="#container_wrap">본문바로가기</a> -->
+            
+             		
+
+            
+
+			<div class="right_button">
+			<a href="https://www.korea.kr/govVision/" target="_blank" title="새창"> <img src="/kfs/images/layout/slogan.png" alt="국민이 주인인 나라 함께 행복한 대한민국"></a>
+				<a class="icon_3" href="http://english.forest.go.kr" target="_blank" title="새창"><img src="/kfs/images/layout/h_rbtn_icon_3.png" alt="">English</a>
+					<a class="icon_txt" href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_11&cmsId=FC_003657" title="글자크기 조정안내"><img src="/kfs/images/layout/h_rbtn_icon_4.jpg" alt="">글자크기 조정안내</a>
+            	<a class="sns_icon icon_4" target="_blank" href="https://twitter.com/forest_news" title="새창"><span class="hide">새창으로 산림청 엑스 바로가기</span></a>
+            	<a class="sns_icon icon_5" target="_blank" href="https://ko-kr.facebook.com/forestkorea/" title="새창"><span class="hide">새창으로 산림청 페이스북 바로가기</span></a>
+            	<a class="sns_icon icon_6" target="_blank" href="https://blog.naver.com/forest_news" title="새창"><span class="hide">새창으로 산림청 블로그 바로가기</span></a>
+            	<a class="sns_icon icon_7" target="_blank" href="https://www.instagram.com/forest_korea/" title="새창"><span class="hide">새창으로 산림청 인스타그램 바로가기</span></a>            	
+            	<a class="sns_icon icon_8" target="_blank" href="https://www.youtube.com/channel/UCBZxglYCbIkkvw1CAAJhOVw" title="새창"><span class="hide">새창으로 산림청 유투브 바로가기</span></a>
+            	
+			</div>
+		</div>
+	</div>
+    
+	<div id="animate">
+		<div id="overflow">
+			<div class="layout">
+				<h1 class="logo">
+					<a href="/kfsweb/kfs/idx/Index.do?mn=NKFS_01&mainType=01&slide=2"><img src="/kfs/images/common/logo.png" alt="산림청"></a>
+					<!--a href="https://www.president.go.kr/" target="_blank" title="새창"><img src="/kfs/images/main/gov_bi.png" alt="다시 대한민국! 새로운 국민의 나라!" style="width:107px;height:45px"></a-->
+				</h1>
+                <div class="ssss_link">
+<!-- 인덱스가 아닐경우만 -->
+                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_05&cmsId=FC_000462"><img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲"></a>
+                        <!--                     </a> -->
+                </div>
+				<div class="util">
+                    <!-- <div class="util_new_forest">
+                        <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462"><img src="/kfs/images/common/new_forest.png" alt="새산새숲"></a>
+                        </div> -->
+                    <div class="util_search">
+						<form name="introFrm" action="/kfsweb/kfs/search.do" target="_self" method="post">
+						<input type="hidden" name="category" value="TOTAL">
+						<input type="hidden" name="w">
+						<input type="hidden" name="searchCnd">
+                        <input type="search" autocomplete="off" name="kwd" value="" title="검색어를 입력하세요" placeholder="무엇이 궁금하세요?" onkeydown="if(event.keyCode==13) {fn_intro_search(); return false;}">
+        				<button type="button" onclick="fn_intro_search();" ><img src="/kfs/images/main/srch_ico.png" alt="검색"></button>  
+						</form>
+                    </div>
+					<div class="util_search_mb">
+                        <button class="search_open"><img src="/kfs/images/layout/util_search_button.png" alt="통합검색창 열기"></button>
+                        <button class="search_close"><img src="/kfs/images/layout/util_search_button_close.png" alt="통합검색창 닫기"></button>
+                    </div>
+					
+					<div class="util_sitemap">
+						<a href="/kfsweb/cm/sym/mpm/SiteMapList.do?mn=NKFS_07_06"><img src="/kfs/images/layout/util_sitemap_button.png" alt="전체메뉴"></a>
+					</div>
+				</div>
+			</div>
+			
+			<script type="text/javascript">
+						/* 
+						var this_code1 = '1';
+						var this_code2 = '2';
+						window.left_mar = function(){
+						 //<![CDATA[
+							// if(this_code1 && this_code2) menu_check(this_code1,this_code2,'N','N','Y');
+							var topMenuNoPerSys = "NKFS";
+							menu_check2(topMenuNoPerSys);
+						//]]>
+						}
+						*/
+						
+						</script>
+					
+				<nav id="gnb" tabindex="0">
+					<ul id="tm" class="gnb_group">
+                        <li class="depth_1">
+                            
+                                <a target="_self" title="산림정책" href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_17&amp;cmsId=FC_003815" >
+                                   <span>산림정책</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_1">
+										<div class="summary">
+											<strong class="sumry_ti">산림정책</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_1th" class="depth_2">
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_17&amp;cmsId=FC_003815" target="_self">정부출범 후 주요 국정성과</a>
+                                                    </li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_01&amp;cmsId=FC_000388" target="_self">중장기계획</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_01&amp;cmsId=FC_000388" target="_self" >제6차 산림기본계획 변경('18~'37)</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_01&amp;cmsId=FC_000106" target="_self">업무계획</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_01&amp;cmsId=FC_000106" target="_self" >주요업무계획</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_02&amp;cmsId=FC_000107" target="_self" >주요세부추진계획</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_03&amp;cmsId=FC_000109" target="_self" >달라지는 주요산림정책</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_04&amp;cmsId=FC_003624" target="_self" >산림사업 안내서</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1008&amp;mn=NKFS_02_15_01" target="_self">e-산림정책도서관</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1008&amp;mn=NKFS_02_15_01" target="_self" >전자책</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://book.nifos.go.kr/library/" target="_blank" title="산림과학 전자도서관(새창)">산림과학 전자도서관</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://know.nifos.go.kr/intlsearch/project/main.do#AC=/intlsearch/project/viewPage.do&VA=content&view_nm=list" target="_blank" title="산림연구과제 및 성과(새창)">산림연구과제 및 성과</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://kna.forest.go.kr/kfsweb/kfi/kfs/kna/application/publication/list.do?mainCd=210103&amp;mn=UKNA_04_10" target="_blank" title="국립수목원 연구간행물(새창)">국립수목원 연구간행물</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.prism.go.kr" target="_blank" title="정책연구보고서(새창)">정책연구보고서</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							<li class="depth_1">
+                            
+                                <a target="_blank" title="분야별산림정보(새창)" href="/kfsweb/kfs/areaIdx/Index.do?mn=AR05" >
+                                   <span>분야별산림정보</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_2">
+										<div class="summary">
+											<strong class="sumry_ti">분야별산림정보</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_2th" class="depth_2">
+											<li>
+												<a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR05" target="_blank" title="국제산림협력(새창)">국제산림협력</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1065&amp;mn=AR05_01_01" target="_blank" title="국제협력(새창)">국제협력</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003532&amp;mn=AR05_02_01" target="_blank" title="해외자원(새창)">해외자원</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000861&amp;mn=AR05_03_01_01" target="_blank" title="임업수출교역(새창)">임업수출교역</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR01" target="_blank" title="산림산업(새창)">산림산업</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_002320&amp;mn=AR01_01_01" target="_blank" title="종묘(새창)">종묘</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000995&amp;mn=AR01_02_01" target="_blank" title="조림(새창)">조림</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000900&amp;mn=AR01_03_01" target="_blank" title="숲가꾸기(새창)">숲가꾸기</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001000&amp;mn=AR01_04_01_01" target="_blank" title="목재(새창)">목재</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1823&amp;mn=AR01_05_03_01" target="_blank" title="임업인/임산물(새창)">임업인/임산물</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000812&amp;mn=AR01_06_01" target="_blank" title="임도(새창)">임도</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000429&amp;mn=AR01_07_01" target="_blank" title="산림일자리(새창)">산림일자리</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR02" target="_blank" title="산림복지(새창)">산림복지</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001349&amp;mn=AR02_01_01_01" target="_blank" title="산림휴양/치유(새창)">산림휴양/치유</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001194&amp;mn=AR02_02_01" target="_blank" title="숲길/등산(새창)">숲길/등산</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1488&amp;mn=AR02_03_01" target="_blank" title="산림문화(새창)">산림문화</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000872&amp;mn=AR02_04_01_02" target="_blank" title="산림교육(새창)">산림교육</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001180&amp;mn=AR02_06_01_01" target="_blank" title="산촌/귀산촌(새창)">산촌/귀산촌</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001138&amp;mn=AR02_07_01" target="_blank" title="수목장림(새창)">수목장림</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR03" target="_blank" title="산림보호(새창)">산림보호</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001250&amp;mn=AR03_01_01_01" target="_blank" title="숲사랑(새창)">숲사랑</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000850&amp;mn=AR03_02_01" target="_blank" title="산림환경보호(새창)">산림환경보호</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001068&amp;mn=AR03_05_01_01" target="_blank" title="백두대간(새창)">백두대간</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001303&amp;mn=AR03_06_01_01" target="_blank" title="도시숲/무궁화(새창)">도시숲/무궁화</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000874&amp;mn=AR03_07_01" target="_blank" title="수목원/정원(새창)">수목원/정원</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR04" target="_blank" title="산림재난(새창)">산림재난</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001124&amp;mn=AR04_01_01_01" target="_blank" title="산불(새창)">산불</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://sansatai.forest.go.kr" target="_blank" title="산사태(새창)">산사태</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/mer/fip/dbhis/dpmsOccrrDetailWarning.do?mn=AR04_02_01_01" target="_blank" title="산림병해충(새창)">산림병해충</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							<li class="depth_1">
+                            
+                                <a target="_self" title="행정정보" href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&amp;mn=NKFS_04_01_01"  class="on">
+                                   <span>행정정보</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            <div class="issue3">
+                                                            	<a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_01" class="hover"><img src="/kfs/images/content/issue/icon24.png" alt="">산림지식</a>
+                                                              </div>
+                                                        <div class="issue3">
+                                                            	<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" class="hover"><img src="/kfs/images/content/issue/icon12.png" alt="">산림통계</a>
+                                                              </div>
+                                                        <div class="issue3">
+                                                            	<a href="http://fmc.forest.go.kr" class="hover" target="_blank" title="새창"><img src="/kfs/images/content/issue/icon47.png" alt="">산림행정미디어센터</a>
+                                                              </div>
+                                                        <div class="issue3">
+                                                            	<a href="https://kfss.forest.go.kr/stat/ptl/fyb/frstyYrBookList.do?curMenu=12453" class="hover"><img src="/kfs/images/content/issue/icon45.png" alt="">산림임업통계연보</a>
+                                                              </div>
+                                                        </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_3">
+										<div class="summary">
+											<strong class="sumry_ti">행정정보</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_3th" class="depth_2">
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01" target="_self">알림정보</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01" target="_self" >알립니다</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1032&mn=NKFS_04_01_02" target="_self" >공고</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1034&mn=NKFS_04_01_03" target="_self" >채용정보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1033&mn=NKFS_04_01_04" target="_self" >입찰정보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1298&mn=NKFS_04_01_05" target="_self" >전자공시 송달</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1288&amp;mn=NKFS_04_01_06" target="_self" >인사정보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1035&amp;mn=NKFS_04_01_07" target="_self" >사유림을 삽니다</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_01&amp;cmsId=FC_000102" target="_self" >산림공무원이 되는 길</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="http://fmc.forest.go.kr" target="_blank" title="산림행정미디어센터(새창)">산림행정미디어센터</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036&amp;mn=NKFS_04_02_01" target="_self" >보도자료</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1509&amp;mn=NKFS_04_02_02" target="_self" >보도설명·정정자료</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0009" target="_blank" title="기고/컬럼(새창)">기고/컬럼</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0010" target="_blank" title="기자브리핑(새창)">기자브리핑</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0013" target="_blank" title="사진(새창)">사진</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0014" target="_blank" title="동영상(새창)">동영상</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/snsGateway.do?bbrssId=BBRSS_0016" target="_blank" title="산림청 누리소통망(새창)">산림청 누리소통망</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351" target="_self">법령정보</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351" target="_self" >소관법령</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/html/HtmlPage.do?pg=/policy/policy_0401.html&amp;mn=NKFS_04_03_02" target="_self" >훈령/예규/고시</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://opinion.lawmaking.go.kr/gcom/ogLmPp?howOrderBy=&btnType=1&myOpnYn=&cptOfiOrgCd=1400000&lsClsCd=&diff=&pntcNo=&pntcNo2=&stYdFmt=2022.+9.+1.&edYdFmt=&lsNm=&isOgYn=Y&opYn=Y" target="_blank" title="입법예고(새창)">입법예고</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_03_04&amp;bbsId=BBSMSTR_1004" target="_self" >행정예고</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://www.law.go.kr/nwRvsLsPop.do?pg=1&amp;chrIdx=0&amp;lsKndCd=&amp;cptOfi=1400000&amp;searchType=lsNm&amp;lsNm=&amp;p_spubdt=&amp;p_epubdt=&amp;p_spubno=&amp;p_epubno=" target="_blank" title="최근 제개정법령(새창)">최근 제개정법령</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" target="_self">산림통계</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" target="_self" >산림기본통계</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_08&amp;cmsId=FC_000344" target="_self" >국가산림자원조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_14&amp;cmsId=FC_003426" target="_self" >전국산주현황</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;cmsId=FC_000076" target="_self" >임산물생산조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_05&amp;cmsId=FC_000081" target="_self" >임가경제조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_06&amp;cmsId=FC_000083" target="_self" >임산물생산비조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_07&amp;cmsId=FC_000343" target="_self" >임업경영실태조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_15&amp;cmsId=FC_003427" target="_self" >임산물소득조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_16&amp;cmsId=FC_003677" target="_self" >산림산업조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1310" target="_blank" title="병해충발생통계(새창)">병해충발생통계</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000433&mn=AR02_06_02_01" target="_blank" title="귀산촌통계(새창)">귀산촌통계</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003000&amp;mn=NKFS_04_05_03" target="_self" >임산물수출입통계</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=12499&bbsId=ptlFrstyYrBook" target="_blank" title="산림임업통계연보(새창)">산림임업통계연보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_05_10&amp;pageIndex=1&amp;pageUnit=10&amp;searchtitle=title&amp;searchcont=&amp;searchkey=&amp;searchwriter=&amp;searchdept=&amp;searchWrd=&amp;ctgryLrcls=CTGRY447&amp;ntcStartDt=&amp;ntcEndDt=&amp;bbsId=BBSMSTR_1016" target="_self" >기타 통계</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1012&amp;mn=NKFS_04_04" target="_self">정책평가 자료실</a>
+                                                    </li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_01" target="_self">산림지식</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_03" target="_self" >산림임업용어사전</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_01&amp;cmsId=FC_001411" target="_self" >생활속의산림</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" target="_self">산림공간정보</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" target="_blank" title="FGIS산림공간정보(새창)">FGIS산림공간정보</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							<li class="depth_1">
+                            
+                                <a target="_self" title="국민소통" href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_01&amp;cmsId=FC_000121" >
+                                   <span>국민소통</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            <div class="issue4">
+                                                            	<a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" class="hover"><img src="/kfs/images/content/issue/icon28.png" alt="">민원신청</a>
+                                                              </div>
+                                                        <div class="issue4">
+                                                            	<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1118&amp;mn=NKFS_05_01_07" class="hover"><img src="/kfs/images/content/issue/icon35.png" alt="">민원서식</a>
+                                                              </div>
+                                                        <div class="issue4">
+                                                            	<a href="/kfsweb/html/HtmlPage.do?pg=/idea/peopleIdea.html&amp;mn=NKFS_05_07_04" class="hover"><img src="/kfs/images/content/issue/icon27.png" alt="">국민생각함</a>
+                                                              </div>
+                                                        <div class="issue4">
+                                                            	<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_01&amp;cmsId=FC_003538" class="hover"><img src="/kfs/images/content/issue/icon40.png" alt="">국민제안</a>
+                                                              </div>
+                                                        </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_4">
+										<div class="summary">
+											<strong class="sumry_ti">국민소통</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_4th" class="depth_2">
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_01&amp;cmsId=FC_000121" target="_self">전자민원</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_01&amp;cmsId=FC_000121" target="_self" >민원이용안내</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_03&amp;cmsId=FC_000068" target="_self" >유사민원검색</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="민원신청(새창)">민원신청</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="나의 민원조회(새창)">나의 민원조회</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.110.go.kr/consult/cam.do" target="_blank" title="110수화통역 신청(새창)">110수화통역 신청</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1118&amp;mn=NKFS_05_01_07" target="_self" >민원서식</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_02_01&amp;cmsId=FC_000063" target="_self" >민원서비스헌장, 민원보호담당관</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/evb/selectEventBbsList.do?EVENT_TPE_CD=1&amp;mn=NKFS_05_07_01" target="_self">국민참여</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/evb/selectEventBbsList.do?mn=NKFS_05_07_01" target="_self" >행사 공모전</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1085&mn=NKFS_05_07_02" target="_self" >칭찬합시다</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1019&mn=NKFS_05_07_03" target="_self" >자유게시판</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/html/HtmlPage.do?pg=/idea/peopleIdea.html&amp;mn=NKFS_05_07_04" target="_self" >국민생각함</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_01&amp;cmsId=FC_003538" target="_self" >국민제안</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/qstnn/selectQstnnGroupList.do?mn=NKFS_05_07_06" target="_self" >설문조사</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1020&amp;mn=NKFS_05_07_07" target="_self" >함께하는 산림사진</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1086&amp;mn=NKFS_05_07_09" target="_self" >정부포상 추천대상자 공개검증</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_12&amp;cmsId=FC_003808" target="_self" >국민참여플랫폼(소통24)</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1860&amp;mn=NKFS_05_07_13" target="_self" >특별성과 포상금 국민추천</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1121&amp;mn=NKFS_05_03_01" target="_self">규제합리화</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1121&amp;mn=NKFS_05_03_01" target="_self" >규제합리화 추진사례</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_07&amp;cmsId=FC_003469" target="_self" >규제합리화과제 현황</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_08&amp;cmsId=FC_003470" target="_self" >심사중인 규제법안</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_09&amp;cmsId=FC_003471" target="_self" >규제합리화 보도자료</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_10&amp;cmsId=FC_003472" target="_self" >규제 법령정보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1832&amp;mn=NKFS_05_03_11_02" target="_self" >규제합리화 홍보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/html/HtmlPage.do?pg=/partic/partic_05_02.html&amp;mn=NKFS_05_03_02" target="_self" >규제신문고</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectControlConfirm.do?mn=NKFS_05_03_06" target="_self" >국민 규제입증요청</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.better.go.kr/zz.main.PortalMain" target="_blank" title="규제정보포털(새창)">규제정보포털</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_10&amp;cmsId=FC_003843" target="_self">산림·임업분야 주요 현장과제 추진 상황</a>
+                                                    </li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_05_01&amp;cmsId=FC_000088" target="_self">부패비리신고</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="https://ncp.clean.go.kr/cmn/secCtfcKMC.do?menuCode=acs&amp;mapAcs=Y&amp;insttCd=1400000" target="_blank" title="부패행위신고(새창)">부패행위신고</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="예산낭비신고(새창)">예산낭비신고</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://ncp.clean.go.kr/cmn/secCtfcKMC.do?menuCode=acs&amp;mapAcs=Y&amp;insttCd=1400000" target="_self" >청탁금지법위반신고</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectIrrationReport_POS.do?mn=NKFS_05_05_08" target="_self" >민간단체 보조금 부조리 신고센터</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectForestBsnsIrrationFraudReport.do?bbsId=BBSMSTR_1851&mn=NKFS_05_05_09" target="_self" >산림사업 부정비리 신고센터</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1017&amp;mn=NKFS_05_05_06" target="_self" >청렴나눔방</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_08_01&amp;cmsId=FC_000775" target="_self">적극행정</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_08_01&amp;cmsId=FC_000775" target="_self" >제도소개</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_08_06&amp;cmsId=FC_003049" target="_self" >국민의 소리함</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1829&amp;mn=NKFS_05_08_07" target="_self" >적극행정 소식</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1725&amp;mn=NKFS_05_08_02" target="_self" >적극행정 자료실</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1812&amp;mn=NKFS_05_08_05" target="_self" >우수공무원</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_09_01&amp;cmsId=FC_003556" target="_self">안전보건</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_09_01&amp;cmsId=FC_003556" target="_self" >안전보건 경영방침</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1825&amp;mn=NKFS_05_09_02" target="_self" >안전보건 의견함</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1826&amp;mn=NKFS_05_09_03&amp;ctgryLrcls=CTGRY497" target="_self" >안전보건 자료실</a></li>
+                                                                            <!--  -->
+																	<li><a href="https://www.safetyreport.go.kr/api?apiKey=140000087I9U9KKXL893MAV6AEQ#introduction" target="_blank" title="안전신문고(새창)">안전신문고</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							<li class="depth_1">
+                            
+                                <a target="_self" title="정보공개" href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" >
+                                   <span>정보공개</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            <div class="issue5">
+                                                            	<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" class="hover"><img src="/kfs/images/content/issue/icon19.png" alt="">정보공개안내</a>
+                                                              </div>
+                                                        <div class="issue5">
+                                                            	<a href="/kfsweb/kfi/kfs/evb/selectImgInfoOpenList.do?advCtgry=3030101&amp;mn=NKFS_06_02_01" class="hover"><img src="/kfs/images/content/issue/icon27.png" alt="">사전정보공표</a>
+                                                              </div>
+                                                        <div class="issue5">
+                                                            	<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_01&amp;cmsId=FC_000130" class="hover"><img src="/kfs/images/content/issue/icon32.png" alt="">공공데이터 개방</a>
+                                                              </div>
+                                                        <div class="issue5">
+                                                            	<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1069&amp;mn=NKFS_06_09_01" class="hover"><img src="/kfs/images/content/issue/icon19.png" alt="">통합자료실</a>
+                                                              </div>
+                                                        </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_5">
+										<div class="summary">
+											<strong class="sumry_ti">정보공개</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_5th" class="depth_2">
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" target="_self">정보공개안내</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" target="_self" >정보공개안내</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_02&amp;cmsId=FC_000463" target="_self" >비공개 세부 기준</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/html/HtmlPage.do?pg=/news/news_030401.html&amp;mn=NKFS_06_01_03" target="_self" >정보목록</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1074&amp;mn=NKFS_06_01_04" target="_self" >업무추진비</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://www.open.go.kr/" target="_blank" title="정보공개신청ㆍ확인(새창)">정보공개신청ㆍ확인</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/evb/selectImgInfoOpenList.do?&amp;mn=NKFS_06_02_01" target="_self">사전정보공표</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/evb/selectImgInfoOpenList.do?mn=NKFS_06_02_01" target="_self" >공표목록</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_02_02&amp;cmsId=FC_000337" target="_self" >맞춤형 사전정보</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1504&amp;mn=NKFS_06_02_03" target="_self" >청구공개 자료방</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/fiscal/fiscalSearchView.do?mn=NKFS_06_04_01&searchGubun=RM" target="_self">재정정보공개</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/fiscal/fiscalSearchView.do?mn=NKFS_06_04_01&searchGubun=RM" target="_self" >세입 예산 운용상황</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/fiscal/fiscalSearchView.do?mn=NKFS_06_04_02&searchGubun=EM" target="_self" >세출 예산 운용상황</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1651&mn=NKFS_06_04_05" target="_self" >세입·세출 사업설명자료</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1070&amp;mn=NKFS_06_04_03" target="_self" >예산결산</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1511&mn=NKFS_06_04_04" target="_self" >국고보조금</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1088&mn=NKFS_06_05" target="_self">감사결과공개</a>
+                                                    </li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1665&amp;mn=NKFS_06_06_01" target="_self">정책실명제</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1665&amp;mn=NKFS_06_06_01" target="_self" >국민신청실명제</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1286&amp;mn=NKFS_06_06_02" target="_self" >중점관리 대상사업</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_07&amp;cmsId=FC_000129" target="_self">사회적협동조합(연합회)경영공시</a>
+                                                    </li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_01&amp;cmsId=FC_000130" target="_self">공공데이터 개방</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_01&amp;cmsId=FC_000130" target="_self" >개방개요</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_05&amp;cmsId=FC_000132" target="_self" >개방현황</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/opda/dataMng/selectPblicDataList.do?mn=NKFS_06_08_02&amp;tabs=1" target="_self" >공공데이터 개방목록</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://www.data.go.kr" target="_blank" title="공공데이터 제공신청(새창)">공공데이터 제공신청</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1662&amp;mn=NKFS_06_08_04" target="_self" >데이터 품질오류 신고</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1855&amp;mn=NKFS_06_08_07" target="_self" >공공데이터 소식</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1069&amp;mn=NKFS_06_09_01" target="_self">통합자료실</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1069&mn=NKFS_06_09_01" target="_self" >통합자료실</a></li>
+                                                                            <!--  -->
+																	<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0015" target="_blank" title="매거진 숲(새창)">매거진 숲</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1089&amp;mn=NKFS_06_09_07" target="_self" >감사 소식지</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1009&amp;mn=NKFS_06_09_03" target="_self" >사진자료실</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1015&amp;mn=NKFS_06_09_04" target="_self" >동영상자료실</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							<li class="depth_1">
+                            
+                                <a target="_self" title="산림청소개" href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_01&amp;cmsId=FC_000072" >
+                                   <span>산림청소개</span>  
+                                </a>
+                            
+                                <!-- <div class="issue">
+                                    <div class="layout"> 
+                                        <div class="isu_ssss">
+                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_03&cmsId=FC_000462">
+                                                <img src="/kfs/images/layout/img_h_ssss.png" alt="새산새숲(NEW FOREST KOREA)">
+                                                <span>more</span>
+                                            </a>
+                                        </div>
+                                        <div class="issue_link">
+                                            </div>
+                                    </div>
+                                </div> -->
+								
+								<div class="group group_6">
+										<div class="summary">
+											<strong class="sumry_ti">산림청소개</strong>
+											<div class="sumry_pt">
+												사람이 중심이 되는 따뜻하고<br>
+												행복한 세상을 만드는데 <br>
+												산림청이 앞장서겠습니다.
+											</div>
+										</div>
+									
+										<ul id="tm_6th" class="depth_2">
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_01&amp;cmsId=FC_000072" target="_self">기관 안내</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_01&amp;cmsId=FC_000072" target="_self" >연혁</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_02&amp;cmsId=FC_000085" target="_self" >비전 및 목표</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_03&amp;cmsId=FC_000086" target="_self" >그루소개</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_04&amp;cmsId=FC_000087" target="_self" >찾아오시는 길</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/mem/selectMemberMyMenuList.do?orgId=null&amp;mn=NKFS_01_01_05" target="_self" >자주찾는 서비스</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_02&amp;cmsId=FC_000101" target="_self">청, 차장소개</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_01&amp;cmsId=FC_000099" target="_self" >청장 인사말</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_02&amp;cmsId=FC_000101" target="_self" >청장 소개</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_03&amp;cmsId=FC_003013" target="_self" >차장 소개</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/csm/selectChiefScheduleMonthList.do?mn=NKFS_01_03_04" target="_self" >청, 차장 일정</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1029&mn=NKFS_01_03_05" target="_self" >청장활동 사진</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/cop/bbs/selectBoardChairmanIntro.do?mn=NKFS_01_03_06" target="_self" >청장과의 대화</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_08&amp;cmsId=FC_000104" target="_self" >역대 청장</a></li>
+                                                                            </ul>
+												</li>
+											<li>
+												<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_02_01&amp;cmsId=FC_000091" target="_self">조직 안내</a>
+                                                    <ul class="depth_3">
+														<!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_02_01&amp;cmsId=FC_000091" target="_self" >조직도</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/mbm/selectEmployeeList.do?mn=NKFS_01_02_02" target="_self" >부서별 업무안내</a></li>
+                                                                            <!--  -->
+																	<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_02_04&amp;cmsId=FC_000381" target="_self" >소속기관 소개</a></li>
+                                                                            </ul>
+												</li>
+											</ul>
+									</div>
+								</li>
+							</ul>
+                    </nav>
+			<input type="hidden" id="mnForTopMenuSelect" value="NKFS_04_05_02"/>
+		</div>
+             		<div class="gnb_close"><a href="#"><span>메뉴닫기</span></a></div>	
+		</div>
+    
+    <div class="general_search">
+            
+        <div class="layout">
+            
+            <!-- action="/" 속성 사용 안하시면 삭제 해주세요 -->
+            <form action="/kfsweb/kfs/search.do" target="_self" method="post" name="schFrm">
+                <input type="hidden" name="category" value="TOTAL">
+                <input type="hidden" name="w">
+                <input type="hidden" name="searchCnd">
+			
+                <div class="search_keyword">
+                    <input type="search" autocomplete="off" name="kwd" id="kwd" title="검색어를 입력하세요" placeholder="검색어를 입력하세요." onkeydown="if(event.keyCode==13) {fn_intro_search2(); return false;}">
+                    <button type="button" onclick="fn_intro_search2();"><img src="/kfs/images/layout/general_search_submit.png" alt="검색"></button>
+                    
+                    <!-- AKC Keyword : Start -->
+                    <div class="keyword" id="topKeywordLst" style="display: none;">
+                        <ul id="autoSearch">
+                            <li><a href="#topKeywordLst">검색어 자동완성을 사용중입니다.</a></li>
+                        </ul>
+                        <!-- choose_word -->
+                        <div class="choose_word">
+                            <div class="fl">
+                                <a href="#topKeywordLst" id="first_opt_top">첫단어 보기</a> | <a href="#topKeywordLst" id="last_opt_top">끝단어 보기</a>
+                            </div>
+                            <a href="#topKeywordLst" id="akc_able" class="fr bt_autokey_cl">끄기</a>
+                        </div>
+                    </div>
+                    
+                </div>
+<!--
+                <div class="faivorit_keyword">
+                    
+                    <span class="label">인기 검색어 </span>
+
+                    <span class="mid">:</span>
+
+                    <span class="word">
+
+                        <a href="#">채용</a>
+                        <a href="#">숲해설가</a>
+                        <a href="#">입산통제</a>
+                        <a href="#">산불</a>
+                        <a href="#">조직도</a>
+                        <a href="#">자작나무숲</a>
+                    </span>
+                </div>
+                -->
+</form>
+            
+        </div>
+    </div>
+
+<script type="text/javascript">
+	
+var agent = navigator.userAgent.toLowerCase(); 
+	
+if ((navigator.appName =='Netscape'&& navigator.userAgent.search('Trident') != -1)||(agent.indexOf("msie") != -1)){
+	jQuery("#utb_t").css("display","none");
+	jQuery("#utb").css("display","none");
+}else{
+
+}
+
+</script>		<!-- 	</div> -->	</div>
+		
+	
+	<div class="general_search_out_ground"></div>
+	<!-- 모바일 메뉴 : s -->
+	<script type="text/javascript">
+	
+  
+// 	function fn_menu_popup(url) {
+// 		window.open(url, '', 'width=700, height=800, resizable=yes, scrollbars=yes, status=no');
+// 		return false;
+// 	} 
+</script>    
+ 
+<!-- 모바일 메뉴 : s --> 
+<div class="navWrap">    
+             		<a href="#" class="menuBtn">메뉴열기</a>
+<nav id="mMenu">
+		<div class="mMenu_top">
+			<a href="/kfsweb/kfs/idx/Index.do?mn=NKFS_01&mainType=01" class="mMenu_logo"><img src="/kfs/images/common/logo.png" alt="산림청"></a>
+		</div>
+		<div class="mMenu_mem">
+			<ul>
+                <!-- <li><a href="/kfsweb/kfi/kfs/src/selectSearchServiceForm.do">통합검색</a></li> -->
+				<li><a href="http://english.forest.go.kr" target="_blank" title="English">English</a></li>
+					</ul>
+		</div>
+		<div class="mMenu_list">
+			<ul>
+				<li class="m1"><a target="_self" title="산림정책"
+					href="#" >
+						산림정책</a>
+					<ul>
+							<li>
+									<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_17&amp;cmsId=FC_003815" >정부출범 후 주요 국정성과</a>
+									</li>
+								<li>
+									<a href="#" >중장기계획</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_13_01&amp;cmsId=FC_000388" target="_self" >제6차 산림기본계획 변경('18~'37)</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >업무계획</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_01&amp;cmsId=FC_000106" target="_self" >주요업무계획</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_02&amp;cmsId=FC_000107" target="_self" >주요세부추진계획</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_03&amp;cmsId=FC_000109" target="_self" >달라지는 주요산림정책</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_16_04&amp;cmsId=FC_003624" target="_self" >산림사업 안내서</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >e-산림정책도서관</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1008&amp;mn=NKFS_02_15_01" target="_self" >전자책</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://book.nifos.go.kr/library/" target="_blank" title="산림과학 전자도서관(새창)">산림과학 전자도서관<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://know.nifos.go.kr/intlsearch/project/main.do#AC=/intlsearch/project/viewPage.do&VA=content&view_nm=list" target="_blank" title="산림연구과제 및 성과(새창)">산림연구과제 및 성과<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://kna.forest.go.kr/kfsweb/kfi/kfs/kna/application/publication/list.do?mainCd=210103&amp;mn=UKNA_04_10" target="_blank" title="국립수목원 연구간행물(새창)">국립수목원 연구간행물<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.prism.go.kr" target="_blank" title="정책연구보고서(새창)">정책연구보고서<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    </div>
+                            </li>
+						</ul>
+					</li>
+				<li class="m2"><a target="_blank" title="분야별산림정보(새창)"
+					href="#" >
+						분야별산림정보</a>
+					<ul>
+							<li>
+									<a href="#" >국제산림협력</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1065&amp;mn=AR05_01_01" target="_blank" title="국제협력(새창)">국제협력<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003532&amp;mn=AR05_02_01" target="_blank" title="해외자원(새창)">해외자원<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000861&amp;mn=AR05_03_01_01" target="_blank" title="임업수출교역(새창)">임업수출교역<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림산업</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_002320&amp;mn=AR01_01_01" target="_blank" title="종묘(새창)">종묘<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000995&amp;mn=AR01_02_01" target="_blank" title="조림(새창)">조림<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000900&amp;mn=AR01_03_01" target="_blank" title="숲가꾸기(새창)">숲가꾸기<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001000&amp;mn=AR01_04_01_01" target="_blank" title="목재(새창)">목재<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1823&amp;mn=AR01_05_03_01" target="_blank" title="임업인/임산물(새창)">임업인/임산물<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000812&amp;mn=AR01_06_01" target="_blank" title="임도(새창)">임도<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000429&amp;mn=AR01_07_01" target="_blank" title="산림일자리(새창)">산림일자리<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림복지</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001349&amp;mn=AR02_01_01_01" target="_blank" title="산림휴양/치유(새창)">산림휴양/치유<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001194&amp;mn=AR02_02_01" target="_blank" title="숲길/등산(새창)">숲길/등산<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1488&amp;mn=AR02_03_01" target="_blank" title="산림문화(새창)">산림문화<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000872&amp;mn=AR02_04_01_02" target="_blank" title="산림교육(새창)">산림교육<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001180&amp;mn=AR02_06_01_01" target="_blank" title="산촌/귀산촌(새창)">산촌/귀산촌<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001138&amp;mn=AR02_07_01" target="_blank" title="수목장림(새창)">수목장림<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림보호</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001250&amp;mn=AR03_01_01_01" target="_blank" title="숲사랑(새창)">숲사랑<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000850&amp;mn=AR03_02_01" target="_blank" title="산림환경보호(새창)">산림환경보호<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001068&amp;mn=AR03_05_01_01" target="_blank" title="백두대간(새창)">백두대간<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001303&amp;mn=AR03_06_01_01" target="_blank" title="도시숲/무궁화(새창)">도시숲/무궁화<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000874&amp;mn=AR03_07_01" target="_blank" title="수목원/정원(새창)">수목원/정원<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림재난</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_001124&amp;mn=AR04_01_01_01" target="_blank" title="산불(새창)">산불<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://sansatai.forest.go.kr" target="_blank" title="산사태(새창)">산사태<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/mer/fip/dbhis/dpmsOccrrDetailWarning.do?mn=AR04_02_01_01" target="_blank" title="산림병해충(새창)">산림병해충<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    </div>
+                            </li>
+						</ul>
+					</li>
+				<li class="m3"><a target="_self" title="행정정보"
+					href="#" >
+						행정정보</a>
+					<ul>
+							<li>
+									<a href="#" >알림정보</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01" target="_self" >알립니다</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1032&mn=NKFS_04_01_02" target="_self" >공고</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1034&mn=NKFS_04_01_03" target="_self" >채용정보</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1033&mn=NKFS_04_01_04" target="_self" >입찰정보</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1298&mn=NKFS_04_01_05" target="_self" >전자공시 송달</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1288&amp;mn=NKFS_04_01_06" target="_self" >인사정보</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1035&amp;mn=NKFS_04_01_07" target="_self" >사유림을 삽니다</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_01&amp;cmsId=FC_000102" target="_self" >산림공무원이 되는 길</a>
+                                                            <ul>
+																<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_01&amp;cmsId=FC_000102" target="_self" >채용방법</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_02&amp;cmsId=FC_000095" target="_self" >인사제도</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_03&amp;cmsId=FC_000096" target="_self" >복지제도</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_04&amp;cmsId=FC_000064" target="_self" >산림항공인자격조건</a>
+                                                                                </li>
+																	</ul>
+															</li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림행정미디어센터</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036&amp;mn=NKFS_04_02_01" target="_self" >보도자료</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1509&amp;mn=NKFS_04_02_02" target="_self" >보도설명·정정자료</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0009" target="_blank" title="기고/컬럼(새창)">기고/컬럼<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0010" target="_blank" title="기자브리핑(새창)">기자브리핑<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0013" target="_blank" title="사진(새창)">사진<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0014" target="_blank" title="동영상(새창)">동영상<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/snsGateway.do?bbrssId=BBRSS_0016" target="_blank" title="산림청 누리소통망(새창)">산림청 누리소통망<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >법령정보</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351" target="_self" >소관법령</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/html/HtmlPage.do?pg=/policy/policy_0401.html&amp;mn=NKFS_04_03_02" target="_self" >훈령/예규/고시</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://opinion.lawmaking.go.kr/gcom/ogLmPp?howOrderBy=&btnType=1&myOpnYn=&cptOfiOrgCd=1400000&lsClsCd=&diff=&pntcNo=&pntcNo2=&stYdFmt=2022.+9.+1.&edYdFmt=&lsNm=&isOgYn=Y&opYn=Y" target="_blank" title="입법예고(새창)">입법예고<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_03_04&amp;bbsId=BBSMSTR_1004" target="_self" >행정예고</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://www.law.go.kr/nwRvsLsPop.do?pg=1&amp;chrIdx=0&amp;lsKndCd=&amp;cptOfi=1400000&amp;searchType=lsNm&amp;lsNm=&amp;p_spubdt=&amp;p_epubdt=&amp;p_spubno=&amp;p_epubno=" target="_blank" title="최근 제개정법령(새창)">최근 제개정법령<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림통계</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" target="_self" >산림기본통계</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_08&amp;cmsId=FC_000344" target="_self" >국가산림자원조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_14&amp;cmsId=FC_003426" target="_self" >전국산주현황</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;cmsId=FC_000076" target="_self" >임산물생산조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_05&amp;cmsId=FC_000081" target="_self" >임가경제조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_06&amp;cmsId=FC_000083" target="_self" >임산물생산비조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_07&amp;cmsId=FC_000343" target="_self" >임업경영실태조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_15&amp;cmsId=FC_003427" target="_self" >임산물소득조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_16&amp;cmsId=FC_003677" target="_self" >산림산업조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1310" target="_blank" title="병해충발생통계(새창)">병해충발생통계<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000433&mn=AR02_06_02_01" target="_blank" title="귀산촌통계(새창)">귀산촌통계<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003000&amp;mn=NKFS_04_05_03" target="_self" >임산물수출입통계</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=12499&bbsId=ptlFrstyYrBook" target="_blank" title="산림임업통계연보(새창)">산림임업통계연보<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_05_10&amp;pageIndex=1&amp;pageUnit=10&amp;searchtitle=title&amp;searchcont=&amp;searchkey=&amp;searchwriter=&amp;searchdept=&amp;searchWrd=&amp;ctgryLrcls=CTGRY447&amp;ntcStartDt=&amp;ntcEndDt=&amp;bbsId=BBSMSTR_1016" target="_self" >기타 통계</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1012&amp;mn=NKFS_04_04" >정책평가 자료실</a>
+									</li>
+								<li>
+									<a href="#" >산림지식</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_03" target="_self" >산림임업용어사전</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_01&amp;cmsId=FC_001411" target="_self" >생활속의산림</a>
+                                                            <ul>
+																<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_01&amp;cmsId=FC_001411" target="_self" >민족성서의근원</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_02&amp;cmsId=FC_001476" target="_self" >문명발달의 공로자</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_03&amp;cmsId=FC_001488" target="_self" >국토의 얼굴</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_04&amp;cmsId=FC_001542" target="_self" >시민사회의 산림운동</a>
+                                                                                </li>
+																	</ul>
+															</li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >산림공간정보</a>
+									<ul>
+										<li> 
+                                                            <a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" target="_blank" title="FGIS산림공간정보(새창)">FGIS산림공간정보<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    <a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_01" ><img src="/kfs/images/content/issue/icon24_ov.png" alt="">산림지식</a>
+                                                    <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" ><img src="/kfs/images/content/issue/icon12_ov.png" alt="">산림통계</a>
+                                                    <a href="http://fmc.forest.go.kr" target="_blank"><img src="/kfs/images/content/issue/icon47_ov.png" alt="">산림행정미디어센터</a>
+                                                    <a href="https://kfss.forest.go.kr/stat/ptl/fyb/frstyYrBookList.do?curMenu=12453" ><img src="/kfs/images/content/issue/icon45_ov.png" alt="">산림임업통계연보</a>
+                                                    </div>
+                            </li>
+						</ul>
+					</li>
+				<li class="m4"><a target="_self" title="국민소통"
+					href="#" >
+						국민소통</a>
+					<ul>
+							<li>
+									<a href="#" >전자민원</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_01&amp;cmsId=FC_000121" target="_self" >민원이용안내</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_03&amp;cmsId=FC_000068" target="_self" >유사민원검색</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="민원신청(새창)">민원신청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="나의 민원조회(새창)">나의 민원조회<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.110.go.kr/consult/cam.do" target="_blank" title="110수화통역 신청(새창)">110수화통역 신청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1118&amp;mn=NKFS_05_01_07" target="_self" >민원서식</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_02_01&amp;cmsId=FC_000063" target="_self" >민원서비스헌장, 민원보호담당관</a>
+                                                            <ul>
+																<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_02_01&amp;cmsId=FC_000063" target="_self" >민원서비스헌장</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_02_02&amp;cmsId=FC_000066" target="_self" >기업민원서비스헌장</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_02_03&amp;cmsId=FC_000067" target="_self" >민원보호담당관</a>
+                                                                                </li>
+																	</ul>
+															</li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >국민참여</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/evb/selectEventBbsList.do?mn=NKFS_05_07_01" target="_self" >행사 공모전</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1085&mn=NKFS_05_07_02" target="_self" >칭찬합시다</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1019&mn=NKFS_05_07_03" target="_self" >자유게시판</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/html/HtmlPage.do?pg=/idea/peopleIdea.html&amp;mn=NKFS_05_07_04" target="_self" >국민생각함</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_01&amp;cmsId=FC_003538" target="_self" >국민제안</a>
+                                                            <ul>
+																<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_01&amp;cmsId=FC_003538" target="_self" >국민제안</a>
+                                                                                </li>
+																	<li>
+																		<a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="나의제안보기(새창)">나의제안보기<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_03&amp;cmsId=FC_000078" target="_self" >공개제안보기</a>
+                                                                                </li>
+																	</ul>
+															</li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/qstnn/selectQstnnGroupList.do?mn=NKFS_05_07_06" target="_self" >설문조사</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1020&amp;mn=NKFS_05_07_07" target="_self" >함께하는 산림사진</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1086&amp;mn=NKFS_05_07_09" target="_self" >정부포상 추천대상자 공개검증</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_12&amp;cmsId=FC_003808" target="_self" >국민참여플랫폼(소통24)</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1860&amp;mn=NKFS_05_07_13" target="_self" >특별성과 포상금 국민추천</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >규제합리화</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1121&amp;mn=NKFS_05_03_01" target="_self" >규제합리화 추진사례</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_07&amp;cmsId=FC_003469" target="_self" >규제합리화과제 현황</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_08&amp;cmsId=FC_003470" target="_self" >심사중인 규제법안</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_09&amp;cmsId=FC_003471" target="_self" >규제합리화 보도자료</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_03_10&amp;cmsId=FC_003472" target="_self" >규제 법령정보</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1832&amp;mn=NKFS_05_03_11_02" target="_self" >규제합리화 홍보</a>
+                                                            <ul>
+																<li>
+																		<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1832&amp;mn=NKFS_05_03_11_02" target="_self" >규제합리화 발행자료</a>
+                                                                                </li>
+																	<li>
+																		<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1830&amp;mn=NKFS_05_03_11_01" target="_self" >규제합리화 영상자료</a>
+                                                                                </li>
+																	</ul>
+															</li>
+													<li> 
+                                                            <a href="/kfsweb/html/HtmlPage.do?pg=/partic/partic_05_02.html&amp;mn=NKFS_05_03_02" target="_self" >규제신문고</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectControlConfirm.do?mn=NKFS_05_03_06" target="_self" >국민 규제입증요청</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.better.go.kr/zz.main.PortalMain" target="_blank" title="규제정보포털(새창)">규제정보포털<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_10&amp;cmsId=FC_003843" >산림·임업분야 주요 현장과제 추진 상황</a>
+									</li>
+								<li>
+									<a href="#" >부패비리신고</a>
+									<ul>
+										<li> 
+                                                            <a href="https://ncp.clean.go.kr/cmn/secCtfcKMC.do?menuCode=acs&amp;mapAcs=Y&amp;insttCd=1400000" target="_blank" title="부패행위신고(새창)">부패행위신고<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" target="_blank" title="예산낭비신고(새창)">예산낭비신고<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://ncp.clean.go.kr/cmn/secCtfcKMC.do?menuCode=acs&amp;mapAcs=Y&amp;insttCd=1400000" target="_self" >청탁금지법위반신고</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectIrrationReport_POS.do?mn=NKFS_05_05_08" target="_self" >민간단체 보조금 부조리 신고센터</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectForestBsnsIrrationFraudReport.do?bbsId=BBSMSTR_1851&mn=NKFS_05_05_09" target="_self" >산림사업 부정비리 신고센터</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1017&amp;mn=NKFS_05_05_06" target="_self" >청렴나눔방</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >적극행정</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_08_01&amp;cmsId=FC_000775" target="_self" >제도소개</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_08_06&amp;cmsId=FC_003049" target="_self" >국민의 소리함</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1829&amp;mn=NKFS_05_08_07" target="_self" >적극행정 소식</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1725&amp;mn=NKFS_05_08_02" target="_self" >적극행정 자료실</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1812&amp;mn=NKFS_05_08_05" target="_self" >우수공무원</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >안전보건</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_09_01&amp;cmsId=FC_003556" target="_self" >안전보건 경영방침</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1825&amp;mn=NKFS_05_09_02" target="_self" >안전보건 의견함</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1826&amp;mn=NKFS_05_09_03&amp;ctgryLrcls=CTGRY497" target="_self" >안전보건 자료실</a>
+                                                            </li>
+													<li> 
+                                                            <a href="https://www.safetyreport.go.kr/api?apiKey=140000087I9U9KKXL893MAV6AEQ#introduction" target="_blank" title="안전신문고(새창)">안전신문고<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    <a href="https://www.epeople.go.kr/nep/crtf/loginNoUserChoice.npaid" ><img src="/kfs/images/content/issue/icon28_ov.png" alt="">민원신청</a>
+                                                    <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1118&amp;mn=NKFS_05_01_07" ><img src="/kfs/images/content/issue/icon35_ov.png" alt="">민원서식</a>
+                                                    <a href="/kfsweb/html/HtmlPage.do?pg=/idea/peopleIdea.html&amp;mn=NKFS_05_07_04" ><img src="/kfs/images/content/issue/icon27_ov.png" alt="">국민생각함</a>
+                                                    <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_07_10_01&amp;cmsId=FC_003538" ><img src="/kfs/images/content/issue/icon40_ov.png" alt="">국민제안</a>
+                                                    </div>
+                            </li>
+						</ul>
+					</li>
+				<li class="m5"><a target="_self" title="정보공개"
+					href="#" >
+						정보공개</a>
+					<ul>
+							<li>
+									<a href="#" >정보공개안내</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" target="_self" >정보공개안내</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_02&amp;cmsId=FC_000463" target="_self" >비공개 세부 기준</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/html/HtmlPage.do?pg=/news/news_030401.html&amp;mn=NKFS_06_01_03" target="_self" >정보목록</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1074&amp;mn=NKFS_06_01_04" target="_self" >업무추진비</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://www.open.go.kr/" target="_blank" title="정보공개신청ㆍ확인(새창)">정보공개신청ㆍ확인<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >사전정보공표</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/evb/selectImgInfoOpenList.do?mn=NKFS_06_02_01" target="_self" >공표목록</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_02_02&amp;cmsId=FC_000337" target="_self" >맞춤형 사전정보</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1504&amp;mn=NKFS_06_02_03" target="_self" >청구공개 자료방</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >재정정보공개</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/fiscal/fiscalSearchView.do?mn=NKFS_06_04_01&searchGubun=RM" target="_self" >세입 예산 운용상황</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/fiscal/fiscalSearchView.do?mn=NKFS_06_04_02&searchGubun=EM" target="_self" >세출 예산 운용상황</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1651&mn=NKFS_06_04_05" target="_self" >세입·세출 사업설명자료</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1070&amp;mn=NKFS_06_04_03" target="_self" >예산결산</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1511&mn=NKFS_06_04_04" target="_self" >국고보조금</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1088&mn=NKFS_06_05" >감사결과공개</a>
+									</li>
+								<li>
+									<a href="#" >정책실명제</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1665&amp;mn=NKFS_06_06_01" target="_self" >국민신청실명제</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1286&amp;mn=NKFS_06_06_02" target="_self" >중점관리 대상사업</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_07&amp;cmsId=FC_000129" >사회적협동조합(연합회)경영공시</a>
+									</li>
+								<li>
+									<a href="#" >공공데이터 개방</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_01&amp;cmsId=FC_000130" target="_self" >개방개요</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_05&amp;cmsId=FC_000132" target="_self" >개방현황</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/opda/dataMng/selectPblicDataList.do?mn=NKFS_06_08_02&amp;tabs=1" target="_self" >공공데이터 개방목록</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://www.data.go.kr" target="_blank" title="공공데이터 제공신청(새창)">공공데이터 제공신청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1662&amp;mn=NKFS_06_08_04" target="_self" >데이터 품질오류 신고</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1855&amp;mn=NKFS_06_08_07" target="_self" >공공데이터 소식</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >통합자료실</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1069&mn=NKFS_06_09_01" target="_self" >통합자료실</a>
+                                                            </li>
+													<li> 
+                                                            <a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0015" target="_blank" title="매거진 숲(새창)">매거진 숲<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1089&amp;mn=NKFS_06_09_07" target="_self" >감사 소식지</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1009&amp;mn=NKFS_06_09_03" target="_self" >사진자료실</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1015&amp;mn=NKFS_06_09_04" target="_self" >동영상자료실</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" ><img src="/kfs/images/content/issue/icon19_ov.png" alt="">정보공개안내</a>
+                                                    <a href="/kfsweb/kfi/kfs/evb/selectImgInfoOpenList.do?advCtgry=3030101&amp;mn=NKFS_06_02_01" ><img src="/kfs/images/content/issue/icon27_ov.png" alt="">사전정보공표</a>
+                                                    <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_08_01&amp;cmsId=FC_000130" ><img src="/kfs/images/content/issue/icon32_ov.png" alt="">공공데이터 개방</a>
+                                                    <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1069&amp;mn=NKFS_06_09_01" ><img src="/kfs/images/content/issue/icon19_ov.png" alt="">통합자료실</a>
+                                                    </div>
+                            </li>
+						</ul>
+					</li>
+				<li class="m6"><a target="_self" title="산림청소개"
+					href="#" >
+						산림청소개</a>
+					<ul>
+							<li>
+									<a href="#" >기관 안내</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_01&amp;cmsId=FC_000072" target="_self" >연혁</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_02&amp;cmsId=FC_000085" target="_self" >비전 및 목표</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_03&amp;cmsId=FC_000086" target="_self" >그루소개</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_04&amp;cmsId=FC_000087" target="_self" >찾아오시는 길</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/mem/selectMemberMyMenuList.do?orgId=null&amp;mn=NKFS_01_01_05" target="_self" >자주찾는 서비스</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >청, 차장소개</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_01&amp;cmsId=FC_000099" target="_self" >청장 인사말</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_02&amp;cmsId=FC_000101" target="_self" >청장 소개</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_03&amp;cmsId=FC_003013" target="_self" >차장 소개</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/csm/selectChiefScheduleMonthList.do?mn=NKFS_01_03_04" target="_self" >청, 차장 일정</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1029&mn=NKFS_01_03_05" target="_self" >청장활동 사진</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/cop/bbs/selectBoardChairmanIntro.do?mn=NKFS_01_03_06" target="_self" >청장과의 대화</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_03_08&amp;cmsId=FC_000104" target="_self" >역대 청장</a>
+                                                            </li>
+													</ul>
+									</li>
+								<li>
+									<a href="#" >조직 안내</a>
+									<ul>
+										<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_02_01&amp;cmsId=FC_000091" target="_self" >조직도</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/mbm/selectEmployeeList.do?mn=NKFS_01_02_02" target="_self" >부서별 업무안내</a>
+                                                            </li>
+													<li> 
+                                                            <a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_02_04&amp;cmsId=FC_000381" target="_self" >소속기관 소개</a>
+                                                            <ul>
+																<li>
+																		<a href="http://fhi.forest.go.kr" target="_blank" title="산림교육원(새창)">산림교육원<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://fao.forest.go.kr" target="_blank" title="산림항공본부(새창)">산림항공본부<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://nfsv.forest.go.kr" target="_blank" title="국립산림품종관리센터(새창)">국립산림품종관리센터<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://north.forest.go.kr" target="_blank" title="북부지방산림청(새창)">북부지방산림청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="https://east.forest.go.kr" target="_blank" title="동부지방산림청(새창)">동부지방산림청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="https://south.forest.go.kr" target="_blank" title="남부지방산림청(새창)">남부지방산림청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="https://west.forest.go.kr" target="_blank" title="서부지방산림청(새창)">서부지방산림청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="https://center.forest.go.kr" target="_blank" title="중부지방산림청(새창)">중부지방산림청<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://nifos.forest.go.kr" target="_blank" title="국립산림과학원(새창)">국립산림과학원<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://kna.forest.go.kr" target="_blank" title="국립수목원(새창)">국립수목원<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	<li>
+																		<a href="http://huyang.forest.go.kr" target="_blank" title="국립자연휴양림관리소(새창)">국립자연휴양림관리소<img class="topMenuOuterLink" src="/kfs/images/layout/icon_blank.png" alt="새창" /></a>
+                                                                                </li>
+																	</ul>
+															</li>
+													</ul>
+									</li>
+								<li>
+                                <div class="mo_aside type_1">
+                                    </div>
+                            </li>
+						</ul>
+					</li>
+				</ul>
+
+			<div class="sns_group">
+				<a href="https://www.facebook.com/forestkorea/"><img src="/kfs/images/main/ics_f.png" alt="페이스북"></a>
+				<a href="https://twitter.com/forest_news"><img src="/kfs/images/main/ics_t.png" alt="트위터"></a>
+				<a href="http://blog.daum.net/kfs4079"><img src="/kfs/images/main/ics_b.png" alt="블로그"></a>
+				<a href="https://www.instagram.com/forest_korea/"><img src="/kfs/images/main/ics_i.png" alt="인스타그램"></a>
+ 					<a href="https://www.youtube.com/channel/UCBZxglYCbIkkvw1CAAJhOVw" id="utb"><img  id="utbimg" src="/kfs/images/main/ics_y.png" alt="유튜브"></a>
+		 
+			
+			</div>
+            </div>
+		<a href="#" class="mMenu_close">메뉴 닫기</a>
+	</nav>
+</div>
+<!-- 모바일 메뉴 : e -->
+<script type="text/javascript">
+	
+var agent = navigator.userAgent.toLowerCase(); 
+	
+	if ((navigator.appName =='Netscape'&& navigator.userAgent.search('Trident') != -1)||(agent.indexOf("msie") != -1)){
+ 		jQuery("#utbimg").css("display","none");
+	}else{
+  	}
+	</script>
+	<!-- 모바일 메뉴 : e -->
+	
+	<div id="location_wrap">
+		<div class="bgC"></div>
+		<div class="layout">
+			<a href="#" class="home">홈으로</a>
+			<script>
+				$(".home").click(function(){
+					//$(".home").attr("href","http://www.forest.go.kr");
+					$(".home").prop("href","http://www.forest.go.kr");
+				});
+			</script>
+			<ul class="location_menu">
+			
+			
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+							<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&amp;mn=NKFS_04_01_01" class="">행정정보</a>
+
+							
+								<ul style="display: none;">
+								
+									
+										
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_02_17&amp;cmsId=FC_003815" class="">산림정책</a></li>
+										
+									
+								
+									
+										
+											<li><a href="/kfsweb/kfs/areaIdx/Index.do?mn=AR05" class="">분야별산림정보</a></li>
+										
+									
+								
+									
+										
+									
+								
+									
+										
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_05_01_01&amp;cmsId=FC_000121" class="">국민소통</a></li>
+										
+									
+								
+									
+										
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_06_01_01&amp;cmsId=FC_000110" class="">정보공개</a></li>
+										
+									
+								
+									
+										
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_01&amp;cmsId=FC_000072" class="">산림청소개</a></li>
+										
+									
+								
+								</ul>
+							
+
+							</li>
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+							
+				
+				
+				
+				
+				
+					
+			
+				
+										
+																				
+					
+				
+										
+																				
+					
+				
+										
+																				
+					
+				
+										
+						
+							<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" class="">산림통계</a>
+
+							
+								<ul style="display: none;">
+									
+															
+											
+												<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01">알림정보</a></li>
+																									
+										
+									
+															
+											
+												<li><a href="http://fmc.forest.go.kr">산림행정미디어센터</a></li>
+																									
+										
+									
+															
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351">법령정보</a></li>
+																									
+										
+									
+															
+																									
+										
+									
+															
+											
+												<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1012&amp;mn=NKFS_04_04">정책평가 자료실</a></li>
+																									
+										
+									
+															
+											
+												<li><a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_01">산림지식</a></li>
+																									
+										
+									
+															
+											
+												<li><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01">산림공간정보</a></li>
+																									
+										
+									
+								</ul>
+							
+
+							</li>
+																				
+					
+				
+										
+																				
+					
+				
+										
+																				
+					
+				
+										
+																				
+					
+				
+								
+					
+			
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+						
+							<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;cmsId=FC_000076" class="last">임산물생산조사</a>
+
+							
+								<ul style="display: none;">
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065">산림기본통계</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_08&amp;cmsId=FC_000344">국가산림자원조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_14&amp;cmsId=FC_003426">전국산주현황</a></li>
+											
+										
+									
+										
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_05&amp;cmsId=FC_000081">임가경제조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_06&amp;cmsId=FC_000083">임산물생산비조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_07&amp;cmsId=FC_000343">임업경영실태조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_15&amp;cmsId=FC_003427">임산물소득조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_16&amp;cmsId=FC_003677">산림산업조사</a></li>
+											
+										
+									
+										
+											
+												<li><a href="http://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1310">병해충발생통계</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000433&mn=AR02_06_02_01">귀산촌통계</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003000&amp;mn=NKFS_04_05_03">임산물수출입통계</a></li>
+											
+										
+									
+										
+											
+												<li><a href="https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=12499&bbsId=ptlFrstyYrBook">산림임업통계연보</a></li>
+											
+										
+									
+										
+											
+												<li><a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_05_10&amp;pageIndex=1&amp;pageUnit=10&amp;searchtitle=title&amp;searchcont=&amp;searchkey=&amp;searchwriter=&amp;searchdept=&amp;searchWrd=&amp;ctgryLrcls=CTGRY447&amp;ntcStartDt=&amp;ntcEndDt=&amp;bbsId=BBSMSTR_1016">기타 통계</a></li>
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+										
+											
+										
+									
+								</ul>
+							
+
+							</li>
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+					
+							
+					
+				
+								
+												
+			
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+					
+						
+					
+				
+												
+								
+												
+
+			</ul>
+			<ul class="loc_BtnArea">
+				<li><a href="#" class="share">공유하기</a>
+					<div class="sns_shareBox" tabindex="0">
+						<strong>공유하기</strong>
+						<div class="snsBtn">
+							<a href="" class="twitter" id="twitterBtn" target="_blank" title="엑스 공유 새창">엑스 공유</a>
+							<a href="" class="facebook"  id="facebookBtn" target="_blank" title="페이스북 공유 새창">페이스북 공유</a>
+							<a href="" class="kakao" id="kakaoBtn" title="카카오톡 공유 새창">카카오톡 공유</a>
+							<!-- a href="" class="google"  id="googleBtn" target="_blank" title="구글 공유">구글 공유</a -->
+							<!--a href="" class="naver"  id="naverBtn" target="_blank" title="네이버 공유">네이버 공유</a-->
+						</div>
+						<button type="button" class="l_Close">닫기</button>
+					</div>
+					<script>
+						$(function () {
+							
+							$("#twitterBtn").attr("href", "https://twitter.com/intent/tweet?text=TEXT&url="+encodeURIComponent(window.location.href));
+							$("#facebookBtn").attr("href", "http://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(window.location.href));
+							$("#googleBtn").attr("href", "http://www.google.com/bookmarks/mark?op=add&bkmk="+encodeURIComponent(window.location.href));
+							// 일반사용자용 Google+ 는 더이상 사용할 수 없습니다.
+							//$("#googleBtn").attr("href", "https://plus.google.com/share?url="+encodeURIComponent(window.location.href));
+							$("#naverBtn").attr("href", "https://share.naver.com/web/shareView?url="+encodeURI(encodeURIComponent(window.location.href))+"&title="+encodeURI("행정정보 &gt; 산림통계 &gt;  임산물생산조사"));
+
+							// CHOON: 카카오톡 버튼 초기화
+							shareKA();
+
+							var btn = $('.loc_BtnArea .share');
+							btn.on('click', function (event) {
+								$('.loc_BtnArea .sns_shareBox').focus();
+							});
+
+							$('.loc_BtnArea .l_Close').on('focusout', function () {
+								$('.loc_BtnArea .sns_shareBox').focus();
+							});
+						});
+					</script>
+				</li>
+				
+                
+				
+					
+					
+                            <li><a href="#" onclick="contentPrintPage_new(); return false;" title="프린트하기_새창" class="print">프린트하기</a></li>
+
+					
+				
+			</ul>
+		</div>
+	</div>
+    <script>
+    function contentPrintPage_new() {
+
+        var windowLeft = 0;
+        var windowTop = 0;
+        //var printURL = "/kfsweb/html/common/popPrint.html";
+        var printURL = "/kfsweb/html/PrintPage.do";
+
+        window.open(printURL,"print",'width=' + $(window).width() + ', height=' + $(window).width() + ', menubar=no, scrollbars=yes,status=no,resizable=yes,top=' + windowTop + ',left=' + windowLeft + '');
+
+    }
+    </script>
+
+
+	
+	
+		<div id="container" class="layout">
+	
+
+
+<div id="lnb">
+	<nav>
+		<h2 class="lt">행정정보 </h2>	
+	
+		
+	
+ 
+ 	
+<!-- 메뉴시작 ################ -->
+			<ul>
+			<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01" 
+								
+								>알림정보<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_01">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1031&mn=NKFS_04_01_01" 
+												
+												>알립니다</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1032&mn=NKFS_04_01_02" 
+												
+												>공고</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1034&mn=NKFS_04_01_03" 
+												
+												>채용정보</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1033&mn=NKFS_04_01_04" 
+												
+												>입찰정보</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1298&mn=NKFS_04_01_05" 
+												
+												>전자공시 송달</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1288&amp;mn=NKFS_04_01_06" 
+												
+												>인사정보</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1035&amp;mn=NKFS_04_01_07" 
+												
+												>사유림을 삽니다</a></li>
+										<!-- 2레벨 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_01&amp;cmsId=FC_000102" 
+												
+												>산림공무원이 되는 길</a>
+										<!-- 주의 2레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+										
+										
+										
+										<!-- Loop level 3 시작 -->
+										<ul class="lnb_depth_3" id="mn_NKFS_04_01_08">
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_01&amp;cmsId=FC_000102" 
+														
+														>채용방법</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_02&amp;cmsId=FC_000095" 
+														
+														>인사제도</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_03&amp;cmsId=FC_000096" 
+														
+														>복지제도</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_01_08_04&amp;cmsId=FC_000064" 
+														
+														>산림항공인자격조건</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											</ul>
+										<!-- Loop level 3 끝 -->
+										
+										</li><!-- 2레벨 li 닫기 -->
+										
+													
+									</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="http://fmc.forest.go.kr" 
+								 title="새창" target="_blank"
+								>산림행정미디어센터<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_02">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036&amp;mn=NKFS_04_02_01" 
+												
+												>보도자료</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1509&amp;mn=NKFS_04_02_02" 
+												
+												>보도설명·정정자료</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0009" 
+												 title="새창"  target="_blank"
+												>기고/컬럼</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0010" 
+												 title="새창"  target="_blank"
+												>기자브리핑</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0013" 
+												 title="새창"  target="_blank"
+												>사진</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://fmc.forest.go.kr/fmc/showTwbbsContList.do?bbrssId=BBRSS_0014" 
+												 title="새창"  target="_blank"
+												>동영상</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://fmc.forest.go.kr/fmc/snsGateway.do?bbrssId=BBRSS_0016" 
+												 title="새창"  target="_blank"
+												>산림청 누리소통망</a></li>
+										</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351" 
+								
+								>법령정보<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_03">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_03_01&amp;cmsId=FC_000351" 
+												
+												>소관법령</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/html/HtmlPage.do?pg=/policy/policy_0401.html&amp;mn=NKFS_04_03_02" 
+												
+												>훈령/예규/고시</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="https://opinion.lawmaking.go.kr/gcom/ogLmPp?howOrderBy=&btnType=1&myOpnYn=&cptOfiOrgCd=1400000&lsClsCd=&diff=&pntcNo=&pntcNo2=&stYdFmt=2022.+9.+1.&edYdFmt=&lsNm=&isOgYn=Y&opYn=Y" 
+												 title="새창"  target="_blank"
+												>입법예고</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_03_04&amp;bbsId=BBSMSTR_1004" 
+												
+												>행정예고</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://www.law.go.kr/nwRvsLsPop.do?pg=1&amp;chrIdx=0&amp;lsKndCd=&amp;cptOfi=1400000&amp;searchType=lsNm&amp;lsNm=&amp;p_spubdt=&amp;p_epubdt=&amp;p_spubno=&amp;p_epubno=" 
+												 title="새창"  target="_blank"
+												>최근 제개정법령</a></li>
+										</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" 
+								class="ov"
+								>산림통계<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_05">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_01&amp;cmsId=FC_000065" 
+												
+												>산림기본통계</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_08&amp;cmsId=FC_000344" 
+												
+												>국가산림자원조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_14&amp;cmsId=FC_003426" 
+												
+												>전국산주현황</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;cmsId=FC_000076" 
+												class="ov"
+												>임산물생산조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_05&amp;cmsId=FC_000081" 
+												
+												>임가경제조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_06&amp;cmsId=FC_000083" 
+												
+												>임산물생산비조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_07&amp;cmsId=FC_000343" 
+												
+												>임업경영실태조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_15&amp;cmsId=FC_003427" 
+												
+												>임산물소득조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_16&amp;cmsId=FC_003677" 
+												
+												>산림산업조사</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://www.index.go.kr/unity/potal/main/EachDtlPageDetail.do?idx_cd=1310" 
+												 title="새창"  target="_blank"
+												>병해충발생통계</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_000433&mn=AR02_06_02_01" 
+												 title="새창"  target="_blank"
+												>귀산촌통계</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?cmsId=FC_003000&amp;mn=NKFS_04_05_03" 
+												
+												>임산물수출입통계</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=12499&bbsId=ptlFrstyYrBook" 
+												 title="새창"  target="_blank"
+												>산림임업통계연보</a></li>
+										<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/cop/bbs/selectBoardList.do?mn=NKFS_04_05_10&amp;pageIndex=1&amp;pageUnit=10&amp;searchtitle=title&amp;searchcont=&amp;searchkey=&amp;searchwriter=&amp;searchdept=&amp;searchWrd=&amp;ctgryLrcls=CTGRY447&amp;ntcStartDt=&amp;ntcEndDt=&amp;bbsId=BBSMSTR_1016" 
+												
+												>기타 통계</a></li>
+										</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					<!-- 1레벨 단노드 -->
+					
+						<li class="lnb_depth_1"><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1012&amp;mn=NKFS_04_04" 
+										
+										>정책평가 자료실</a></li>
+								<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_01" 
+								
+								>산림지식<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_07">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/mwd/selectMtstWordDictionaryList.do?mn=NKFS_04_07_03" 
+												
+												>산림임업용어사전</a></li>
+										<!-- 2레벨 -->
+									
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_01&amp;cmsId=FC_001411" 
+												
+												>생활속의산림</a>
+										<!-- 주의 2레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+										
+										
+										
+										<!-- Loop level 3 시작 -->
+										<ul class="lnb_depth_3" id="mn_NKFS_04_07_01">
+										<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_01&amp;cmsId=FC_001411" 
+														
+														>민족성서의근원</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_02&amp;cmsId=FC_001476" 
+														
+														>문명발달의 공로자</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_03&amp;cmsId=FC_001488" 
+														
+														>국토의 얼굴</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_07_01_04&amp;cmsId=FC_001542" 
+														
+														>시민사회의 산림운동</a>
+												<!-- Loop level 4 시작 -->
+												<!-- Loop level 4 끝 -->
+												
+												</li><!-- 3레벨 li 닫기 -->
+												
+																							
+											</ul>
+										<!-- Loop level 3 끝 -->
+										
+										</li><!-- 2레벨 li 닫기 -->
+										
+													
+									</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					<!-- 1레벨 -->
+					
+						<li class="lnb_depth_1"><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" 
+								
+								>산림공간정보<span>&nbsp;</span></a>
+						<!-- 주의 1레벨 단노드가 아니믈 li를 닫지 않고있음 -->
+						
+						<!-- Loop level 2 시작 -->
+						<ul class="lnb_depth_2" id="mn_NKFS_04_08">						
+						<!-- 2레벨 단노드 -->
+									
+										<li><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" 
+												 title="새창"  target="_blank"
+												>FGIS산림공간정보</a></li>
+										</ul>
+						<!-- Loop level 2 끝 -->
+					
+					
+						</li><!-- 1레벨 li 닫기 -->
+						
+					</ul>
+	<!-- 메뉴끝 ################ -->
+			<script type="text/javascript">
+		  //<![CDATA[
+			$(document).ready( function () {
+				/* alert(''); */
+			});
+			
+						document.getElementById('mn_NKFS_04_01').style.display = "none";
+					
+					document.getElementById('mn_NKFS_04_01_08').style.display = "none";
+				
+						document.getElementById('mn_NKFS_04_02').style.display = "none";
+					
+						document.getElementById('mn_NKFS_04_03').style.display = "none";
+					
+						document.getElementById('mn_NKFS_04_05').style.display = "";
+					
+						document.getElementById('mn_NKFS_04_07').style.display = "none";
+					
+					document.getElementById('mn_NKFS_04_07_01').style.display = "none";
+				
+						document.getElementById('mn_NKFS_04_08').style.display = "none";
+					
+		  	//]]>
+		  
+		  	
+			</script>
+			
+	</nav>
+	
+	<button type="button" class="lnb_toggle on">보조메뉴 닫기</button>
+</div>
+		<!-- remote -->
+				
+				
+
+
+<div id="container_wrap">
+
+
+
+			<!-- 2018.11.19 -->
+			
+			
+			<!-- 2018.11.27 제목 추가 -->
+			<div id="navigation">
+                <div id="location"></div>
+				<h3>임산물생산조사</h3>
+				
+					
+						<div class="location_answer">
+							<dl>
+								<dt><strong>관련문의</strong></dt>
+								<dd><strong>산림빅데이터팀 &nbsp;<a href="tel:042-481-4167">042-481-4167</a></strong>
+									<strong id="lastModifiedLabel"></strong>
+								</dd>
+							</dl>
+						</div>
+					
+				
+            </div>
+
+             
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+	function fn_loading_start(){
+		var backHeight = $(document).height();
+	    var backWidth  = window.document.body.clientWidth;
+
+		var backGroundCover = "<div id='back'></div>";
+		var loadingBarImage = "";
+
+		loadingBarImage += "<div id='loadingBar'>";
+		loadingBarImage += "<img src='/kfs/images/common/loading.gif'/>";
+		loadingBarImage += "</div>";
+
+		$('body').append(backGroundCover).append(loadingBarImage);
+
+		$('#back').css({'width' : backWidth,'height': backHeight,'opacity' :'0.3'});
+
+		$('#back').show();
+		$('#loadingBar').show();
+
+	}
+
+	function fn_loading_close(){
+		$('#back, #loadingBar').hide();
+		$('#back, #loadingBar').remove();
+	}
+
+	//첨부파일 변환 확인 및 뷰어 기동
+	function fn_ajax_convFile(fileStreCoursNm, streFileNm, atchFileId, fileSn, bbsId, dwldHistYn){
+		//<a href="/sn3hcv_skin/doc.html?fn=&rs=/sn3hcv_result/" class="btn type_3 detail" target="_blank">자세히보기</a>
+
+		fn_loading_start();
+
+		jQuery.ajax({
+			url: "/kfsweb/cmm/fms/convFileAjax.do;jsessionid=ZVOXDCsfTx6xeVG8DIMF1kdDvi3gJZd4B2onS2qd0stbCaf0Tg0dMzeywAPCuEpN.frswas01_servlet_engine5?mn=NKFS_04_05_02",
+			data: { fileStreCoursNm: fileStreCoursNm, streFileNm: streFileNm, atchFileId: atchFileId, fileSn: fileSn, bbsId: bbsId},
+			type: 'post',
+			dataType: 'json',
+			success: function(request) {
+				
+				fn_loading_close();
+
+				window.open("/sn3hcv_skin/doc.html?fn="+streFileNm+"&rs=/kfsweb/sn3hcv_result/", "docViewer", "width=800, height=900, toolbar=no, scrollbars=yes, resizable=yes, target=new");
+					
+			}, 
+			error: function(request, status, error) {
+				
+				fn_loading_close();
+				fn_reportError ();
+			}
+		});
+		
+	}
+	
+// CHOON
+$(document).ready(function(){
+
+	//한국의 정원 목록 필터링
+	$("input#search-text-1234").off("propertychange input change keyup paste").on("propertychange input change keyup paste",function(e){
+		let v = this.value;
+		if (v!=this.curr_val) {
+			this.curr_val = v;
+			const tbl = $("table#tbl-filterable-1234");
+			if (!v || v.trim()=='') {
+				$(tbl).find("tbody > tr").css("display","");
+			}
+			else {
+				$(tbl).find("tbody > tr").css("display","none");
+				$(tbl).find("tbody > tr").each(function(){
+					// 명칭일치
+					const span = $(this).find("th > span");
+					if ($(span).text().indexOf(v) !=-1) {
+						$(this).css("display","");
+					}
+					// 위치일치
+					const td = $(this).find("td:nth-child(2)");
+					console.log('td=',td.text());
+					if ($(td).text().indexOf(v) !=-1) {
+						$(this).css("display","");
+					}
+				});
+			}
+		}
+	});
+
+});
+
+</script>
+
+	<!--div id="div_load_image" style="position:absolute; top:50%; left:50%; width:0px; height:0px; z-index:9999; background:#f0f0f0; filter:alpha(opacity=50); opacity:alpha*0.5; margin:auto; padding:0; text-align:center">
+		<img src="/kfs/images/common/loading.gif" alt="로딩바" style="width:100px; height=100px;">
+	</div-->
+
+	<div id="txt">
+		<div style="text-align:right">
+<a href="https://kfss.forest.go.kr/stat/" target="_blank" title="새창">
+<img src="/kfs/images/content/stat_btn.png" alt="산림임업통계플랫폼에서 더 많은 통계 보기" />
+</a>
+</div><div class="w_iconBox"><a href="https://kfss.forest.go.kr/stat/ptl/article/articleList.do?curMenu=9847&bbsId=ptlPdsMntProdReq" class="sm_icon_bl" title="새창" target="_blank"><span class="bul_blank">연도별 자료 바로보기</span></a></div><h4>목적</h4><ul class="txt_list"><li>임산물의 생산량 및 생산액을 조사하여 임업인의 소득향상과 임산물 수급계획 등 임업정책 수립을 위한 기초자료</li></ul><p class="defText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;※ 국가승인통계(136006), 승인일자(1976.1.27.)</p><h4>조사대상</h4><ul class="txt_list"><li>조사대상 : 임산물을 생산하는 전 임가<br>       * 14종 145품목을 생산하는 전체 임가</li></ul><h4>조사항목</h4><ul class="txt_list"><li>임산물 품목별 생산량, 생산액, 생산면적 등</li></ul><h4>조사기간</h4><ul class="txt_list"><li>조사주기 : 매년 (1910년부터 조사 시작)</li><li>조사기준년도 : 전년도 1.1~12.31</li></ul><h4>조사방법</h4><ul class="txt_list"><li>구조화된 조사표에 의한 방문 면접·전수조사(도급), 표본 조사(전화), 행정자료 활용</li></ul><h4>기대효과</h4><ul class="txt_list"><li>한 해 동안 생산된 임산물의 양과 금액을 통일된 기준과 방법으로 조사하여 임업정책 수립 및 국가기초통계 등으로 활용</li></ul><h4>결과공표</h4><ul class="txt_list"><li>조사기준년도 익년 10월 공표</li></ul><p class="defText">※ 원자료 신청은 산림빅데이터팀 042-481-4167로 연락주시기 바랍니다.</p>
+	</div>
+	
+	
+	
+	
+	
+	<!-- 만족도평가 -->
+	
+
+
+
+
+
+
+<!--   2013.5.07 ssl-->
+<form name="satisfactionVO" method="post" action="https://www.forest.go.kr/kfsweb/kfi/kfs/sft/insertSatisfaction.do">
+	<input type="hidden" name="insertBbsId" value="" />
+	<input type="hidden" name="insertNttId" value="" />
+	<input type="hidden" name="mn" value="NKFS_04_05_02"/>
+	<input type="hidden" name="menuNo" value="NKFS_04_05_02"/>
+	<input type="hidden" name="returnUrl" value="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;amp;cmsId=FC_000076"/> 
+	<input type="hidden" name="siteCd" value="NKFS"/> 
+    
+    	
+        <div class="satisfaction">
+            <strong class="hide">만족도조사</strong>
+            <div class="top_title_box">
+                <div class="open_title">
+                    <strong>열람하신 정보에 대해 만족하셨습니까?</strong>
+                    <!--평가전에는 안나오게-->
+                    
+                        <div class="open_score">
+                            [ 평점 <span class="red">4/5</span> ]
+                        </div>
+                    
+                </div>
+            </div>
+            <div class="open_area">
+                <div class="open_radio">
+                    <fieldset>
+                        <legend>만족도조사선택</legend>
+                        <div>
+                            <label for="est01"><input name="stsfdg" id="est01" value="5" class="sts_radio" type="radio">매우만족</label>
+                        </div>
+                        <div>
+                            <label for="est02"><input name="stsfdg" id="est02" value="4" class="sts_radio" type="radio" checked="checked">만족</label>
+                        </div>
+                        <div>
+                            <label for="est03"><input name="stsfdg" id="est03" value="3" class="sts_radio" type="radio">보통</label>
+                        </div>
+                        <div>
+                            <label for="est04"><input name="stsfdg" id="est04" value="2" class="sts_radio" type="radio">불만족</label>
+                        </div>
+                        <div>
+                            <label for="est05"><input name="stsfdg" id="est05" value="1" class="sts_radio" type="radio">매우불만족</label>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="text_box">
+                    <input type="text" name="stsfdgCn" id="stsfdgCn" title="만족도 의견입력">
+                    <button type="button" onclick="fn_satisfaction();" class="o_selbt">평가하기</button>
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+    
+    
+</form>
+	<!-- 만족도평가 -->
+
+		</div>
+		<!-- content -->
+
+	    
+
+	</div>
+	<!-- container -->
+
+	
+
+
+
+
+
+<script type="text/javascript">
+(function ($) {
+	var path = $(".path");
+	var title = "";
+	if(typeof path != 'undefined' && path.text() != '') {
+		title = "산림청 "+$(".path").text();
+	
+		var tabText = $("#tabText").find("div").find("span").text();
+		var fo0205_author_con01_tap = $(".fo0205_author_con01_tap").find(".fo0205_author_con01_tap_ov").text();
+		var tabTitle = $("#tabMenu").find("em").find("span").text();
+		
+		if(typeof tabTitle != 'undefined' && tabTitle != '') {
+			if(typeof tabText != 'undefined' && tabText != '') {
+				title = title + " > " + tabTitle;
+			} else {
+				if(typeof fo0205_author_con01_tap != 'undefined' && fo0205_author_con01_tap != '') {
+					title = title + " > " + tabTitle;
+				} else {
+					title = title + " : " + tabTitle;
+				}
+			}
+		}
+		
+		if(typeof fo0205_author_con01_tap != 'undefined' && fo0205_author_con01_tap != '') {
+			if(typeof tabText != 'undefined' && tabText != '') {
+				title = title + " > " + fo0205_author_con01_tap;
+			} else {
+				title = title + " : " + fo0205_author_con01_tap;
+			}
+		}
+		
+		if(typeof tabText != 'undefined' && tabText != '') {
+			title = title + " : " + tabText;
+		}
+		
+		var kfriNewTab1 = $(".kfriNewTab1").find(".currentTab").text();
+		if(typeof kfriNewTab1 != 'undefined' && kfriNewTab1 != '') {
+			title = title + " : " + kfriNewTab1;
+		}
+	
+		document.title = title;
+	}
+}) (jQuery);
+
+</script>
+
+<!-- 푸터 : s -->
+<div id="footer">
+
+	<div class="layout">
+
+		<ul class="ft_Link">
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_01&cmsId=FC_000134">누리집이용방법</a></li>
+			<!-- <li class="txt_size"><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_11&cmsId=FC_003657">글자크기 조정 안내</a></li> -->
+			<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1822&mn=NKFS_07_10">도움말</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_02&cmsId=FC_000131">이용약관</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_03_04&cmsId=FC_003583" class="point">개인정보처리방침</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_03_03&cmsId=FC_000375">영상정보처리기기운영·관리방침</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_07&cmsId=FC_000367">저작권정책</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_07_04&cmsId=FC_000133">문서 보기 프로그램</a></li>			
+			<li><a href="/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1018&amp;mn=NKFS_07_05">누리집오류신고</a></li>
+			<li><a href="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_04&cmsId=FC_000087">찾아오시는길</a></li>
+			<li><a href="/kfsweb/kfi/kfs/mbm/selectEmployeeList.do?mn=NKFS_01_02_02">직원찾기</a></li>
+		</ul>
+
+		<address>
+			<div>(우)35208 대전광역시 서구 청사로 189 1동(산림청)</div>
+			<div>전화(유료) : (주)<a href="tel:1588-3249">1588-3249</a> (월~금 09:00~18:00, 공휴일 제외) (야)<a href="tel:042-481-4151">042-481-4151</a>, 팩스 : 042-478-6653</div>
+		</address>
+		
+        
+		<ul class="ft_mark">
+			<li><a href="http://www.kogl.or.kr/" target="_blank" title="새창" style="display:block"><img src="/kfs/images/layout/ft_mark_02.png" alt="공공저작물"></a></li>
+			<li><a href="http://www.wa.or.kr/board/list.asp?search=total&SearchString=www.forest.go.kr&BoardID=0006" target="_blank" title="새창" style="display:block"><img src="/kfs/images/layout/ft_mark_03.png" alt="웹접근성품질인증서"></a></li>
+			<li><a href="https://www.eprivacy.or.kr/front/certifiedSiteMark/certifiedSiteMarkPopup.do?certCmd=EP&certNum=2025-EP-R023" target="_blank" title="새창" style="display:block"><img src="/kfs/images/layout/ft_mark_05.png" alt="ePRIVACY인증서pdf"></a></li>
+
+		</ul>
+	</div>
+</div>
+<!-- 푸터 : e -->
+  
+<!-- <a href="#kbi" onclick="alertRootMenuNo();" title="test" style="color: #fff;">####</a> -->
+<!--a href="#kbi" onclick="alertRootMenuNo();" alt="test" style="color: #fff;">####</a -->
+
+<script type="text/javascript">
+	function alertRootMenuNo(){			
+		var testerId = "64.236.146.118";
+		if (testerId != "127.0.0.1") return;
+		var rootMenuNo1 = "NKFS_04";
+		var rootMenuNo2 = "NKFS_04_05";
+		var rootMenuNo3 = "NKFS_04_05_02";
+		var topMenuType = "absolute";
+		var topMenuNoPerSys = "NKFS";
+		var orgId = "";
+		var reqUrl = "/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;amp;cmsId=FC_000076";
+		
+		var str = "rootMenuNo1 : " + rootMenuNo1 + "\n";
+		str += "rootMenuNo2 : " + rootMenuNo2 + "\n";
+		str += "rootMenuNo3 : " + rootMenuNo3 + "\n";
+		str += "topMenuType : " + topMenuType + "\n";
+		str += "topMenuNoPerSys : " + topMenuNoPerSys + "\n";
+		str += "orgId : " + orgId + "\n";
+		str += "reqUrl : " + reqUrl + "\n";
+		
+		alert(str);
+	}
+	
+	//소속기관 이동
+	function fn_frmLinkOrgan() {
+		var url = document.getElementById("jump_01").value;
+		if(url == ""){
+			alert("이동할 소속기관을 선택하세요.");
+		}else{
+			document.frmLinkOrgan.submit();	
+		}
+	}
+	
+	//관련사이트 이동
+	function fn_frmLinkInfo() {
+		var url = document.getElementById("jump_03").value;
+		var f = document.getElementById("frmLinkInfo2");	
+		if(url == ""){
+			alert("이동할 관련사이트을 선택하세요.");
+		}else{
+			f.submit();	
+		}
+	}
+
+</script>
+
+	
+	
+		<!-- 인덱스가 아닐경우만 -->
+	<div id="footInfo">
+
+		<div class="layout">
+
+			<div class="f_util left_util">
+
+				<div class="util_item icon_1"><a href="#utilItemTarget_1" title="중앙행정기관 바로가기"><span>중앙행정기관 <i>바로가기</i></span></a></div>
+				<div class="util_item icon_2"><a href="/kfsweb/kfi/kfs/reg/selectRelationGroupList.do?mn=NKFS_07_09_03" title="등록단체 바로가기"><span>등록단체 <i>바로가기</i></span></a></div>
+
+			</div>
+
+			<div class="f_util right_util">				
+				<div class="util_item icon_1"><a href="#utilItemTarget_2" title="소속기관 바로가기"><span>소속기관 <i>바로가기</i></span></a></div>
+				<div class="util_item icon_1"><a href="#utilItemTarget_3" title="소속기관 바로가기"><span>산하공공기관 <i>바로가기</i></span></a></div>	
+				<div class="util_item icon_1"><a href="#utilItemTarget_4" title="관련누리집 바로가기"><span>관련누리집 <i>바로가기</i></span></a></div>
+ 
+			</div>
+		
+		</div>
+
+		<div id="utilItemTarget_1" class="util_item_target" style="" tabindex="0">
+
+		<div class="target_wrap">
+
+			<div class="target_title"><span>중앙행정기관</span> 바로가기</div>
+
+				<div class="target_body">
+
+				<ul>
+				<li><a href="http://www.bai.go.kr/" target="_blank" title="새창">감사원</a></li>
+				<li><a href="http://www.humanrights.go.kr" target="_blank" title="새창">국가인권위원회</a></li>
+				<li><a href="http://www.nis.go.kr" target="_blank" title="새창">국가정보원</a></li>
+				<li><a href="http://www.pss.go.kr" target="_blank" title="새창">대통령경호처</a></li>
+				<li><a href="http://www.president.go.kr/" target="_blank" title="새창">대한민국 대통령실</a></li>
+				<li><a href="https://www.kcc.go.kr/" target="_blank" title="새창">방송미디어통신위원회</a></li>
+				<li><a href="http://www.ftc.go.kr/" target="_blank" title="새창">공정거래위원회</a></li>
+				<li><a href="http://www.mpva.go.kr/" target="_blank" title="새창">국가보훈부</a></li>
+				<li><a href="http://www.opm.go.kr" target="_blank" title="새창">국무조정실</a></li>
+				<li><a href="http://www.opm.go.kr" target="_blank" title="새창">국무총리비서실</a></li>
+				<li><a href="http://www.acrc.go.kr/" target="_blank" title="새창">국민권익위원회</a></li>
+				<li><a href="http://www.fsc.go.kr/" target="_blank" title="새창">금융위원회</a></li>
+				<li><a href="http://www.moleg.go.kr/" target="_blank" title="새창">법제처</a></li>
+				<li><a href="http://www.mfds.go.kr/index.do" target="_blank" title="새창">식품의약품안전처</a></li>
+				<li><a href="https://www.pipc.go.kr/np/" target="_blank" title="새창">개인정보보호위원회</a></li>
+				<li><a href="http://www.nssc.go.kr" target="_blank" title="새창">원자력안전위원회</a></li>
+				<li><a href="http://www.mpm.go.kr/main.do" target="_blank" title="새창">인사혁신처</a></li>
+				<li><a href="http://www.moel.go.kr/" target="_blank" title="새창">고용노동부</a></li>
+				<li><a href="http://www.msit.go.kr" target="_blank" title="새창">과학기술정보통신부</a></li>
+				<li><a href="http://www.moe.go.kr/" target="_blank" title="새창">교육부</a></li>
+				<li><a href="http://www.mnd.go.kr/" target="_blank" title="새창">국방부</a></li>
+				<li><a href="http://www.molit.go.kr" target="_blank" title="새창">국토교통부</a></li>
+				<li><a href="http://www.moef.go.kr/" target="_blank" title="새창">재정경제부</a></li>
+				<li><a href="http://www.mafra.go.kr" target="_blank" title="새창">농림축산식품부</a></li>
+				<li><a href="http://www.mcst.go.kr/" target="_blank" title="새창">문화체육관광부</a></li>
+				<li><a href="http://www.moj.go.kr" target="_blank" title="새창">법무부</a></li>
+				<li><a href="http://www.mohw.go.kr" target="_blank" title="새창">보건복지부</a></li>
+				<li><a href="http://www.motie.go.kr" target="_blank" title="새창">산업통상부</a></li>
+				<li><a href="http://www.mogef.go.kr/" target="_blank" title="새창">성평등가족부</a></li>
+				<li><a href="http://www.mofa.go.kr/" target="_blank" title="새창">외교부</a></li>
+				<li><a href="http://www.mss.go.kr/" target="_blank" title="새창">중소벤처기업부</a></li>
+				<li><a href="http://www.unikorea.go.kr/" target="_blank" title="새창">통일부</a></li>
+				<li><a href="http://www.mof.go.kr/" target="_blank" title="새창">해양수산부</a></li>
+				<li><a href="http://www.mois.go.kr" target="_blank" title="새창">행정안전부</a></li>
+				<li><a href="http://www.me.go.kr/" target="_blank" title="새창">기후에너지환경부</a></li>
+				<li><a href="http://www.spo.go.kr/spo/index.jsp" target="_blank" title="새창">검찰청</a></li>
+				<li><a href="http://www.police.go.kr/" target="_blank" title="새창">경찰청</a></li>
+				<li><a href="http://www.customs.go.kr/" target="_blank" title="새창">관세청</a></li>
+				<li><a href="http://www.nts.go.kr/" target="_blank" title="새창">국세청</a></li>
+				<li><a href="http://www.kma.go.kr/" target="_blank" title="새창">기상청</a></li>
+				<li><a href="http://www.rda.go.kr/" target="_blank" title="새창">농촌진흥청</a></li>
+				<li><a href="https://www.khs.go.kr/" target="_blank" title="새창">국가유산청</a></li>
+				<li><a href="http://www.dapa.go.kr/" target="_blank" title="새창">방위사업청</a></li>
+				<li><a href="http://www.mma.go.kr/" target="_blank" title="새창">병무청</a></li>
+				<li><a href="http://www.forest.go.kr/" target="_blank" title="새창">산림청</a></li>
+				<li><a href="http://www.saemangeum.go.kr/" target="_blank" title="새창">새만금개발청</a></li>
+				<li><a href="http://www.nfa.go.kr/" target="_blank" title="새창">소방청</a></li>
+				<li><a href="https://www.pps.go.kr" target="_blank" title="새창">조달청</a></li>
+				<li><a href="http://kostat.go.kr/" target="_blank" title="새창">국가데이터처</a></li>
+				<li><a href="https://www.moip.go.kr" target="_blank" title="새창">지식재산처</a></li>
+				<li><a href="http://www.kcg.go.kr/" target="_blank" title="새창">해양경찰청</a></li>
+				<li><a href="http://www.naacc.go.kr/" target="_blank" title="새창">행정중심복합도시건설청</a></li>
+				</ul>
+
+				</div>
+
+			<div class="target_close"><a href="#"><span></span> 창닫기</a></div>
+
+		</div>
+
+	</div>
+
+
+
+	<div id="utilItemTarget_2" class="util_item_target" style="" tabindex="0">
+
+		<div class="target_wrap">
+
+				<div class="target_title"><span>소속기관</span> 바로가기</div>
+
+				<div class="target_body">
+
+				<ul>
+					<li><a href="http://fhi.forest.go.kr" target="_blank" title="새창">산림교육원</a></li>
+					<li><a href="http://fao.forest.go.kr" target="_blank" title="새창">산림항공본부</a></li>
+					<li><a href="http://nfsv.forest.go.kr" target="_blank" title="새창">국립산림품종관리센터</a></li>
+					<li><a href="http://north.forest.go.kr" target="_blank" title="새창">북부지방산림청</a></li>
+					<li><a href="http://east.forest.go.kr" target="_blank" title="새창">동부지방산림청</a></li>
+					<li><a href="http://south.forest.go.kr" target="_blank" title="새창">남부지방산림청</a></li>
+					<li><a href="http://west.forest.go.kr" target="_blank" title="새창">서부지방산림청</a></li>
+					<li><a href="http://center.forest.go.kr" target="_blank" title="새창">중부지방산림청</a></li>
+					<li><a href="http://nifos.forest.go.kr" target="_blank" title="새창">국립산림과학원</a></li>
+					<li><a href="http://kna.forest.go.kr" target="_blank" title="새창">국립수목원</a></li>
+					<li><a href="http://huyang.forest.go.kr" target="_blank" title="새창">국립자연휴양림관리소</a></li>
+				</ul>
+
+				</div>
+
+				<div class="target_close"><a href="#"><span></span> 창닫기</a></div>
+
+		</div>
+	</div>
+
+
+	<div id="utilItemTarget_3" class="util_item_target" style="" tabindex="0">
+
+		<div class="target_wrap">
+
+				<div class="target_title"><span>산하공공기관</span> 바로가기</div>
+
+				<div class="target_body">
+
+				<ul>
+					<li><a href="http://www.kofpi.or.kr" target="_blank" title="새창">한국임업진흥원</a></li>
+					<li><a href="http://www.fowi.or.kr" target="_blank" title="새창">한국산림복지진흥원</a></li>
+					<li><a href="https://www.koagi.or.kr" target="_blank" title="새창">한국수목원정원관리원 </a></li>
+					<li><a href="http://www.komount.kr" target="_blank" title="새창">한국등산트레킹지원센터 </a></li>
+					<li><a href="https://kifds.or.kr" target="_blank" title="새창">한국산림재난안전관리공단 </a></li>
+				</ul>
+
+				</div>
+
+				<div class="target_close"><a href="#"><span></span> 창닫기</a></div>
+
+		</div>
+	</div>
+
+
+
+
+
+	<div id="utilItemTarget_4" class="util_item_target" style="" tabindex="0">
+
+		<div class="target_wrap">
+
+			<div class="target_title"><span>관련누리집</span> 바로가기</div>
+
+							<div class="target_body">		
+							<ul>
+							
+								<li><a href="http://www.foresttrip.go.kr/main.do" target="_blank" title="새창">숲나들e</a></li>
+								<li><a href="http://www.nature.go.kr/" target="_blank" title="새창">국가생물종지식정보</a></li>
+								<li><a href="http://www.nature.go.kr/kpni/index.do" target="_blank" title="새창">국가표준식물목록</a></li>
+								<li><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fgis&amp;mn=KFS_03_08_01" target="_blank" title="새창">산림공간정보서비스</a></li>
+								<li><a href="https://ftims.forest.go.kr/" target="_blank" title="새창">산림기술정보통합관리시스템</a></li>
+								<li><a href="http://mtweather.nifos.go.kr/" target="_blank" title="새창">산악기상정보시스템</a></li>
+								<li><a href="http://forestfire.nifos.go.kr" target="_blank" title="새창">산불위험예보시스템</a></li>
+								<li><a href="http://sansatai.forest.go.kr/" target="_blank" title="새창">산사태정보시스템</a></li>
+								<li><a href="http://www.forest.go.kr/newkfsweb/kfs/idx/SubIndex.do?orgId=fli&amp;mn=KFS_03_08_02" target="_blank" title="새창">산지정보시스템</a></li>
+								<li><a href="http://www.forestinfo.or.kr/" target="_blank" title="새창">임산물유통정보</a></li>
+								<li><a href="http://ob.forest.go.kr" target="_blank" title="새창">퇴직공무원커뮤니티</a></li>
+								<li><a href="https://winz.forest.go.kr/" target="_blank" title="새창">목재정보서비스 </a></li>								
+								<li><a href="http://know.nifos.go.kr" target="_blank" title="새창">산림과학지식서비스</a></li>
+								<li><a href="https://carbonregistry.forest.go.kr/fcr_web/fco/main/intro/index.do" target="_blank" title="새창">산림탄소등록부</a></li>
+								<li><a href="https://nfsv.forest.go.kr" target="_blank" title="새창">신품종출원</a></li>
+								<li><a href="https://fd.forest.go.kr/ffas" target="_blank" title="새창">국가산불정보시스템</a></li>
+								<li><a href="https://fcis.forest.go.kr" target="_blank" title="새창">산지전용통합정보시스템</a></li>
+								<li><a href="https://e-um.forest.go.kr" target="_blank" title="새창">산림경영이음</a></li>
+								<li><a href="https://foco.go.kr" target="_blank" title="새창">임업-in 통합포털</a></li>
+								<li><a href="https://edu.forest.go.kr" target="_blank" title="새창">숲교육포털</a></li>
+							</ul>			
+							</div>
+
+		<div class="target_close"><a href="#"><span></span> 창닫기</a></div>
+
+		</div>
+	</div>
+	<address class="f_addr">
+		<p>COPYRIGHTⒸ 산림청 SINCE1967. ALL RIGHTS RESERVED.</p>
+	</address>
+	
+</div>
+<div class="f_logo"><span><img src="/kfs/images/layout/f_logo.png" alt="산림청로고" />이 누리집은 산림청 누리집입니다.</span></div>
+
+	
+
+</div>
+<!-- wrap -->
+
+
+<script type="text/javascript">
+<!--
+var slidemenu_X = 375; //상단 제한 값
+var slidemenu_Y = 370; //하단 제한 값
+
+/* 20130306 var top를 quicktop로 수정 */
+if (isNS4) {
+    var quicktop = document["quick_top"];
+    if (null != quicktop && undefined != quicktop) {
+    	document.getElementById('quick_top').style.top = slidemenu_X+"px";
+        document.getElementById('quick_top').style.visibility = "visible";
+        moveRightEdge();
+    }
+
+} else if (isDOM) {
+    var quicktop = getRef('quick_top');
+    if (null != quicktop && undefined != quicktop) {
+	    document.getElementById('quick_top').style.top = slidemenu_X+"px";
+	    document.getElementById('quick_top').style.visibility = "visible";
+	    moveRightEdge();
+    }
+}
+/*
+if (isNS4) {
+    var top = document["quick_top"];
+    document.getElementById('quick_top').style.top = slidemenu_X+"px";
+    document.getElementById('quick_top').style.visibility = "visible";
+    moveRightEdge();
+} else if (isDOM) {
+    var top = getRef('quick_top');
+    document.getElementById('quick_top').style.top = slidemenu_X+"px";
+    document.getElementById('quick_top').style.visibility = "visible";
+    moveRightEdge();
+}
+*/
+-->
+</script>
+
+<form name="popPrint" method="post" action="/">
+<input type="submit" name="submit" value="submit" style="display:none;"/>
+</form>
+<form name="scrapVO" method="post" action="/">
+<input type="hidden" name="scrapUrl" value="/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_04_05_02&amp;amp;cmsId=FC_000076"/>
+<input type="hidden" name="menuNo" value="NKFS_04_05_02"/>
+<input type="submit" name="scrapSubmit" value="scrapSubmit" style="display:none;"/>
+</form>
+<!-- AceCounter Log Gathering Script V.71.2010011401 -->
+<script type="text/javascript">
+//<![CDATA[
+/* if(typeof _GUL == 'undefined'){
+var _GUL = '116.67.118.25';var _GPT='80'; var _AIMG = new Image(); var _bn=navigator.appName; var _PR = location.protocol=="https:"?"https://"+_GUL:"http://"+_GUL+":"+_GPT;if( _bn.indexOf("Netscape") > -1 || _bn=="Mozilla"){ setTimeout("_AIMG.src = _PR+'/?cookie';",1); } else{ _AIMG.src = _PR+'/?cookie'; };
+document.writeln("<scr"+"ipt type='text/javascript' src='/js/acecounter/acecounter_V70.js'><\/scr"+"ipt>");
+} */
+//]]>
+</script>
+
+</body>
+</html>
