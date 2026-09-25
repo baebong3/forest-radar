@@ -401,6 +401,13 @@ def load_prod_db(con):
             d['sido'][y][sd] = t
         else:
             d['sgg'][y][(sd, sgg)] = t
+    try:                                                # 보고서 본문 「최근 5년」 표로 옛 연도 전국값을 채움
+        for y, item, sub, tn in con.execute('SELECT year,item,sub,tonnes FROM prod_nat'):
+            d = out[item][sub]
+            if not d['nat'].get(y):
+                d['nat'][y] = tn
+    except Exception:
+        pass
     return out
 
 
@@ -442,12 +449,13 @@ def prod_cards(item, lab, PD, CSV=None):
         if not nat:
             continue
         name = (sub or lab)
+        trend = not (sub and subs.get('') and subs['']['nat'])     # 표고는 생 · 건 합계 추이 하나만, 지역은 생 · 건 따로
         yrs = sorted(nat)[-13:]
         ly = yrs[-1]
         nd = nd_for(nat.values())
         spp = [{'name': '생산량', 'color': PRD, 'light': PRD_L, 'values': [nat[y] for y in yrs]}]
         p1 = pct(nat[ly], nat.get(ly - 1))
-        cards.append('<div class="card span"><div class="sec">PRODUCTION · 임산물생산조사</div><div class="h2">%s 연간 생산량 %d년 %s톤%s</div>'
+        if trend: cards.append('<div class="card span"><div class="sec">PRODUCTION · 임산물생산조사</div><div class="h2">%s 연간 생산량 %d년 %s톤%s</div>'
                      '<div class="cap">단위 : 톤 · 산림청 임산물생산조사(연 1회, 다음 해 10월 공표) · %d~%d년</div>%s</div>'
                      % (esc(name), ly, fmt(nat[ly], nd), (', 전년 대비 %s' % fmt_pct(p1)) if p1 is not None else '', yrs[0], ly,
                         dual([('%d년' % y, '') for y in yrs], spp, nd, w=1180, h=240, mob_labels=['%d년' % y for y in yrs])))

@@ -28,6 +28,10 @@ CREATE TABLE IF NOT EXISTS prod(
   PRIMARY KEY(year, item, sub, sido, sigungu)
 );
 CREATE TABLE IF NOT EXISTS prod_done(year INTEGER PRIMARY KEY, article TEXT, rows INTEGER, at TEXT);
+CREATE TABLE IF NOT EXISTS prod_nat(          -- 보고서 본문 「최근 5년 생산량」 표 (전국, 톤)
+  year INTEGER NOT NULL, item TEXT NOT NULL, sub TEXT NOT NULL, tonnes REAL, src INTEGER,
+  PRIMARY KEY(year, item, sub)
+);
 """
 
 # 품목 줄 : 글자 사이 공백이 들어간 채로 인쇄됨 (예 '호        두   kg   8,345   47,844,803')
@@ -79,6 +83,46 @@ def parse(text):
             if not m:
                 continue
             out.append((item, sub, sd, sgg, num(m.group(1)), num(m.group(2))))
+    return out
+
+
+NAT_ITEMS = {'밤': ('chestnut', ''), '호두': ('walnut', ''), '대추': ('jujube', ''), '감': ('persimmon', ''),
+             '표고': ('shiitake', '')}
+
+
+def parse_nat(text):
+    """「수실류 · 버섯 최근 5년 생산량」 표 → [(year, item, sub, 톤)]"""
+    out = []
+    for key in ('수실류 최근 5년', '버섯 최근 5년'):
+        pos = [m.start() for m in re.finditer(key, text)]
+        if not pos:
+            continue
+        seg = text[pos[-1]:pos[-1] + 6000]                       # 목차가 아닌 본문 쪽(마지막 등장)
+        lines = seg.split('\n')
+        header, rows = None, []
+        for l in lines:
+            toks = l.split()
+            if header is None and ('밤' in toks or '표고' in toks) and not re.search(r'\d', l):
+                header = []
+                for t in toks:                                   # 생산량 · 생산액이 한 줄에 나란히 있으면 앞쪽(생산량)만
+                    if t in ('감', '밤', '대추', '호두', '잣', '기타', '송이', '표고'):
+                        if t in header:
+                            break
+                        header.append(t)
+                continue
+            m = re.match(r'^\s*(20\d\d)\s+(.*)$', l)
+            if header and m:
+                nums = re.findall(r'△?[\d,.]+', m.group(2))
+                if len(nums) >= 3 + len(header):
+                    rows.append((int(m.group(1)), nums))
+                if len(rows) == 5:
+                    break
+        for y, nums in rows:
+            vals = nums[3:3 + len(header)]
+            for h, v in zip(header, vals):
+                if h in NAT_ITEMS:
+                    item, sub = NAT_ITEMS[h]
+                    out.append((y, item, sub, float(v.replace(',', '').replace('△', '-'))))
     return out
 
 
@@ -135,12 +179,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--since', type=int, default=2012)
     ap.add_argument('--txt'), ap.add_argument('--year', type=int)
+    ap.add_argument('--retry', action='store_true', help='못 읽었던 해도 다시 시도')
     a = ap.parse_args()
     con = db()
     con.executescript(SCHEMA)
     if a.txt:
-        rows = parse(open(a.txt, encoding='utf-8').read())
+        t = open(a.txt, encoding='utf-8').read()
+        rows = parse(t)
         store(con, a.year, rows)
+        for yy, item, sub, tn in parse_nat(t):
+            con.execute('INSERT OR REPLACE INTO prod_nat(year,item,sub,tonnes,src) VALUES(?,?,?,?,?)', (yy, item, sub, tn, a.year))
         con.commit()
         print('행 %d' % len(rows))
         return
@@ -153,13 +201,20 @@ def main():
         con.commit()
         return
     done = {r[0] for r in con.execute('SELECT year FROM prod_done WHERE rows > 0')}
+    if not con.execute('SELECT COUNT(*) FROM prod_nat').fetchone()[0]:
+        done = set()                                        # 5년 표를 새로 읽도록 한 번 다시 받음
+    tried = {r[0] for r in con.execute("SELECT year FROM prod_done WHERE rows = 0")}
     for y in sorted(arts):
-        if y < a.since or y in done:
+        if y < a.since or y in done or (y in tried and not a.retry):   # 글꼴 문제로 못 읽는 옛 보고서는 다시 받지 않음
             continue
         seq, title = arts[y]
         try:
             t = pdf_text(op, seq)
             rows = parse(t) if t else []
+            for yy, item, sub, tn in (parse_nat(t) if t else []):
+                old = con.execute('SELECT src FROM prod_nat WHERE year=? AND item=? AND sub=?', (yy, item, sub)).fetchone()
+                if not old or old[0] <= y:                   # 나중 보고서(수정치)가 우선
+                    con.execute('INSERT OR REPLACE INTO prod_nat(year,item,sub,tonnes,src) VALUES(?,?,?,?,?)', (yy, item, sub, tn, y))
         except Exception as ex:
             print('[%d] 실패 : %s' % (y, ex))
             con.execute('INSERT OR REPLACE INTO prod_done(year,article,rows,at) VALUES(?,?,?,?)',
