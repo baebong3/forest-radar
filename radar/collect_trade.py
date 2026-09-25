@@ -154,7 +154,10 @@ def main():
                 body = ex.read()[:300].decode('utf-8', 'ignore')
             except Exception:
                 pass
-        ex = '%s %s' % (ex, re.sub(r'\s+', ' ', body))
+        em = re.findall(r'<(?:errMsg|returnAuthMsg)>([^<]+)<', body)
+        ex = '%s %s' % (ex, ' · '.join(em) if em else re.sub(r'\s+', ' ', body)[:120])
+        if 'NOT_REGISTERED' in body:
+            ex += ' (이 인증키로 「관세청_품목별 수출입실적(GW)」 활용신청이 안 됐거나 승인 반영 대기 중)'
         print('접속 점검 실패 → 수출입 수집 중단 : %s' % ex)
         con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('trade_err', '공공데이터포털 접속 실패 : %s' % str(ex)[:200]))
         con.commit()
