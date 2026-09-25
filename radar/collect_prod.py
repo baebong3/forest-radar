@@ -161,6 +161,15 @@ def main():
         except Exception as ex:
             print('[%d] 실패 : %s' % (y, ex))
             continue
+        if not rows and t:                                  # 서식이 달라 못 읽은 해 : 점검용 발췌를 남김
+            os.makedirs(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug'), exist_ok=True)
+            ls = t.split('\n')
+            hit = [i for i, l in enumerate(ls) if re.search(r'(?<![가-힣])밤(?![가-힣])', l)][:8]
+            sample = '\n'.join(ls[:80]) + '\n=====\n' + '\n-----\n'.join('\n'.join(ls[max(0, i - 12):i + 25]) for i in hit)
+            bl = [i for i, l in enumerate(ls) if '부여' in l][:4]
+            sample += '\n=====부여\n' + '\n-----\n'.join('\n'.join(ls[max(0, i - 5):i + 60]) for i in bl)
+            open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug', '%d.txt' % y),
+                 'w', encoding='utf-8').write('LINES %d\n' % len(ls) + sample)
         store(con, y, rows)
         con.execute('INSERT OR REPLACE INTO prod_done(year,article,rows,at) VALUES(?,?,?,?)',
                     (y, title, len(rows), datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
