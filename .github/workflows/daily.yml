@@ -20,11 +20,12 @@ permissions:
 
 concurrency:
   group: daily-radar
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 

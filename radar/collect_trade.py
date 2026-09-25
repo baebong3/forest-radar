@@ -86,7 +86,7 @@ def parse(xml_bytes):
     return code.strip(), msg.strip(), rows
 
 
-def fetch(key, q, ym_from, ym_to, tries=3):
+def fetch(key, q, ym_from, ym_to, tries=2, timeout=20):
     k = key if '%' in key else urllib.parse.quote(key, safe='')    # Encoding 키를 넣어도 이중 인코딩 안 되게
     url = '%s?serviceKey=%s&strtYymm=%s&endYymm=%s&hsSgn=%s' % (API, k, ym_from.replace('-', ''),
                                                                ym_to.replace('-', ''), q)
@@ -94,7 +94,7 @@ def fetch(key, q, ym_from, ym_to, tries=3):
     for i in range(tries):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': 'forest-radar'})
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 return r.read()
         except Exception as ex:                 # 공공데이터포털 일시 오류 대비 재시도
             last = ex
@@ -143,6 +143,16 @@ def main():
     now = datetime.now(KST)
     end = '%04d-%02d' % (now.year, now.month)
     first_err = None
+    # 접속 점검 : 공공데이터포털이 응답하지 않으면(해외 서버 차단 · 장애) 오래 붙잡지 말고 바로 끝냄
+    try:
+        code, msg, rows = parse(fetch(key, '080241', '%04d-01' % (now.year - 1), '%04d-03' % (now.year - 1), tries=1, timeout=25))
+        print('접속 점검 : 결과코드 %s %s · 행 %d' % (code, msg, len(rows)))
+    except Exception as ex:
+        print('접속 점검 실패 → 수출입 수집 중단 : %s' % ex)
+        con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('trade_err', '공공데이터포털 접속 실패 : %s' % str(ex)[:200]))
+        con.commit()
+        return
+    fails = 0
     for it in ITEMS:
         have = con.execute('SELECT COUNT(*) FROM trade WHERE item=?', (it['key'],)).fetchone()[0]
         ms = months(a.start, end) if have == 0 else months(a.start, end)[-a.recent:]
@@ -156,7 +166,11 @@ def main():
                 except Exception as ex:
                     first_err = first_err or '%s %s : %s' % (it['label'], src['q'], ex)
                     print('  실패 %s %s %s~%s : %s' % (it['label'], src['q'], ch[0], ch[-1], ex))
+                    fails += 1
+                    if fails >= 5:
+                        break
                     continue
+                fails = 0
                 if code not in ('', '00', '0', '000') and not rows:
                     print('  API 응답 %s %s : %s %s' % (it['label'], src['q'], code, msg))
                     print('  응답 앞부분 :', raw[:300].decode('utf-8', 'ignore'))
