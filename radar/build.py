@@ -718,9 +718,9 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK):
         o.append('<div class="kpis">%s</div>' % kpi('연간 생산량 (%d년)' % ply, fmt(plv, nd_for([plv])), '톤', '전년 대비 %s' % arrow(plp), 'p'))
 
     # ② 최근 뉴스 · 동향 (뉴스 + 농경연 관측 + 가격 시계열)
-    o.append(part(2, '최근 뉴스 · 동향', '뉴스 · 농경연 임업관측 · 가격'))
-    o.append('<div class="grid">%s</div>' % news_card(key, lab, news))
+    o.append(part(2, '최근 뉴스 · 동향', '농경연 임업관측 · 뉴스 · 가격'))
     o.append(krei_card(key, K))
+    o.append('<div class="grid">%s</div>' % news_card(key, lab, news))
     o.append(ts_cards(key, KT, kind='price'))
 
     # ③ 생산량
