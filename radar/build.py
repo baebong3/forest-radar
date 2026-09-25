@@ -3,7 +3,7 @@
 data/radar.db + data/production.csv → docs/index.html (GitHub Pages 공개 페이지)
 
 디자인 : 서던 하우스(딥그린 #1E4A4A · 오렌지 #F08900), Pretendard 서브셋 자체 호스팅
-  - 탭 : 종합 · 밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감 (라디오 토글, 자바스크립트 없이 동작)
+  - 탭 : 종합 · 밤 · 호두 · 대추 · 표고버섯 · 떫은감 (라디오 토글, 자바스크립트 없이 동작)
   - 품목 탭 : 헤드라인 → KPI → 최근 13개월 수입 · 수출량 → 연도별 같은 기간 누계 → 연간 생산량
              → 월별 상세표 → 최근 뉴스 → HS 코드 주석
   - 수입 = 딥그린, 수출 = 오렌지 (모든 차트 공통)
@@ -323,9 +323,6 @@ def ko_ym(ym):
 
 def krei_card(item_key, K):
     k = K.get(item_key)
-    if item_key == 'pinenut':
-        return ('<div class="grid"><div class="card span"><div class="sec">KREI OUTLOOK</div><div class="h2">농경연 임업관측</div>'
-                '<div class="empty">잣은 한국농촌경제연구원 임업관측(밤 · 표고버섯 · 대추 · 감 · 호두 · 산채 · 오미자 · 조경수) 대상 품목이 아님</div></div></div>')
     if not k:
         return ''
     groups = []
@@ -358,7 +355,7 @@ def krei_overview(K):
     if not rows:
         return ''
     return ('<div class="grid"><div class="card span"><div class="sec">KREI OUTLOOK</div><div class="h2">농경연 임업관측 최신 전망</div>'
-            '<div class="cap">품목별 최신 월보에서 절마다 전망 문장 우선 1개 · 잣은 관측 대상 아님</div><div class="tw"><table class="t kt"><thead><tr>'
+            '<div class="cap">품목별 최신 월보에서 절마다 전망 문장 우선 1개</div><div class="tw"><table class="t kt"><thead><tr>'
             '<th class="l">품목</th><th class="l">월보</th><th class="l">생산 · 출하</th><th class="l">수출입</th><th class="l">가격</th>'
             '</tr></thead><tbody>%s</tbody></table></div></div></div>' % ''.join(rows))
 
@@ -572,8 +569,8 @@ def item_pane(it, T, forms, P, ref, news, K, KT):
 def summary_pane(T, P, ref, allnews, K):
     o = ['<section class="pane p-all">']
     if not ref:
-        o.append('<div class="hero"><div class="eyebrow">임산물 수급 레이더 · 종합</div><h1>임산물 6개 품목 수출입 · 생산 · 뉴스 모니터링</h1>'
-                 '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감을 각각 확인</li>'
+        o.append('<div class="hero"><div class="eyebrow">임산물 수급 레이더 · 종합</div><h1>임산물 5개 품목 수출입 · 생산 · 뉴스 모니터링</h1>'
+                 '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 표고버섯 · 떫은감을 각각 확인</li>'
                  '<li>뉴스는 매일, 관세청 수출입 통계는 매월 자동 갱신</li></ul></div>')
         o.append(krei_overview(K))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
@@ -600,7 +597,7 @@ def summary_pane(T, P, ref, allnews, K):
             if pp is not None and yip >= 1:
                 movers.append((abs(pp), it['label'], pp))
         movers.sort(reverse=True)
-        h1 = '임산물 6개 품목 수출입 동향 - %d년 %d월 기준' % (y, m)
+        h1 = '임산물 5개 품목 수출입 동향 - %d년 %d월 기준' % (y, m)
         dek = ['%s 수입 누계 전년 동기 대비 변화가 가장 큰 품목 : %s' % (
             rng, ' · '.join('%s %s' % (lb, fmt_pct(pp)) for _, lb, pp in movers[:3]) or '-'),
             '품목 탭에서 월별 추이 · 연도별 누계 · 생산량 · 최근 뉴스를 확인']
@@ -624,7 +621,7 @@ def summary_pane(T, P, ref, allnews, K):
                         hbars([a for a, _ in arr], [{'name': title, 'color': col, 'values': [v for _, v in arr]}], nd, w=560)))
         o.append('</div>')
     o.append('<div class="grid"><div class="card span"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
-             '<div class="cap">최근 %d일 · 임업 정책과 6개 품목 기사 통합 · 최신순</div>%s</div></div>'
+             '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 최신순</div>%s</div></div>'
              % (NEWS_DAYS, news_list('all', allnews, 12, item_chip=True)))
     o.append('</section>')
     return ''.join(o)
@@ -686,7 +683,7 @@ def main():
     doc = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
            '<meta name="viewport" content="width=device-width,initial-scale=1">'
            '<title>임산물 수급 레이더</title>'
-           '<meta name="description" content="밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감 월별 수출입, 연간 생산량, 최근 뉴스">%s</head><body>'
+           '<meta name="description" content="밤 · 호두 · 대추 · 표고버섯 · 떫은감 월별 수출입, 연간 생산량, 최근 뉴스">%s</head><body>'
            '<header class="mast"><div class="in"><div class="wm">SOUTHERN<b>POST</b></div><div class="vr"></div>'
            '<div class="team"><span class="t1">(주)서던포스트</span><span class="t2">임산물 수급 레이더</span></div>'
            '<div class="upd">페이지 갱신 <b>%s</b><br>수출입 기준월 <b>%s</b></div></div>'
