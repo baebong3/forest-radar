@@ -5,7 +5,7 @@ on:
     - cron: '0 22 * * *'      # 매일 07:00 KST
   push:                       # 코드 수정이 올라오면 바로 한 번 실행
     branches: [main]
-    paths: ['radar/**', 'data/production.csv', '.github/workflows/daily.yml']
+    paths: ['radar/**', 'data/production.csv', '.github/workflows/daily.yml', 'trigger.txt']
   workflow_dispatch:          # Actions 탭에서 수동 실행
     inputs:
       days:
