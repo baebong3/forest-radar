@@ -13,7 +13,7 @@ data/radar.db + data/production.csv → docs/index.html (GitHub Pages 공개 페
   python radar/build.py
   python radar/build.py --db 다른.db --out 다른.html
 """
-import argparse, csv, html, os, re, sys
+import argparse, csv, html, json, os, re, sys
 from collections import defaultdict
 from datetime import datetime, timedelta
 
@@ -116,10 +116,19 @@ table.t{width:100%%;border-collapse:collapse;font-size:13px}
 .nl .tt a:hover{color:var(--green);text-decoration:underline}
 .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:3px;padding:1px 7px;background:var(--tint);color:var(--green);white-space:nowrap;margin-right:6px}
 .chip.o{background:var(--otint);color:var(--org-d)}
+.kgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.kh{font-size:12px;font-weight:800;color:var(--org-d);border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:4px}
+.kl2{list-style:none;margin:0;padding:0}
+.kl2 li{padding:9px 0;border-bottom:1px solid var(--rule2);word-break:keep-all}
+.kl2 li b{display:block;font-size:14px;line-height:1.45;color:var(--ink)}
+.kl2 li span{display:block;font-size:12.5px;color:var(--sub);margin-top:3px;line-height:1.5}
+.kc .cap a,.foot a{color:var(--green);font-weight:700;border-bottom:1px solid var(--rule)}
+.t td.w{white-space:normal;word-break:keep-all;min-width:180px;line-height:1.45}
+.t.kt td{vertical-align:top}
 .hsn{font-size:12px;color:var(--muted);margin-top:10px;word-break:keep-all}
 .foot{margin:30px 0 0;padding:18px 0 40px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);line-height:1.7}
 .foot b{color:var(--sub)}
-@media(max-width:980px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.kgs{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}
   .kpi:nth-child(4){border-left:0}.kpi:nth-child(n+4){border-top:1px solid var(--rule2)}}
 @media(max-width:640px){.hero h1{font-size:22px}.kv{font-size:23px}
   .kpis{grid-template-columns:repeat(2,1fr)}
@@ -174,6 +183,67 @@ def load_news(con, key, today, days=NEWS_DAYS):
         seen.add(k)
         out.append({'title': t, 'url': u, 'date': d, 'cat': c or '기타', 'summary': s or '', 'item': key})
     return out
+
+
+def load_krei(con):
+    """품목별 최신 임업관측 월보 (소제목 · 근거 문장)"""
+    out = {}
+    try:
+        rows = con.execute('SELECT item,ym,title,pdf,view,heads FROM krei ORDER BY ym DESC').fetchall()
+    except Exception:
+        return out
+    for item, ym, title, pdf, view, heads in rows:
+        hs = json.loads(heads or '[]')
+        if item in out or not hs:
+            continue
+        out[item] = {'ym': ym, 'title': title, 'pdf': pdf, 'view': view, 'heads': hs}
+    return out
+
+
+def ko_ym(ym):
+    return '%s년 %d월호' % (ym[:4], int(ym[5:]))
+
+
+def krei_card(item_key, K):
+    k = K.get(item_key)
+    if item_key == 'pinenut':
+        return ('<div class="grid"><div class="card span"><div class="sec">KREI OUTLOOK</div><div class="h2">농경연 임업관측</div>'
+                '<div class="empty">잣은 한국농촌경제연구원 임업관측(밤 · 표고버섯 · 대추 · 감 · 호두 · 산채 · 오미자 · 조경수) 대상 품목이 아님</div></div></div>')
+    if not k:
+        return ''
+    groups = []
+    for sec in ('생산·출하', '수출입', '가격'):
+        hs = [h for h in k['heads'] if h['sec'] == sec]
+        if not hs:
+            continue
+        li = ''.join('<li><b>%s</b>%s</li>' % (esc(h['head']), ('<span>%s</span>' % esc(h['detail'])) if h['detail'] else '')
+                     for h in hs)
+        groups.append('<div class="kg"><div class="kh">%s</div><ul class="kl2">%s</ul></div>' % (sec, li))
+    return ('<div class="grid"><div class="card span kc"><div class="sec">KREI OUTLOOK</div>'
+            '<div class="h2">농경연 임업관측 %s</div><div class="cap">한국농촌경제연구원 임업관측 월보의 소제목(판단)과 첫 문장(근거) · '
+            '<a href="%s" target="_blank" rel="noopener">원문 PDF</a> · <a href="%s" target="_blank" rel="noopener">월보 페이지</a></div>'
+            '<div class="kgs">%s</div></div></div>' % (ko_ym(k['ym']), esc(k['pdf']), esc(k['view']), ''.join(groups)))
+
+
+def krei_overview(K):
+    rows = []
+    for it in ITEMS:
+        k = K.get(it['key'])
+        if not k:
+            continue
+        cells = []
+        for sec in ('생산·출하', '수출입', '가격'):
+            hs = [h['head'] for h in k['heads'] if h['sec'] == sec]
+            fc = [h for h in hs if '전망' in h or '듯' in h]
+            cells.append(esc((fc or hs or ['-'])[0]))
+        rows.append('<tr><td class="l"><b>%s</b></td><td class="l"><a href="%s" target="_blank" rel="noopener">%s</a></td>%s</tr>'
+                    % (it['label'], esc(k['pdf']), ko_ym(k['ym']), ''.join('<td class="l w">%s</td>' % c for c in cells)))
+    if not rows:
+        return ''
+    return ('<div class="grid"><div class="card span"><div class="sec">KREI OUTLOOK</div><div class="h2">농경연 임업관측 최신 전망</div>'
+            '<div class="cap">품목별 최신 월보에서 절마다 전망 문장 우선 1개 · 잣은 관측 대상 아님</div><div class="tw"><table class="t kt"><thead><tr>'
+            '<th class="l">품목</th><th class="l">월보</th><th class="l">생산 · 출하</th><th class="l">수출입</th><th class="l">가격</th>'
+            '</tr></thead><tbody>%s</tbody></table></div></div></div>' % ''.join(rows))
 
 
 # ── 표기 도우미 ──────────────────────────────────────────────
@@ -244,7 +314,7 @@ def wait_card():
             '다음 자동 실행 때 2016년 1월부터 채워짐</div>')
 
 
-def item_pane(it, T, forms, P, ref, news):
+def item_pane(it, T, forms, P, ref, news, K):
     key, lab = it['key'], it['label']
     S = T.get(key, {})
     g = lambda ym: S.get(ym, {'exp_kg': 0, 'exp_usd': 0, 'imp_kg': 0, 'imp_usd': 0})
@@ -252,9 +322,20 @@ def item_pane(it, T, forms, P, ref, news):
 
     prod = P.get(it['prod'], {}) or P.get(lab, {})
     if not ref or not S:
-        o.append('<div class="hero"><div class="eyebrow">%s · 수출입 · 생산 · 뉴스</div><h1>%s 수급 레이더</h1>'
-                 '<ul class="dek"><li>관세청 월별 수출입 통계가 들어오면 헤드라인 · 지표 · 차트가 자동으로 채워짐</li></ul></div>'
-                 % (esc(lab), esc(lab)))
+        k = K.get(key)
+        fc = [h for h in (k['heads'] if k else []) if '전망' in h['head'] or '듯' in h['head']]
+        if fc:
+            eb = '%s · 농경연 임업관측 %s' % (lab, ko_ym(k['ym']))
+            h1 = fc[0]['head']
+            dek = ['%s' % esc(h['head']) for h in fc[1:3]]
+        else:
+            eb, h1 = '%s · 수출입 · 생산 · 뉴스' % lab, '%s 수급 레이더' % lab
+            dek = ['관세청 월별 수출입 통계가 들어오면 지표 · 차트가 자동으로 채워짐']
+        if news:
+            dek.append('최근 기사 : <a href="%s" target="_blank" rel="noopener">%s</a>' % (esc(news[0]['url']), esc(news[0]['title'])))
+        o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1><ul class="dek">%s</ul></div>'
+                 % (esc(eb), esc(h1), ''.join('<li>%s</li>' % d for d in dek)))
+        o.append(krei_card(key, K))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
     else:
         y, m = int(ref[:4]), int(ref[5:])
@@ -302,6 +383,7 @@ def item_pane(it, T, forms, P, ref, news):
             kpi('연간 생산량' + (' (%d년)' % py if py else ''), fmt(prod[py], nd_for(prod.values())) if py else '-', '톤' if py else '',
                 '임산물생산조사' if py else '공표값 입력 대기')))
 
+        o.append(krei_card(key, K))
         labs = [mlabel(x, i == 0) for i, x in enumerate(ms13)]
         mob = ['%s.%s' % (x[2:4], x[5:]) for x in ms13]
         si = [{'name': '수입량', 'color': IMP, 'values': [t_(g(x)['imp_kg']) for x in ms13]}]
@@ -368,12 +450,13 @@ def item_pane(it, T, forms, P, ref, news):
     return ''.join(o)
 
 
-def summary_pane(T, P, ref, allnews):
+def summary_pane(T, P, ref, allnews, K):
     o = ['<section class="pane p-all">']
     if not ref:
         o.append('<div class="hero"><div class="eyebrow">임산물 수급 레이더 · 종합</div><h1>임산물 6개 품목 수출입 · 생산 · 뉴스 모니터링</h1>'
                  '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 잣 · 표고버섯 · 곶감을 각각 확인</li>'
                  '<li>뉴스는 매일, 관세청 수출입 통계는 매월 자동 갱신</li></ul></div>')
+        o.append(krei_overview(K))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
     else:
         y, m = int(ref[:4]), int(ref[5:])
@@ -407,6 +490,7 @@ def summary_pane(T, P, ref, allnews):
         ws = [span_w([re.sub('<[^>]+>', '', r[j]) for r in rows]) for j in range(9)]
         body = ''.join('<tr><td class="l"><b>%s</b></td>%s</tr>' % (r[0], ''.join(numtd(r[j], ws[j]) for j in range(1, 9)))
                        for r in rows)
+        o.append(krei_overview(K))
         o.append('<div class="grid"><div class="card span"><div class="sec">OVERVIEW</div><div class="h2">품목별 수출입 요약</div>'
                  '<div class="cap">단위 : 톤 · 증감률은 전년 같은 달 · 같은 기간 대비</div><div class="tw"><table class="t"><thead>'
                  '<tr><th class="l">품목</th><th>%d월<br>수입량</th><th>전년<br>동월 대비</th><th>%d월<br>수출량</th><th>전년<br>동월 대비</th>'
@@ -472,8 +556,9 @@ def main():
         tog.append('#t-%s:checked~.wrap .p-%s{display:block}' % (k, k))
     css = CSS.replace('%%', '%').replace('%(TOGGLE)s', '\n'.join(tog))
 
-    body = [summary_pane(T, P, ref, allnews)]
-    body += [item_pane(it, T, forms, P, ref, news[it['key']]) for it in ITEMS]
+    K = load_krei(con)
+    body = [summary_pane(T, P, ref, allnews, K)]
+    body += [item_pane(it, T, forms, P, ref, news[it['key']], K) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
     tabs = '<nav class="tabs"><label for="t-all">종합</label>%s</nav>' % ''.join(
         '<label for="t-%s">%s</label>' % (it['key'], it['label']) for it in ITEMS)
@@ -487,9 +572,9 @@ def main():
            '<div class="upd">페이지 갱신 <b>%s</b><br>수출입 기준월 <b>%s</b></div></div>'
            '<div class="ribbon"><i></i><i></i></div></header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
-           '산림청 임산물생산조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
+           '한국농촌경제연구원 임업관측 월보(매월 4일) · 산림청 임산물생산조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 뉴스 매일 07:00 · 수출입 매일 확인(최근 14개월 재수집으로 잠정치 수정 반영) · '
-           '월별 수치는 HS 부호 합산이며 가공품(맛밤 · 호두 가공품 등)은 제외%s<br>'
+           '월별 수치는 HS 부호 합산(밤 · 표고버섯은 냉동 · 조제품 포함, 농경연 관측 월보와 같은 범위)%s<br>'
            '<b>(주)서던포스트</b> · 최근 뉴스 수집 %s · 최근 수출입 수집 %s</footer></main></body></html>'
            % (css, today.strftime('%Y.%m.%d %H:%M'), (ref.replace('-', '.') if ref else '수집 대기'), radios, tabs,
               ''.join(body), err, meta.get('news_run', '-'), meta.get('trade_run', '-')))

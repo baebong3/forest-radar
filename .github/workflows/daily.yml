@@ -46,6 +46,9 @@ jobs:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: python radar/collect_trade.py --start ${{ github.event.inputs.start || '2016-01' }}
 
+      - name: Collect KREI 임업관측
+        run: python radar/collect_krei.py
+
       - name: Build page
         run: python radar/build.py
 
