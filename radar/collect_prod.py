@@ -252,6 +252,8 @@ def main():
             sample += '\n=====부여\n' + '\n-----\n'.join('\n'.join(ls[max(0, i - 5):i + 60]) for i in bl)
             open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug', '%d.txt' % y),
                  'w', encoding='utf-8').write('LINES %d\n' % len(ls) + sample)
+        if len(rows) < 100:                                 # 옛 보고서(글꼴 깨짐) 일부만 읽힌 경우는 버림
+            rows = []
         store(con, y, rows)
         con.execute('INSERT OR REPLACE INTO prod_done(year,article,rows,at) VALUES(?,?,?,?)',
                     (y, title, len(rows), datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
