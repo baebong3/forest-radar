@@ -1,0 +1,2216 @@
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko" style="overflow-x:hidden !important;">
+
+
+
+
+<head>
+<title>산림청 산림임업통계플랫폼</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<link rel="icon" type="image/x-icon" href="/stat/images/favicon.ico" />
+<link rel="shotcut icon" type="image/x-icon" href="/stat/images/favicon.ico" />
+<meta name="description" content="산림청 산림임업통계플랫폼">
+<meta name="title" content="산림청 산림임업통계플랫폼"/>
+<meta name="author" content="산림청"/>
+<meta name="keywords" content="산림청"/>
+<link rel="stylesheet" type="text/css" href='/stat/css/jqueryui/jquery-ui-1.12.1.min.css' media="screen"/>
+
+<link rel="stylesheet" type="text/css" href="/stat/css/common.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/layout.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/sub.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/main.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/add.css?version=1122" media="all"/>
+ <!-- 시각화css -->
+<link rel="stylesheet" type="text/css" href="/stat/css/slick.css" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/slick-theme.css" media="all"/>
+
+<!-- 251124 대개편 css 추가 -->
+<link rel="stylesheet" type="text/css" href="/stat/css/default.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/new_main.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/form.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/table1.css?version=1122" media="all"/>
+<link rel="stylesheet" type="text/css" href="/stat/css/fonts.css?version=1122" media="all"/>
+
+<script type="text/javascript">
+var _ctxPath = "/stat";
+var _menuPath = "/ptl";
+</script>
+
+<script type="text/javascript" src="/stat/js/jquery/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src='/stat/js/jquery/jquery-ui-1.12.1.min.js'></script>
+<script type="text/javascript" src="/stat/js/common.js?version=1122"></script>
+<script type="text/javascript" src="/stat/js/documentready.js?version=1122"></script>
+<script type="text/javascript" src='/stat/js/briefing-ui.js'></script> <!-- 시각화js -->
+<script type="text/javascript" src="/stat/js/survey.js?version=1122"></script>
+<!-- 251124 대개편 js 추가 -->
+<script type="text/javascript" src="/stat/js/ImageSlider.js?version=1122"></script>
+
+<!-- ibsheet -->
+
+
+
+
+
+<!-- slick slider -->
+<script type="text/javascript" src="/stat/js/slick.js"></script>
+<script type="text/javascript" src="/stat/js/slick.min.js"></script>
+
+<!-- 웹로그 전송 -->
+<script type="text/javascript" src="https://weblog.forest.go.kr/wlo/js/wl6.js" ></script>
+
+<script type="text/javascript" src='/stat/js/content.js?version=1122'></script>
+<script type="text/javascript" src='/stat/js/rightMenu.js?version=1122'></script>
+<style>
+ul.shortListBody li:nth-of-type(1n + 4) {
+    display: none;
+}
+.part_bar {
+	display: flex;
+	justify-content: space-between;
+}
+.part_bar_right {
+	position: relative;
+	cursor: pointer;
+	display: flex;
+    align-items: center;
+}
+.part_bar_right span {
+  padding: 0px 20px 0px 30px;
+  font-weight: 300;
+  font-size: 18px;
+  position:relative;
+  white-space: nowrap;
+  margin-left: 1rem;
+}
+.part_bar_right span::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 3px;
+    top: calc(50% - 1px);
+    width: 1.5rem;
+    height: 0.3rem;
+    background-color: var(--col_main_green);
+}
+.part_bar_right span::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 3px;
+    top: calc(50% - 1px);
+    width: 1.5rem;
+    height: 0.3rem;
+    background-color: var(--col_main_green);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    -webkit-transition: transform 0.3s ease;
+    transition: transform 0.3s ease;
+}
+.part_bar_right em {
+  font-weight: 400;
+}
+.part_bar_right em::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: calc(50% - 10px);
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid var(--col_main_green);
+    border-radius: 0.2rem;
+}
+.articleRowBtn {display: flex;align-items: center;height: 100%;padding-left: 4.5rem;}
+</style>
+</head>
+
+
+<!-- 모달 창 끝 -->
+
+<body>
+<script type="text/javascript" >
+var curMenu = "9847";
+var curMenuObj = {};
+var leftMenuList = [];
+var startMenuSeq = "";
+var allMenuList = [];	// 사이트 전체 메뉴 목록
+var naviDsp = [];
+var mobileMenuList = [];	// 모바일 메뉴 목록
+var sessionMenuList = [];
+
+// 2026-08-13 웹접근성 추가
+var menuovList2 = ['111','12500','12498'];
+var menuovList3 = ['12513'];
+var menuovList4 = ['12497'];
+
+var statSearchForm = new FormControllHelper('statSearchForm');	// 조회 폼 컨트롤러 객체 생성
+$(function(){
+	selectSiteMenuAll("44");	// 사이트 전체 메뉴 조회(대국민포털 메뉴순번)
+
+	// Top 산림 통계 메뉴 링크 append 
+	var topMenu1 = _getChildFirstMenuForArr("109", allMenuList);
+	if(!_isnt(topMenu1)){
+// 		$("#topMenuLink1").attr("href", getMenuLink(topMenu1) );
+	}
+	// Top 임업 통계 메뉴 링크 append 
+	var topMenu2 = _getChildFirstMenuForArr("110", allMenuList);
+	if(!_isnt(topMenu2)){
+// 		$("#topMenuLink2").attr("href", getMenuLink(topMenu2) );
+	}
+	
+	if(!_isnt(curMenu)){
+		getMenuNaviLi(curMenu, allMenuList);
+		naviDsp.push("<li id='naviHome'><a>홈</a></li>");
+		for(var i=naviDsp.length;i>0;i--){
+			$("#menuNaviDsp").append(naviDsp[i]);
+		}
+		$(document).attr("title",_replaceTitle(naviDsp));
+		
+		getLeftMenuDsp();
+		setCurMenuDsp();
+		
+		// 상위 보조 메뉴 생성 추가
+		getTopLocationMenuDsp();
+		
+		getMobileMenuNaviLi(curMenu, allMenuList);
+		getMobileMenuDsp();
+		setCurMobileMenuDsp(true);
+		
+		// 현재 보고 있는 페이지에 해당하는 좌측 메뉴 강조, 대국민 -> 자료실
+		if(curMenuObj.depth == 2) {
+			$("#leftMenuBtn" + curMenu).addClass("active");
+		} else if(curMenuObj.depth == 3) {
+			$("#leftMenuBtn" + curMenu).addClass("on");
+			$("#leftMenuBtn" + curMenuObj.upperMenuSeq).addClass("active");
+		}
+		//$("#leftMenuLi" + curMenu).css("backgroundColor", "#CBE4D8");
+		//$("#leftMenuBtn" + curMenu).css("color", "white");
+	}
+	
+	// 포커스되면 위로 보여주기
+	$('#skip a').on('focus', function(){
+	  $(this).stop().animate({ top: 0 }, 200);
+	});
+	
+	// 포커스 빠져나가면 다시 숨기기
+	$('#skip a').on('focusout', function(){
+	  $(this).stop().animate({ top: "-40px" }, 200);
+	});
+	
+	// 클릭 시에도 숨기기 (앵커 이동 후 바로)
+	$('#skip a').on('click', function(){
+	  $(this).stop().animate({ top: "-40px" }, 200);
+	});
+    
+ 	// 주메뉴 MENU
+	gnb (); // GNB Menu
+	
+	// 웹 접근성 추가 2026-08-13
+	for(var i =0; i<menuovList2.length; i++){
+		if(curMenuObj.upperMenuSeq == menuovList2[i] || curMenuObj.menuSeq ==  menuovList2[i]){
+			$(".num2").find("a").eq(0).addClass("ov");
+		}
+	}	
+	
+	for(var i=0; i< menuovList3.length; i++){
+		if(curMenuObj.upperMenuSeq == menuovList3[i] || curMenuObj.menuSeq ==  menuovList3[i]){
+			$(".num3").find("a").eq(0).addClass("ov");
+		}
+	}
+
+	for(var i=0; i< menuovList4.length; i++){
+		if(curMenuObj.upperMenuSeq == menuovList4[i] || curMenuObj.menuSeq ==  menuovList4[i]){
+			$(".num4").find("a").eq(0).addClass("ov");
+		}
+	}
+	// 웹 접근성 추가 	
+	
+	/*통계보기페이지 트리형 슬라이스바*/
+	// 초기 상태: 모든 하위 메뉴 숨기기
+    const allSubMenus = document.querySelectorAll('.depth2, .depth3, .depth4');
+    allSubMenus.forEach(menu => {
+    	// 하위 LI 메뉴 선택 시, UL 메뉴가 'collapsed' 되는 문제 수정
+    	if(menu === document.getElementById("leftMenuUl"+curMenuObj.upperMenuSeq)) {
+	        menu.classList.add('expanded');
+    	} else {
+	        menu.classList.add('collapsed');
+    	}
+    });
+    
+    // 모든 토글 버튼에 클릭 이벤트 추가
+    //const toggleBtns = $('.leftTreeToggleBtn');
+    const toggleBtns = document.querySelectorAll('.leftTreeToggleBtn');
+    
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 현재 버튼의 부모 li 찾기
+            const parentLi = this.parentElement;
+            const currentDepth = parentLi.getAttribute('data-depth');
+            
+            // 부모 li의 자식 중 ul 태그 찾기
+            let subMenu = null;
+            for (let i = 0; i < parentLi.children.length; i++) {
+                if (parentLi.children[i].tagName === 'UL') {
+                    subMenu = parentLi.children[i];
+                    break;
+                }
+            }
+            
+            if (subMenu) {
+                const span = this.querySelector('span');
+                
+                // 현재 표시 상태 확인
+                const isCollapsed = subMenu.classList.contains('collapsed');
+                
+             	// 자료실 - depth2 메뉴를 클릭한 경우, 같은 레벨의 다른 메뉴들 닫기
+                if (currentDepth === '2') {
+                    // 모든 depth2 메뉴 찾기
+                    const allDepth2Items = document.querySelectorAll('.treeLi[data-depth="2"]');
+                    
+                    allDepth2Items.forEach(item => {
+                        // 현재 클릭한 항목이 아닌 경우
+                        if (item !== parentLi) {
+                            const otherBtn = item.querySelector('.leftTreeToggleBtn');
+                            const otherSubMenu = item.querySelector('ul');
+                            const otherSpan = otherBtn ? otherBtn.querySelector('span') : null;
+                            
+                            if (otherSubMenu && otherBtn) {
+                                // 다른 메뉴 닫기
+                                otherSubMenu.classList.remove('expanded');
+                                otherSubMenu.classList.add('collapsed');
+                                otherSubMenu.style.display = 'none'; // display none 추가
+                                otherBtn.classList.remove('active');
+                                
+                                if (otherSpan) {
+                                    otherSpan.classList.remove('open');
+                                }
+                                
+                                // 하위 메뉴들도 모두 닫기
+                                const childSubMenus = otherSubMenu.querySelectorAll('ul');
+                                childSubMenus.forEach(childMenu => {
+                                    childMenu.classList.remove('expanded');
+                                    childMenu.classList.add('collapsed'); 
+                                });
+                                
+                                
+                                const childSpans = otherSubMenu.querySelectorAll('span.open');
+                                childSpans.forEach(childSpan => {
+                                    childSpan.classList.remove('open');
+                                });
+                            }
+                        }
+                    });
+                }
+                                
+                if (isCollapsed) {
+                    // 열기
+                    subMenu.classList.remove('collapsed');
+                    subMenu.classList.add('expanded');
+                    this.classList.add('active'); // active 추가
+                    if (span) {
+                        span.classList.add('open');
+                    }
+                } else {
+                    // 닫기
+                    subMenu.classList.remove('expanded');
+                    subMenu.classList.add('collapsed');
+                    if (span) {
+                        span.classList.remove('open');
+                    }
+                    
+                    // 하위 메뉴들도 모두 닫기
+                    const childSubMenus = subMenu.querySelectorAll('ul');
+                    childSubMenus.forEach(childMenu => {
+                        childMenu.classList.remove('expanded');
+                        childMenu.classList.add('collapsed');
+                    });
+                    
+                    // 하위 메뉴들의 아이콘도 모두 플러스로 변경
+                    const childSpans = subMenu.querySelectorAll('span.open');
+                    childSpans.forEach(childSpan => {
+                        childSpan.classList.remove('open');
+                    });
+                }
+            }
+        });/*통계보기페이지 트리형 슬라이스바*/
+    });
+	
+	$(document).on("click",".leftTreeToggleBtn",function(e){
+		e.preventDefault();
+		var menuSeq = $(this).parent().attr("data-menuSeq");
+		if($(this).parent().children("ul:first").html()=="") getLeftSubMenu(menuSeq);
+		$(this).toggleClass("open_folder");
+		$(this).toggleClass("click");
+		$(this).parent().children("ul:first").toggle();
+	});
+
+	/* 2021.04.26 hsj 마우스오버 이벤트 제거
+	$("#lnb").on("mouseenter",function(){
+		$("#lnb").css("width","auto");
+	});
+	
+	$("#lnb").on("mouseleave",function(){
+		$("#lnb").css("width","320px");
+	});
+	*/	
+	
+	$("#statSearchBtn").on("click",function(e){	 //  검색 버튼 클릭
+		e.preventDefault();
+		//var searchText = $("#subStatSearchText").val().trim();
+		var searchText = $("#mainStatSearchText").val().trim();
+		if(searchText == "") {
+			alert("검색어를 입력해주세요.")
+		} else {
+			//var url = _ctxPath + '/ptl/main/searchStatMenuList.do';
+			var url = _ctxPath + '/ptl/main/searchTotalList.do';
+			var params = statSearchForm.getFormData2Json({searchText : searchText, searchItem : 'tab01', upperMenuSeq : 0, pageIndex : 1, pageSize : 10});
+			submitCall(url, params, 'post');
+		}
+	});	
+
+	// 대국민 개편으로 subStatSearchText -> mainStatSearchText 로 수정
+    document.getElementById('mainStatSearchText').addEventListener('keyup', function(event) {
+ 	    // keyCode가 13이면(엔터 키)
+ 	    if (event.keyCode === 13) {
+ 	        // 검색 함수 호출
+ 	        $('#statSearchBtn').trigger('click');
+ 	    }
+ 	});
+
+	
+	//모바일메뉴이벤트
+	$('.mobileSubMenuBtn').on("click", function(e){
+		e.preventDefault();
+		$(this).addClass("on");
+		$('.mobileSubMenuBtn').not($(this)).removeClass("on");
+		$("#mobileMenuTreeArea").empty();
+		startMenuSeq = "";
+		curMenu = $(this).data("curmenu");
+		
+		if(!_isnt(curMenu)){	// 현재 메뉴에 의한 좌측 메뉴 구성
+			getMobileMenuNaviLi(curMenu, allMenuList);
+			getMobileMenuDsp();
+	 		setCurMobileMenuDsp();
+	 		//22-06-08 중메뉴만 보이도록 수정(모바일)
+	 		//$('#mobileMenuTreeArea li a:eq(0)').click();
+		}
+	});
+
+	//모바일메뉴이벤트
+	$(document).on("click",".mobileTreeToggleBtn",function(e){
+		e.preventDefault();
+		var menuSeq = $(this).parent().attr("data-menuSeq");
+		if($(this).parent().children("ul:first").html()=="") getMobileSubMenu(menuSeq);
+		$(this).toggleClass("open_folder");
+		$(this).toggleClass("click");
+		$(this).parent().children("ul:first").toggle();
+	});
+	
+	//22-06-08 중메뉴만 보이도록 수정
+	//$("#leftMenuTreeArea li a:eq(0)").click();
+	//22-06-08 중메뉴만 보이도록 수정(모바일)
+	//$("#mobileMenuTreeArea li a:eq(0)").click();
+	
+	
+	
+});
+
+function selectSiteMenuAll(upperMenuSeq){		// 사이트 전체 메뉴 조회(대국민포털 메뉴순번)
+	if(Array.isArray(sessionMenuList) && sessionMenuList.length > 0){
+		for(var i=sessionMenuList.length-1;i>=0;i--){
+			var row = _null2Blank(sessionMenuList[i]);
+			allMenuList[i] = row;
+		}
+	} else {
+		var url = _ctxPath + '/ptl/comm/selectPtlMenuList.do';
+		var params = { upperMenuSeq : upperMenuSeq };	 
+		ajaxCallSyncGet(url, params, function(result){
+			if(result.code==1){
+				var list = result.data;
+				if(Array.isArray(list) && list.length>0){
+					for(var i=list.length-1;i>=0;i--){
+						var row = _null2Blank(list[i]);
+						allMenuList[i] = row;
+					}
+				}
+			}
+		});	
+	}
+}
+
+function getMenuNaviLi(thisSeq, menuList){
+	for(var i=0;i<menuList.length;i++){
+		var menu = menuList[i];
+		if(!_isnt(menu) && menu.menuSeq == thisSeq){
+			naviDsp.push("<li><a>"+menu.menuNm+"</a></li>");
+			if(!_isnt(menu.upperMenuSeq)){
+				getMenuNaviLi(menu.upperMenuSeq, menuList);
+				if(!startMenuSeq){
+					startMenuSeq = menu.menuSeq;	
+					$("#leftTopMenuNmDsp").text(menu.menuNm);
+				}
+				break;
+			}
+		}	
+	}
+}
+
+function getLeftMenuDsp(){
+	for(var i=0;i<allMenuList.length;i++){
+		var row = allMenuList[i];
+		if(curMenu==row.menuSeq)	curMenuObj = row;
+		if(!_isnt(row) && row.upperMenuSeq == startMenuSeq){
+			//2025-01-09 인포그래픽 - 임산물단기시장동향 메뉴숨김
+			//if(row.menuSeq != '9859') {
+				leftMenuList[row.menuSeq] = row;
+				$li = mkLeftMenuLiNew(row);
+				$("#leftMenuTreeArea").append($li);
+	// 			getLeftSubMenu(row.menuSeq);
+			//}
+		}	
+	}
+}
+
+function getLeftSubMenu(upperMenuSeq){
+	for(var i=0;i<allMenuList.length;i++){
+		var row = allMenuList[i];
+		if(!_isnt(row) && row.upperMenuSeq == upperMenuSeq){
+			leftMenuList[row.menuSeq] = row;
+			$li = mkLeftMenuLi(row);
+			$("#leftMenuUl"+row.upperMenuSeq).append($li);
+// 			getLeftSubMenu(row.menuSeq);
+		}
+	}
+}
+
+function mkLeftMenuLi(row){
+	// 전국산주현황 , 임산물생산조사 밑의 줄 추가 2026-09-10
+	var underLine = "";
+	if(row.menuSeq == "9846" || row.menuSeq == "9847") underLine = "menu_line";
+	
+	html = "<li id='leftMenuLi"+row.menuSeq+"' class='treeLi "+underLine+"' data-menuSeq='"+row.menuSeq+"' data-depth='"+row.depth+"'>";
+	var liAClass = "";
+	var href = "";
+	var childDsp = "";
+	if(row.menuTypeCd!="FOLDER"){
+		liAClass =" file ";
+		href = " href='"+getMenuLink(row)+"' ";
+	}
+	else{
+		liAClass =" leftTreeToggleBtn ";
+		/** 2021.04.26 hsj 갯수 표시 제거
+		childDsp = "<span class='new'>"+row.childCnt+"</span>";
+		*/
+	}
+	html +=	"<a id='leftMenuBtn"+row.menuSeq+"' "+href+" class='"+liAClass+"' title='"+row.menuDscrt+"'>"+row.menuNm+"</a> "+childDsp;
+	if(row.childCnt>0){
+		html +=	"\n <ul id='leftMenuUl"+row.menuSeq+"' class='treeUl depth"+(parseInt(row.depth)+1)+"' style='display:none;'></ul>";
+	}		
+	html +=	"</li>";
+	return $(html);
+}
+
+function mkLeftMenuLiNew(row){
+	html = "<li data-menuSeq='"+row.menuSeq+"' data-depth='"+row.depth+"' id='leftMenuLi"+row.menuSeq+"' class='treeLi lnb_depth_1'>";
+	var liAClass = "";
+	var href = "";
+	var childDsp = "";
+	if(row.menuTypeCd!="FOLDER"){
+		liAClass =" file ";
+		href = " href='"+getMenuLink(row)+"' ";
+	}
+	else{
+		liAClass =" leftTreeToggleBtn menu-toggle ";
+	}
+	html +=	"<a id='leftMenuBtn"+row.menuSeq+"' "+href+" class='"+liAClass+"' title='"+row.menuDscrt+"'>"+row.menuNm+"</a> "+childDsp;
+	if(row.childCnt>0){
+		html +=	"\n <ul id='leftMenuUl"+row.menuSeq+"' class='treeUl depth"+(parseInt(row.depth)+1)+"' style='display:none;'></ul>";
+	}		
+	html +=	"</li>";
+	return $(html);
+}
+
+function setCurMenuDsp(){
+	$("#curMenuNmDsp").text(curMenuObj.menuNm);
+	var curDepth = curMenuObj.depth;
+	var upMenuSeq = curMenuObj.upperMenuSeq;
+	var upMenuSeqList = [];
+	for(var i=curDepth;i>2;i--){
+		for(var j=0;j<allMenuList.length;j++){
+			if(upMenuSeq==allMenuList[j].menuSeq){
+				upMenuSeqList.push(allMenuList[j].menuSeq);
+				curDepth = allMenuList[j].depth;
+				upMenuSeq = allMenuList[j].upperMenuSeq;
+				break;
+			}
+		}
+	}	
+	for(var i=upMenuSeqList.length;i>=0;i--){
+		getLeftSubMenu(upMenuSeqList[i]);
+		$("#leftMenuBtn"+upMenuSeqList[i]).toggleClass("open_folder");
+		$("#leftMenuBtn"+upMenuSeqList[i]).toggleClass("click");
+		$("#leftMenuBtn"+upMenuSeqList[i]).parent().children("ul:first").toggle();
+	}
+// 	$("#leftMenuLi"+curMenu).children("a").addClass("click");
+}
+
+
+//모바일메뉴관련스크립트START
+function getMobileMenuDsp(){
+	for(var i=0;i<allMenuList.length;i++){
+		var row = allMenuList[i];
+		
+		if(curMenu==row.menuSeq)	curMenuObj = row;
+		if(!_isnt(row) && row.upperMenuSeq == startMenuSeq){
+			//2025-01-09 인포그래픽 - 임산물단기시장동향 메뉴숨김
+			//if(row.menuSeq != '9859') {
+				mobileMenuList[row.menuSeq] = row;
+				$li = mkMobileMenuLi(row);
+				$("#mobileMenuTreeArea").append($li);
+			//}
+		}	
+	}
+}
+
+function mkMobileMenuLi(row){
+	html = "<li id='mobileMenuLi"+row.menuSeq+"' class='treeLi' data-menuSeq='"+row.menuSeq+"' data-depth='"+row.depth+"'>";
+	var liAClass = "";
+	var href = "";
+	var childDsp = "";
+	if(row.menuTypeCd!="FOLDER"){
+		liAClass =" file ";
+		href = " href='"+getMenuLink(row)+"' ";
+	}else{
+		liAClass =" mobileTreeToggleBtn ";
+	}
+	html +=	"<a id='mobileMenuBtn"+row.menuSeq+"' "+href+" class='"+liAClass+" btn' ";
+	if(row.menuDscrt){
+		html += " title='"+row.menuDscrt+"' ";
+	}
+	html +=	">"+row.menuNm+"</a> "+childDsp;
+	if(row.childCnt>0){
+		html +=	"\n <ul id='mobileMenuUl"+row.menuSeq+"' class='treeUl depth"+(parseInt(row.depth)+1)+"' style='display:none;'></ul>";
+	}		
+	html +=	"</li>";
+	return $(html);
+}
+
+function getMobileMenuNaviLi(thisSeq, menuList){
+	for(var i=0;i<menuList.length;i++){
+		var menu = menuList[i];
+		if(!_isnt(menu) && menu.menuSeq == thisSeq){
+			if(!_isnt(menu.upperMenuSeq)){
+				getMobileMenuNaviLi(menu.upperMenuSeq, menuList);
+				if(!startMenuSeq){
+					startMenuSeq = menu.menuSeq;
+				}
+				break;
+			}
+		}	
+	}
+}
+
+function setCurMobileMenuDsp(moveMenuFlag){	
+	var curDepth = curMenuObj.depth;
+	var upMenuSeq = curMenuObj.upperMenuSeq;
+	var upMenuSeqList = [];
+	for(var i=curDepth;i>2;i--){
+		for(var j=0;j<allMenuList.length;j++){
+			if(upMenuSeq==allMenuList[j].menuSeq){
+				upMenuSeqList.push(allMenuList[j].menuSeq);
+				curDepth = allMenuList[j].depth;
+				upMenuSeq = allMenuList[j].upperMenuSeq;
+				break;
+			}
+		}
+	}	
+	for(var i=upMenuSeqList.length;i>=0;i--){
+		getMobileSubMenu(upMenuSeqList[i]);
+		$("#mobileMenuBtn"+upMenuSeqList[i]).toggleClass("open_folder");
+		$("#mobileMenuBtn"+upMenuSeqList[i]).toggleClass("click");
+		$("#mobileMenuBtn"+upMenuSeqList[i]).parent().children("ul:first").toggle();
+	}
+	
+	// 모바일 메뉴 이동 시, 메뉴 왼편 산림통계, 임업통계, 기타통계 대 메뉴가 무조건 산림통계가 클릭되어있는것처럼 보이는 오류 수정 시작
+	var firstMenuNm = null; // 산림통계, 임업통계, 기타통계가 들어갈 변수
+	var upMenuSeqTmp = upMenuSeq; // upMenuSeq를 가공하면 다른곳에서 문제가 생길 수 있으니 tmp 변수로 담아 사용
+	var curDepthTmp = curDepth; // curDepth를 가공하면 다른곳에서 문제가 생길 수 있으니 tmp 변수로 담아 사용
+	if(moveMenuFlag){
+		for(var i=curDepthTmp;i>1;i--){ //1depth까지 찾기
+			for(var j=0;j<allMenuList.length;j++){ //모든 메뉴 리스트에서
+				if(upMenuSeqTmp==allMenuList[j].menuSeq){
+					curDepthTmp = allMenuList[j].depth;
+					upMenuSeqTmp = allMenuList[j].upperMenuSeq;
+					firstMenuNm = allMenuList[j].menuNm;
+					break;
+				}
+			}
+		}
+	
+		
+		$('.mobileSubMenuBtn').each(function(){
+			if($(this).text() == firstMenuNm){ //text로 비교했기때문에, 메뉴명이 바뀌게되면  ptlSubTop.jsp에 하드코딩 되어있는 모바일 메뉴명과 시스템관리-메뉴관리에서의 메뉴명도 똑같이 바꿔주어야 작동함.
+				$(this).addClass("on");
+			}else{
+				$(this).removeClass("on");
+			}
+		}) 
+	}; 
+	// 모바일 메뉴 이동 시, 메뉴 왼편 산림통계, 임업통계, 기타통계 대 메뉴가 무조건 산림통계가 클릭되어있는것처럼 보이는 오류 수정 끝
+	$("#mobileMenuLi"+curMenu).children("a").addClass("click");
+}
+
+function getMobileSubMenu(upperMenuSeq){
+	for(var i=0;i<allMenuList.length;i++){
+		var row = allMenuList[i];
+		if(!_isnt(row) && row.upperMenuSeq == upperMenuSeq){
+			mobileMenuList[row.menuSeq] = row;
+			$li = mkMobileMenuLi(row);
+			$("#mobileMenuUl"+row.upperMenuSeq).append($li);
+		}
+	}
+}
+
+//251124 대국민 신규 함수 추가
+//GNB Menu
+function gnb (){
+	var param = $("#gnb>ul>li>a");
+	param.th2 = param.parent().find(">ul>li>a"); 
+	var bg = $("#header .bg");
+
+	var eqCnt = 0;
+	var liCnt = 0;
+	$("#gnb>ul>li").each(function(i){
+		$(this).find(">ul>li").length;
+		if(liCnt < $(this).find(">ul>li").length){
+		  liCnt = $(this).find(">ul>li").length;
+		  eqCnt = i;
+		}
+	});
+	
+	var gnbHei = param.parent().eq(eqCnt).find(">ul").innerHeight();
+	param.next().css({"height":gnbHei+"px"});
+	
+	function _close (){
+		param.removeClass("ov");
+		param.next().hide().stop().animate({"opacity":0},0);
+		bg.stop().animate({"height":0+"px","padding-bottom":0+"px"},200,function(){
+			$(this).hide();	
+		});	
+		
+		// 웹 접근성 추가 2026-08-13
+		for(var i =0; i<menuovList2.length; i++){
+			if(curMenuObj.upperMenuSeq == menuovList2[i] || curMenuObj.menuSeq ==  menuovList2[i]){
+				$(".num2").find("a").eq(0).addClass("ov");
+			}
+		}	
+		
+		for(var i=0; i< menuovList3.length; i++){
+			if(curMenuObj.upperMenuSeq == menuovList3[i] || curMenuObj.menuSeq ==  menuovList3[i]){
+				$(".num3").find("a").eq(0).addClass("ov");
+			}
+		}
+
+		for(var i=0; i< menuovList4.length; i++){
+			if(curMenuObj.upperMenuSeq == menuovList4[i] || curMenuObj.menuSeq ==  menuovList4[i]){
+				$(".num4").find("a").eq(0).addClass("ov");
+			}
+		}
+		// 웹 접근성 추가 		
+		
+	}
+	
+	param.bind("mouseenter focus",function(){
+		param.removeClass("ov");
+		$(this).addClass("ov");	
+		param.next().show().stop().animate({"opacity":1},400);
+		bg.show().stop().animate({"height":(gnbHei+20)+"px"},100);
+	}); 
+	
+	param.th2.bind("mouseenter focus",function(){
+		param.removeClass("ov");
+		$(this).parent().parent().prev().addClass("ov");
+	});	
+	
+	$("#header").bind("mouseleave",function(){
+		_close ();
+	});	
+
+	param.parent().last().find("ul>li").last().find(">a").bind("focusout",function(){
+		_close ();
+	});
+	
+	param.parent().each(function(e){
+		$(this).addClass("num"+(e+1));	
+	});	
+}
+
+//모바일메뉴로 탭이동 금지
+function updateMobileMenuTabindex() {
+	if (window.innerWidth > 1024) {
+	 // 데스크탑 화면에서는 m_menu 비활성화
+	 $('.m_menu a').attr('tabindex', '-1');    
+	} else {
+	 // 모바일 화면에서는 tabindex 복원
+	 $('.m_menu a').removeAttr('tabindex');
+	}
+}
+
+// function setCurMenuDsp(){		// 이전
+// 	$("#curMenuNmDsp").text(curMenuObj.menuNm);
+// 	var curDepth = curMenuObj.depth;
+// 	console.log(curDepth);
+// 	var upMenuSeq = curMenuObj.upperMenuSeq;
+// 	console.log(upMenuSeq);
+// 	for(var i=curDepth;i>0;i--){
+// 		 if(!_isnt(leftMenuList[upMenuSeq])){
+// 			 $("#leftMenuUl"+upMenuSeq).show();
+// 			 $("#leftMenuBtn"+upMenuSeq).toggleClass("open_folder");
+// 			 upMenuSeq = leftMenuList[upMenuSeq].upperMenuSeq;
+// 			 console.log(upMenuSeq);
+// 		 }
+// 	}	
+// 	$("#leftMenuLi"+curMenu).children("a").addClass("click");
+// }
+
+
+// 상위 보조 메뉴 동적 생성 (depth별로 계층 구조)
+function getTopLocationMenuDsp(){
+	var locationMenuHtml = "";
+	
+	// 현재 메뉴부터 상위로 올라가면서 depth별 메뉴 수집
+	var menuHierarchy = [];
+	var currentMenuSeq = curMenu;
+	
+	while(currentMenuSeq){
+		var menuObj = getMenuObjBySeq(currentMenuSeq);
+		if(!menuObj) break;
+		
+		// depth 1, 2, 3만 수집
+		if(menuObj.depth >= 1 && menuObj.depth <= 3){
+			menuHierarchy.unshift(menuObj); // 배열 앞에 추가 (역순 정렬)
+		}
+		
+		currentMenuSeq = menuObj.upperMenuSeq;
+	}
+	
+	// 각 depth별로 li 생성
+	for(var i=0; i<menuHierarchy.length; i++){
+		var menu = menuHierarchy[i];
+		
+		// 해당 depth의 형제 메뉴들 찾기
+		var siblingMenus = [];
+				
+		for(var j=0; j<allMenuList.length; j++){
+			var row = allMenuList[j];
+			
+			if(menu.depth == 1){
+				
+				if(row.upperMenuSeq == menu.upperMenuSeq && row.depth == menu.depth){
+					
+					siblingMenus = [
+						{
+							menuNm: '통계보기',
+							menuUrl: '/ptl/newStat/newStatDtl.do',
+							depth: 1,
+							isHardcoded: true
+						},
+						{
+							menuNm: '자료실',
+							menuUrl: '/ptl/article/articleList.do?curMenu=11198&bbsId=ptlPdsBase',
+							depth: 1,
+							isHardcoded: true
+						},
+						{
+							menuNm: '보이는통계',
+							menuUrl: '/ptl/visualization/visualizationDtl.do?curMenu=11220',
+							depth: 1,
+							isHardcoded: true
+						},
+						{
+							menuNm: '알림마당',
+							menuUrl: '/ptl/article/articleList.do?curMenu=11213&bbsId=ptlNotice',
+							depth: 1,
+							isHardcoded: true
+						}
+					];
+				}
+			} else {
+				if(row.upperMenuSeq == menu.upperMenuSeq && row.depth == menu.depth){
+					siblingMenus.push(row);
+				}
+			}
+		}
+		// li 생성
+		locationMenuHtml += "<li>";
+		
+		// 현재 depth 메뉴 링크
+		//var menuLink = getMenuLink(menu);
+		
+		// 통계자료실은 depth3이 있어서 예외 처리
+		var menuLink = "";
+		var menuNm = menu.menuNm.replace(/\s+/g, '');
+
+		if(menuNm == "통계자료실" || menuNm == "인포그래픽"){
+			// 통계자료실일 경우 첫 번째 하위 메뉴(depth 3)의 링크 사용
+			var firstChildMenu = getFirstChildMenu(menu.menuSeq);
+			if(firstChildMenu){
+				menuLink = getMenuLink(firstChildMenu);
+			} else {
+				menuLink = getMenuLink(menu);
+			}
+		} else {
+			menuLink = getMenuLink(menu);
+		}
+		
+		locationMenuHtml += "<a href='" + menuLink + "' class='menu-toggle' title='보조메뉴열기'>" + menu.menuNm + "</a>";
+		
+		// 형제 메뉴들을 ul>li로 추가
+		if(siblingMenus.length > 0){
+			locationMenuHtml += "<ul>";			
+			for(var k=0; k<siblingMenus.length; k++){
+				var sibling = siblingMenus[k];
+				var siblingLink = "";
+				var siblingNm = sibling.menuNm.replace(/\s+/g, '');
+				
+				if(sibling.isHardcoded){
+					siblingLink = _ctxPath + sibling.menuUrl;
+				} else if(siblingNm == "통계자료실" || siblingNm == "인포그래픽"){
+					var firstChild = getFirstChildMenu(sibling.menuSeq);
+					siblingLink = firstChild ? getMenuLink(firstChild) : getMenuLink(sibling);
+				} else {
+					siblingLink = getMenuLink(sibling);
+				}
+				
+				locationMenuHtml += "<li><a href='" + siblingLink + "'>" + sibling.menuNm + "</a></li>";
+			}
+			locationMenuHtml += "</ul>";
+		}
+		
+		locationMenuHtml += "</li>";
+	}
+		
+	$(".location_menu").html(locationMenuHtml);
+	
+	// ★★★ 메뉴 이벤트 바인딩 ★★★
+	initLocationMenuEvents();
+}
+
+//첫 번째 하위 메뉴 찾기 (통계자료실 예외처리용)
+function getFirstChildMenu(parentMenuSeq){
+	for(var i=0; i<allMenuList.length; i++){
+		if(allMenuList[i].upperMenuSeq == parentMenuSeq){
+			return allMenuList[i];
+		}
+	}
+	return null;
+}
+
+// menuSeq로 메뉴 객체 찾기
+function getMenuObjBySeq(menuSeq){
+	for(var i=0; i<allMenuList.length; i++){
+		if(allMenuList[i].menuSeq == menuSeq){
+			return allMenuList[i];
+		}
+	}
+	return null;
+}
+
+// 메뉴 링크 생성
+function getMenuLink(menuObj){
+	if(!menuObj) return "#";
+	
+	var link = _ctxPath;
+	
+	// menuUrl이 있으면 사용
+	if(menuObj.menuUrl && menuObj.menuUrl != ""){
+		link += menuObj.menuUrl;
+		if(menuObj.menuUrl.indexOf("?") > -1){
+			link += "&curMenu=" + menuObj.menuSeq;
+		} else {
+			link += "?curMenu=" + menuObj.menuSeq;
+		}
+		return link;
+	}
+	
+	// bbsId가 있으면 게시판 링크
+	if(menuObj.bbsId && menuObj.bbsId != ""){
+		link += "/ptl/article/articleList.do?curMenu=" + menuObj.menuSeq + "&bbsId=" + menuObj.bbsId;
+		return link;
+	}
+	
+	// 기본 링크
+	link += "/ptl/newStat/newStatDtl.do?curMenu=" + menuObj.menuSeq;
+	return link;
+}
+
+//상위 보조 메뉴 이벤트 초기화
+function initLocationMenuEvents(){
+	const menuItems = document.querySelectorAll('.location_menu > li');
+	
+	menuItems.forEach(item => {
+		const toggle = item.querySelector('a');
+		const subMenu = item.querySelector('ul');
+		
+		if (!subMenu) return; // 하위 메뉴 없으면 스킵
+		
+		// 초기 상단 텍스트 저장
+		let currentText = toggle.textContent.trim();
+		let currentHref = toggle.getAttribute('href');
+		
+		// ✅ 초기화: 상단과 같은 하위 메뉴 항목 숨기기
+		const allSubLinks = subMenu.querySelectorAll('a');
+		allSubLinks.forEach(link => {
+			if (link.textContent.trim() === currentText) {
+				link.parentElement.style.display = 'none';
+			} else {
+				link.parentElement.style.display = 'block';
+			}
+		});
+		
+		// 하위 메뉴 클릭 이벤트
+		subMenu.addEventListener('click', function(e) {
+			if (e.target.tagName === 'A') {
+				e.preventDefault();
+				
+				const clickedLink = e.target;
+				const selectedText = clickedLink.textContent.trim();
+				const selectedHref = clickedLink.getAttribute('href');
+				
+				// 모든 하위 메뉴 항목 보이기
+				allSubLinks.forEach(link => {
+					link.parentElement.style.display = 'block';
+				});
+				
+				// 선택된 항목만 숨기기
+				clickedLink.parentElement.style.display = 'none';
+				
+				// 상단 텍스트 교체
+				toggle.textContent = selectedText;
+				toggle.setAttribute('href', selectedHref);
+				
+				// 현재 값 업데이트
+				currentText = selectedText;
+				currentHref = selectedHref;
+				
+				// 메뉴 닫기
+				toggle.classList.remove('active');
+				subMenu.style.display = 'none';
+				
+				// ✅ 페이지 이동
+				window.location.href = selectedHref;
+			}
+		});
+		
+		// 토글 클릭 이벤트
+		toggle.addEventListener('click', function(e) {
+			e.preventDefault();
+			
+			const isActive = this.classList.contains('active');
+			
+			// 다른 메뉴들 닫기
+			menuItems.forEach(otherItem => {
+				if (otherItem !== item) {
+					const otherToggle = otherItem.querySelector('a');
+					const otherSubMenu = otherItem.querySelector('ul');
+					if (otherToggle) otherToggle.classList.remove('active');
+					if (otherSubMenu) otherSubMenu.style.display = 'none';
+				}
+			});
+			
+			// 현재 메뉴 토글
+			this.classList.toggle('active');
+			subMenu.style.display = isActive ? 'none' : 'block';
+		});
+		
+		// 마우스가 나가면 메뉴 닫기
+		item.addEventListener('mouseleave', function() {
+			toggle.classList.remove('active');
+			subMenu.style.display = 'none';
+		});
+	});
+}
+
+</script>
+	<!-- wrap start -->
+	<div id="wrap">
+		<div id="skip">
+			<a href="#skipNav">주메뉴 바로가기</a>
+			<a href="#lnb">보조메뉴 바로가기</a>
+			<a href="#container_wrap">본문 바로가기</a>
+		</div>
+		
+		
+
+
+
+
+
+
+
+
+
+<div class="js_mobile_check"></div>
+
+<header id="header">
+	<div class="headTop box1400" id="skipNav">
+		<div class="head_box">
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo.png" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+            <!--
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo_top_main.png" style="width: 267px; height: 51px;" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo_top_spring.png" style="width: 267px; height: 51px;" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo_top_summer.png" style="width: 267px; height: 51px;" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo_top_autumn.png" style="width: 267px; height: 51px;" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+            <h1 class="sub_logo"><a href="/stat/ptl/main/main.do"><img src="/stat/images/main/logo_top_winter.png" style="width: 267px; height: 51px;" alt="FOSS 산림청 산림자원통계포털시스템 Forest Statistical System" /></a></h1>
+             -->
+        </div>
+        
+        <div class="menu_box">
+	        <nav id="gnb">
+	            <ul>
+	                <li>
+	                    <a href="/stat/ptl/newStat/newStatDtl.do">통계보기</a>
+	                    <ul>
+	                        <li><a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=8">승인통계</a></li>
+	                        <li><a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=2">유관기관통계</a></li>
+	                        <li><a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=14">산림임업통계연보</a></li>
+	                    </ul>
+	                </li>
+	                <li>
+	                    <a href="/stat/ptl/infoGraphc/infoGraphcList.do?curMenu=12501">자료실</a>
+	                    <ul>
+							<li><a href="/stat/ptl/infoGraphc/infoGraphcList.do?curMenu=12501">인포그래픽</a></li>
+	                        <li><a href="/stat/ptl/article/articleList.do?curMenu=9795&bbsId=ptlPdsBase">통계자료실</a></li>
+	                        <li><a href="/stat/ptl/eBook/ptlEBookList.do?curMenu=12399">통계간행물(E-Book)</a></li>
+	                        <li><a href="/stat/ptl/article/articleList.do?curMenu=991&bbsId=latestStat">기타자료실</a></li>
+	                    </ul>
+	                </li>
+	                <li>
+	                    <a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12503">보이는 통계</a>
+	                    <ul>
+	                        <li><a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12503">산림자원통계</a></li>
+	                        <li><a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12504">임업통계</a></li>
+	                        <li><a href="/stat/ptl/main/majorStatIndirs.do">통계주요지표</a></li>
+	                    </ul>
+	                </li>
+	                <li>
+	                    <a href="/stat/ptl/article/articleList.do?curMenu=897&bbsId=ptlNotice" class="">알림마당</a>
+	                    <ul>
+	                        <li><a href="/stat/ptl/article/articleList.do?curMenu=897&bbsId=ptlNotice">공지사항</a></li>
+	                        <li><a href="/stat/ptl/article/articleList.do?curMenu=12352&bbsId=ptlPressRelease">보도자료</a></li>
+	                        <li><a href="/stat/ptl/article/articleList.do?curMenu=993&bbsId=ptlFaq">FAQ</a></li>
+	                        <li><a href="/stat/ptl/noti/annualSchedule.do?curMenu=12506">통계공표일정</a></li>
+	                        <li><a href="/stat/ptl/noti/userOpinion.do?curMenu=12507">사용자의견</a></li>
+	                    </ul>
+	                </li>
+	            </ul>
+	        </nav>	        
+	    </div><!--//menu_box-->
+	    
+	    <!--검색-->
+        <div class="total_search_box total_search_box__top">
+          <form id="statSearchForm" onsubmit="return false;">
+			<label for="mainStatSearchText" class="blind">통합검색어</label>
+            <input type="text" name="searchText" id="mainStatSearchText" class="input_search">
+            <button id="statSearchBtn" class="btn_search"></button>
+          </form>
+        </div>
+        <!--모바일일때 검색-->
+        <div class="m_search_box">
+          <form>
+            <button type="button" class="btn_search"></button>
+          </form>
+        </div>
+        <div class="modal_overlay">
+          <div class="m_search_box">
+            <form>
+			  <label for="mMainStatSearchText" class="blind">모바일 통합검색어</label>
+              <input type="text" placeholder="검색어를 입력하세요." name="searchText" id="mMainStatSearchText" class="input_search">
+              <button id="mStatSearchBtn" class="btn_search"></button>
+            </form>
+          </div>
+        </div>
+        <!--모바일메뉴-->
+        <div class="m_menu_box" onclick="openNav()"><img src="/stat/images/main/icon_m_menu.png" alt="전체메뉴"></div>
+
+        <div class="bg">
+          <div class="bg_gray"></div>
+          <div class="box1400 h-100">
+          	<div class="sub_img"><img src="/stat/images/main/sub_img_spring.png" alt="산림임업통계겨울 이미지"></div>
+          	
+          	
+          </div>
+        </div>
+	</div><!-- //headTop -->
+	
+	<!--모바일 메뉴-->
+    <div class="m_menu" id="mySidepanel">
+        <div class="closebtn clearfix"><a href="javascript:void(0)" class=" " onclick="closeNav()"><span>×</span></a></div>
+            
+        <ul>
+            <li class="main_tit"><a href="/stat/ptl/newStat/newStatDtl.do">통계보기</a></li>
+            <li class="sub_tit">
+                <a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=8">승인통계</a>
+                <a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=2">유관기관통계</a>
+                <a href="/stat/ptl/newStat/newStatDtl.do?evntUpperSeq=14">산림임업통계연보 </a>
+            </li>
+            <li class="main_tit"><a href="/stat/ptl/article/articleList.do?curMenu=9795&bbsId=ptlPdsBase">자료실</a></li>
+            <li class="sub_tit">
+                <a href="/stat/ptl/article/articleList.do?curMenu=9795&bbsId=ptlPdsBase">통계자료실</a>
+                <a href="/stat/ptl/eBook/ptlEBookList.do?curMenu=12399">통계간행물(E-Book)</a>
+                <a href="/stat/ptl/infoGraphc/infoGraphcList.do?curMenu=12501">인포그래픽</a>
+                <a href="/stat/ptl/article/articleList.do?curMenu=991&bbsId=latestStat">기타자료실</a>
+            </li>
+            
+            <li class="main_tit"><a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12503">보이는 통계</a></li>
+            <li class="sub_tit">
+                <a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12503">산림자원통계</a>
+                <a href="/stat/ptl/visualization/visualizationDtl.do?curMenu=12504">임업통계</a>
+                <a href="/stat/ptl/main/majorStatIndirs.do">통계주요지표</a>
+            </li>
+
+            <li class="main_tit"><a href="/stat/ptl/article/articleList.do?curMenu=897&bbsId=ptlNotice" class="">알림마당</a></li>
+            <li class="sub_tit">
+                <a href="/stat/ptl/article/articleList.do?curMenu=897&bbsId=ptlNotice">공지사항</a>
+                <a href="/stat/ptl/article/articleList.do?curMenu=12352&bbsId=ptlPressRelease">보도자료</a>
+                <a href="/stat/ptl/article/articleList.do?curMenu=993&bbsId=ptlFaq">FAQ</a>
+                <a href="/stat/ptl/noti/annualSchedule.do?curMenu=12506">통계공표일정</a>
+                <a href="/stat/ptl/noti/userOpinion.do?curMenu=12507">사용자의견</a>
+            </li>
+        </ul>
+    </div>
+    
+    
+        <div id="location_wrap">
+			<div class="box1400">
+			  <div class="d-flex">
+			    <a href="/stat/ptl/main/main.do" class="home">홈</a>
+			    <ul class="location_menu">
+			      
+			      
+			    </ul>
+			  </div><!--d-flex-->
+			</div><!--box1400-->
+        </div><!--//location_wrap-->
+    
+    <script>
+	    $(function () {
+			subImageChange();
+			
+			/*검색모달 */
+    		// 모달 열기/닫기 함수
+    		/*검색모달 */
+    		const modalOverlay = document.querySelector('.modal_overlay');
+    		const btnSearch = document.querySelector('.m_search_box .btn_search'); // 모바일 검색 버튼
+    		const inputSearch = document.querySelector('#mMainStatSearchText');
+
+    		// 검색 버튼 클릭 - 모달 열기
+    		btnSearch.addEventListener('click', (e) => {
+    		  e.preventDefault();
+    		  modalOverlay.classList.add('active');
+    		  setTimeout(() => {
+    		    inputSearch.focus();
+    		  }, 100);
+    		});
+
+
+    		// 오버레이 클릭 시 닫기 (박스 외부 클릭)
+    		modalOverlay.addEventListener('click', (e) => {
+    		  if (e.target === modalOverlay) {
+    		    modalOverlay.classList.remove('active');
+    		  }
+    		});
+
+    		// ESC 키로 닫기
+    		document.addEventListener('keydown', (e) => {
+    		  if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+    		    modalOverlay.classList.remove('active');
+    		  }
+    		});
+
+    		// 모달 안의 폼 제출 처리
+    		document.querySelector('.modal_overlay .m_search_box form').addEventListener('submit', (e) => {
+    		  e.preventDefault();
+    		  const searchValue = inputSearch.value.trim();
+    		  if (searchValue) {
+    		    console.log('검색어:', searchValue);
+    		    // 여기에 검색 기능 추가
+    		    document.querySelector('#mainStatSearchText').value = searchValue;
+    		    document.querySelector('#statSearchBtn').click();
+    		    modalOverlay.classList.remove('active'); // 검색 후 모달 닫기
+    		  }
+    		});
+		});
+		// 메뉴 안에 있는 서브 이미지 월에 맞게 하기
+		function subImageChange() {
+			const month = new Date().getMonth() + 1; // 1~12
+			
+			if (month >= 3 && month <= 5) {
+				season = 'spring';
+			} else if (month >= 6 && month <= 8) {
+				season = 'summer';
+			} else if (month >= 9 && month <= 11) {
+				season = 'fall';
+			} else {
+				season = 'winter';
+			}
+			
+			const imgSrc = "/stat/images/main/sub_img_" + season + ".png";
+			$('.sub_img img').attr('src', imgSrc);
+			
+		}
+		
+	    function openNav() {
+	    	//document.getElementById("mySidepanel").classList.toggle("show");
+	    	$("#mySidepanel").toggleClass("show");
+	    }
+	    
+	    function closeNav() {
+	        //document.getElementById("mySidepanel").classList.toggle("show");
+	    	$("#mySidepanel").toggleClass("show");
+	    }
+	</script>
+	<!--//모바일메뉴-->
+</header>
+
+
+		
+		<div id="container" class="box1400">
+			
+
+
+<!-- <nav id="lnb">
+	<h2 id="leftTopMenuNmDsp"></h2>
+	<ul id="leftMenuTreeArea" class='treeUl depth1'>
+
+	</ul>
+</nav> -->
+
+<!--lnb 좌측 메뉴-->
+<div id="lnb">
+	<nav>
+	  <h2 id="leftTopMenuNmDsp"></h2>
+	  <ul id="leftMenuTreeArea" class="sub_menu"></ul>
+	
+	</nav>
+</div><!--//lnb 좌측 메뉴-->
+
+
+			<div id="container_wrap">
+				
+				<!--navigation-->
+			    <div class="sub_title navigation menu_02 clearfix">
+			      <h2 id="curMenuNmDsp"></h2>
+			    </div><!--//navigation-->
+				
+
+
+
+<div class="container_midd">
+	<div class="layer_box board_view d-flex flex-column h-100">
+	    <div id="titleDsp" class="layer_tit board_view_tit"></div>
+	  
+	    <!--layer_con-->
+	    <div class="layer_con board_view_con">
+	      <ul>
+	        <li class="bvc_row">
+	          <dl>
+	            <dt>작성자 ·</dt>
+	            <dd>담당자</dd>
+	          </dl>
+	
+	          <dl>
+	            <dt>등록일 ·</dt>
+	            <dd id="regDtmDsp"></dd>
+	          </dl>
+	
+	          <dl>
+	            <dt>자료갱신일 ·</dt>
+	            <dd id="updtDtmDsp"></dd>
+	          </dl>
+	
+	        </li>
+	        <li class="bvc_row">
+	
+	          <dl>
+	            <dt>첨부파일 ·</dt>
+	            <dd id="fileDspArea" class="file_download"></dd>
+	          </dl>
+	        </li>
+	        <li class="bvc_row con">
+	          
+	          <div id="contDsp" class=""></div>
+	
+	        </li>
+	        <li class="bvc_row button">
+	          <div class="row justify-content-center">
+	            <div class="col-12">
+	              <button id="goListBtn" class="btn btn-darkgray px-2"><img src="/stat/images/main/list-ul_w.svg" alt="목록아이콘"> 목록보기</button>
+	            </div>
+	          </div></li>
+	      </ul>
+	    </div><!--//layer_con-->
+	
+	    
+	    <!--layer_bottom-->
+	    <div class="layer_bottom board_view_page">
+	      <ul>
+	        <li>
+	          <a href="javascript:void(0)" onclick="prvDetailBoard()" class="pre">
+	            <div><span>이전 글</span></div>
+	            <div id="prevTitle" class="">이전 글이 없습니다.</div>
+	          </a>
+	        </li>
+	         <li>
+	          <a href="javascript:void(0)" onclick="nxtDetailBoard()" class="next">
+	            <div><span>다음 글</span></div>
+	            <div id="nextTitle" class="">다음 글이 없습니다.</div>
+	          </a>
+	        </li>
+	      </ul>
+	
+	    </div><!--//layer_bottom-->
+	    
+	  </div>
+</div>
+
+<form id="hiddenForm">
+	<input type="hidden" name="pageIndex" value="0">
+	<input type="hidden" name="pageSize" value="0">
+	<input type="hidden" name="searchItem" value="">
+	<input type="hidden" name="searchText" value="">
+	<input type="hidden" name="orderBy" value="">
+</form>
+
+<!-- 모달 창 -->
+<div id="microDataSurveyModal" class="microDataSurveyModal">
+	<!-- 모달 내용 -->
+	<div class="microDataSurveyModal-content">
+		<h1>
+			마이크로데이터 다운로드 목적 수렴
+			<button class="close"
+				onclick="closeMicroDataSurveyModal();">
+				<i class="fa-solid fa-xmark">X</i>
+			</button>
+		</h1>
+		<div id="microDataSurveyInputForm">
+		<div id="microDataSurveyListDivTop" style="font-weight: 600;font-size:16px;color: #000;padding-bottom: 5px;margin:20px 20px 0px 20px;padding:10px;border:1px solid;">
+			<span>
+				※ 마이크로데이터 자료 다운로드 서비스를 이용해 주셔서 감사합니다.<br>
+				&nbsp;&nbsp;&nbsp;&nbsp; 마이크로데이터 자료의 다운로드를 위해서 아래의 내용을 작성해 주셔야 하며,<br> 
+				&nbsp;&nbsp;&nbsp;&nbsp; 입력 정보는 마이크로데이터 제공 서비스의 활용도를 높이는 목적으로만 사용됩니다.
+			</span>
+		</div>
+			<div id="microDataSurveyListDiv"></div>
+
+			<div id="microDataSurveyListDivBtm">
+				    
+				<div class="txt_info">※ 작성해 주신 의견은 산림임업통계플랫폼의 서비스 개선에
+					활용하겠습니다.</div>
+				<div class="btn_box">
+					<button class="btn_line"
+						onclick="document.getElementById('microDataSurveyModal').style.display='none'">
+						닫기</button>
+					<button class="btn_green" onclick="submitMicroDataOpinion()">제출</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 모달 창 끝 -->
+
+
+
+<script type="text/javascript" >
+var bbsId = "ptlPdsMntProdReq";
+var articleSeq = "2550";
+var hiddenForm = new FormControllHelper('hiddenForm');	// 조회 폼 컨트롤러 객체 생성
+
+var prevArticleSeq = "";
+var nextArticleSeq = "";
+
+$(function(){
+	
+	selectDtl();	// 상세 조회
+	
+	if(curMenuObj != null && curMenuObj.upperMenuSeq != "11693") {
+		// $(".headBot .nav a#topMenuLink2").addClass("onTopMenuLink");
+		$(".headBot > div > ul > li:nth-child(1)").addClass("onTopMenu");
+	}
+	
+	$("#goListBtn").on("click",function(e){	 //  목록 버튼 클릭
+		e.preventDefault();
+	
+		var url = _ctxPath + '/ptl/article/articleList.do';
+		var params = hiddenForm.getFormData2Json({bbsId : bbsId});			
+        submitCall(url, params, 'post');
+	});
+});
+
+function selectDtl(){	// 상세 조회
+	var url = _ctxPath + '/ptl/article/selectArticleDtl.do';
+	ajaxCallSyncGet(url, {articleSeq : articleSeq, bbsId : bbsId}, function(result){
+		// 이전글, 다음글 넣기
+		if(!result.data.prevArticleSeq) {
+			$("#prevTitle").text("이전 글이 없습니다.");			
+		} else {
+			prevArticleSeq = result.data.prevArticleSeq;
+			$("#prevTitle").text(result.data.prevTitle);
+		}
+		
+		if(!result.data.nextArticleSeq) {
+			$("#nextTitle").text("다음 글이 없습니다.");
+		} else {
+			nextArticleSeq = result.data.nextArticleSeq;
+			$("#nextTitle").text(result.data.nextTitle);
+		}
+		
+		afterSelectDtl(result);
+	});	
+}
+
+function afterSelectDtl(result){	// 상세 조회 후 출력
+	if(result.code==1){
+		var row = result.data;
+		var bbsId = row.bbsId;
+		
+		row.regDtm = row.regDtm.substring(0, 10);
+		row.updtDtm = row.updtDtm.substring(0, 10);
+		
+		//보도자료 일때 분류 보여주기 
+		if(bbsId == "ptlPressRelease"){
+			$('.sctinIdDsp').show();
+		}else{
+			$('.sctinIdDsp').hide();
+		}
+		
+		if(!_isnt(row)){
+			_autoDtlResolve(row,"Dsp");
+			selectFileList();
+		}
+		
+		// 스크롤 최상단으로 이동
+		$(window).scrollTop(0);
+	}
+}
+
+function selectFileList(){		// 파일 목록 조회
+	var url = _ctxPath + '/ptl/article/selectArticleFileList.do';
+	ajaxCallSyncGet(url, {workPath : 'Article', workSeq : articleSeq}, function(result){
+		afterSelectFileList(result);
+	});
+}
+
+
+var downHref = ""; //openMicroDataSurveyModal에서 href 값을 추출하여 저장하기 위해 선언
+
+function openMicroDataSurveyModal(event,element){
+	event.preventDefault();
+	var url = _ctxPath + '/ptl/survey/selectSurveyList.do';
+	var params = {surveyTpcd : "2"}; // 1:사용자의견질문 | 2:마이크로데이터의견수렴질문
+	$('#microDataSurveyListDiv').empty();
+	
+	ajaxCallSyncGet(url,params,function(result) {
+		if (result.code == 1) {
+			var list = result.data;
+			if (Array.isArray(list) && list.length > 0) { //하위질문 있는지 체크
+				$.each(list,function(idx) {
+					var row = _null2Blank(list[idx]);
+					if (row.upperSurveyNo != "0") {
+						var index = list.findIndex(function(item) {
+							return item.surveyNo === row.upperSurveyNo;
+						});
+						
+						list[index].lowerSurveyYn = 'Y';
+					}
+				});
+					
+					var checkHtml = "<ul class='checkSurveyUl'>";
+					var checkDivId = "";
+				$.each(list,function(idx) {
+					var checkHtml2 = "";
+					var html = "";
+					var row = _null2Blank(list[idx]);
+					var divId = "";
+					if (row.surveyTpcd == "2") { //일반질문일때
+						if (row.upperSurveyNo == "0") { //최상위질문처리
+									
+							divId = "#microDataSurveyListDiv";
+							checkDivId = "#microDataSurveyListDiv";
+							html += "<div id='survey"+row.surveyNo+"' class='surveyDiv'>"
+									+ "<div style='font-weight: 600;font-size:16px;color: #000;padding-bottom: 5px;width:100%;'>"
+									+ row.surveyCont;
+									if(row.ncsryInputYn == "Y"){ //필수답변질문일때
+										html += "<span style='color:red;'>*</span>";
+									}
+							if (row.lowerSurveyYn != 'Y' && (row.answerCd == "" || row.answerCd == null)) {
+								if(row.privacyYn == 'Y'){ /* 핸드폰번호 입력 */
+									html += "<textarea disabled id='userOpinion' class='privacy_phoneNo' rows='1' style='width:40%;height:34px;margin-left:5px;font-size:20px;display:block;' data-surveyNo='"+row.surveyNo+"' data-privacyYn='"+row.privacyYn+"' data-ncsryInputYn='"+row.ncsryInputYn+"' placeholder='숫자만입력ex.01012345678'></textarea>";									
+								}else{
+									html += "<textarea id='userOpinion' rows='4' style='width:100%;height:100px;font-size:14px;' data-surveyNo='"+row.surveyNo+"' data-privacyYn='"+row.privacyYn+"' data-ncsryInputYn='"+row.ncsryInputYn+"' placeholder='의견을 입력하세요.'></textarea>";
+								}
+							}else if(row.lowerSurveyYn == 'Y' && (row.answerCd == "" || row.answerCd == null)){
+								checkHtml2 += "<div class='checkSurvey"+row.surveyNo+"' style='font-weight: 600;font-size:16px;color: #000;padding-bottom: 5px;'>Q1. 답변하실 항목을 선택해주세요.";
+								$(checkDivId).append(checkHtml2);
+								
+							}else {
+								html += "<ul id='microDataAnswerListArea' style='font-weight: 600;font-size:16px;' data-ncsryInputYn='"+row.ncsryInputYn+"'>";
+								$.each(row.answerCdListVo,function(cdIdx) {
+									html += "<li>";
+									html += "<input type='checkbox' id='surveyAnswer"+row.surveyNo+"-"+cdIdx+"' data-surveyNo='"+row.surveyNo+"' data-privacyYn='"+row.privacyYn+"' name='answerCont[]' value='"+row.answerCdListVo[cdIdx].cdDtlId+"'>"
+											+ "<label style='margin-left:5px;' for='surveyAnswer"+row.surveyNo+"-"+cdIdx+"'>"
+											+ row.answerCdListVo[cdIdx].cdDtlNm
+											+ "</label>";
+
+									html += "</li>";
+								});
+								html += "</ul></div>";
+							}
+							html += "</div>";
+						} else {
+							if(row.surveyCont == "기타"){ //하위의 질문제목이 "기타"일때
+								divId = "#survey"+row.upperSurveyNo + " #microDataAnswerListArea";
+								html += "<li>";
+								html += "<input type='checkbox' class='answer_etc' id='surveyAnswer"+row.upperSurveyNo+"-"+row.surveyNo+"' data-surveyNo='"+row.upperSurveyNo+"' data-privacyYn='"+row.privacyYn+"' name='answerCont[]' value='0'>"
+										+ "<label style='margin-left:5px;' for='surveyAnswer"+row.upperSurveyNo+"-"+row.surveyNo+"'>"
+										+ "기타"
+										+ "</label>";
+								html += "<textarea disabled id='userOpinion' class='answer_etc_textarea' rows='1' style='width:50%;height:20px;margin-left:5px;font-size:15px;display:inline-block;overflow:hidden;' data-surveyNo='"+row.surveyNo+"' data-privacyYn='"+row.privacyYn+"' data-ncsryInputYn='"+row.ncsryInputYn+"' placeholder='내용입력'></textarea>";
+								html += "</li>";
+								
+							}else{
+								checkHtml += "<li class='checkSurveyLi'><input type='checkbox' id='checkSurvey"+row.surveyNo+"' value='"+row.surveyNo+"'>"
+											+ "<label style='margin-left:5px;' for='checkSurvey"+row.surveyNo+"'>"+row.surveyCont+"</label></li>";
+								divId = "#survey"+row.upperSurveyNo;
+								checkDivId = ".checkSurvey"+row.upperSurveyNo;
+								html += "<div id='lowerSurvey"+row.surveyNo+"' style='font-weight: 600;font-size:16px;color: #000;padding-bottom: 5px; display:none;'><span style='color:blue;'>"
+										+ row.surveyCont+"</span>";
+								if(row.ncsryInputYn == "Y"){
+									html += "<span style='color:red;'>*</span>";
+								}
+								if (row.answerCd == ""
+										|| row.answerCd == null) {
+									html += "<textarea id='userOpinion' rows='4' style='width:100%;height:100px;font-size-14px;' data-surveyNo='"
+											+ row.surveyNo
+											+ "' data-privacyYn='"
+											+ row.privacyYn
+											+ "' data-ncsryInputYn='"+row.ncsryInputYn+"' placeholder='의견을 입력하세요.'></textarea>";
+								} else {
+									html += "<ul id='microDataAnswerListArea' data-ncsryInputYn='"+row.ncsryInputYn+"'>";
+									$.each(row.answerCdListVo,function(cdIdx) {
+														html += "<li>";
+														html += "<input type='checkbox' id='surveyAnswer"+row.surveyNo+"-"+cdIdx+"' data-surveyNo='"+row.surveyNo+"' data-privacyYn='"+row.privacyYn+"' name='answerCont[]' value='"+row.answerCdListVo[cdIdx].cdDtlId+"'>"
+																+ "<label style='margin-left:5px;' for='surveyAnswer"+row.surveyNo+"-"+cdIdx+"'>"
+																+ row.answerCdListVo[cdIdx].cdDtlNm
+																+ "</label>";
+	
+														html += "</li>";
+													});
+									html += "</ul></div>";
+								}
+
+							}
+							
+						}
+					} else { //구분문자열일때
+						if (row.upperSurveyNo == "0") { //최상위질문처리
+							divId = "#microDataSurveyListDiv";
+							// 	html += "<div id='survey"+row.surveyNo+"' style='border:3px double #078064;margin:5px;padding:10px;'>"
+							html += "<h2 style=' border-bottom: 1px solid #ddd; margin-bottom: 20px;'><span id='surveyGubunSpan'>"
+									+ row.surveyCont
+									+ "</span></h2>";
+							// 	+ "<div style='font-weight: 600;font-size:19px;'>"+row.surveyCont+"</div></div>";
+						} else { //하위설명있을때, 추가하려면 여기서 수정해야함 현재는 들어가지않음.
+							divId = "#survey"
+									+ row.upperSurveyNo;
+									html += "<div style='font-weight: 600;font-size:16px;color: #000;padding-bottom: 5px;'><span>"
+											+ row.surveyCont
+													.replace(
+															/\r\n/g,
+															'<br>');
+									html += "</span></div>";
+								}
+
+							}
+							
+							
+							$(divId).append(html);
+						});
+							checkHtml += "</ul>";
+							$(checkDivId).append(checkHtml);
+
+					} else {
+
+				}
+
+				}
+	
+			});
+	
+	//다운받으려는 마이크로데이터 자동선택 및 disabled 처리
+	$('#microDataAnswerListArea input[value="'+bbsId+'"]').prop('checked', true).prop('disabled', true);
+	$('#microDataAnswerListArea input[value="'+bbsId+'"]').siblings().css("color","blue");
+	$('#microDataAnswerListArea input[value="' + bbsId + '"]').closest('li').siblings().find('input').prop('disabled', true);
+	
+	document.documentElement.style.overflowY = 'hidden'; // y 축 스크롤 비활성화
+	document.getElementById('microDataSurveyModal').style.display = 'block';
+	
+	downHref = $(element).attr("href");  // 클릭한 링크의 href 값을 추출
+	
+}
+
+// 모달 닫기
+function closeMicroDataSurveyModal() {
+	  document.documentElement.style.overflowY = 'auto'; // y 축 스크롤 활성화
+  document.getElementById('microDataSurveyModal').style.display = 'none';
+}
+
+
+//의견 제출
+function submitMicroDataOpinion() {
+	var ncsryinputs = $('#microDataAnswerListArea[data-ncsryinputyn="Y"]');
+	var checkedCount = 1;
+	 
+	// 각 요소에 대해 반복합니다.
+	if(ncsryinputs.length !== 0){
+		ncsryinputs.each(function() {
+		    // 현재 요소의 하위 input 태그들 중 checked 상태인 것의 개수를 세어봅니다.
+		    checkedCount = $(this).find('input:checked').length;
+		    if(checkedCount === 0){
+		    	return false;
+		    }
+		    
+		});
+	}
+	
+	 $('#microDataSurveyInputForm textarea[data-ncsryinputyn="Y"]').each(function() {
+		 if(isBlankStr($(this).val())){
+			 checkedCount = 0;
+		 }
+		 
+	 });
+	    // 만약 checked 상태인 것이 하나도 없으면 해당 요소에 대한 작업을 수행합니다.
+	    if (checkedCount === 0) {
+	    	showMsgBox("INF", "필수답변<span style='color:red;'>(*)</span>이 작성(선택)되지 않았습니다.");
+	    	return;
+	    }
+	
+	showMsgBox("CNF", "제출하시겠습니까?", function() {
+		var url = _ctxPath + '/ptl/survey/insertAnswer.do';
+
+		var selectedValues = [];
+
+		$("#microDataSurveyInputForm input[name='answerCont[]']:checked").each(
+				function() {
+					var surveyNoTmp = $(this).attr("data-surveyNo");
+					var privacyYn = $(this).attr("data-privacyYn");
+					var obj = {
+						answerCont : $(this).val(),
+						surveyNo : parseInt(surveyNoTmp),
+						privacyYn : privacyYn
+					};
+
+					selectedValues.push(obj);
+				});
+
+		$("#microDataSurveyInputForm textarea").each(function() {
+			var textareaValue = $(this).val();
+			var surveyNoTmp = $(this).attr("data-surveyNo");
+			var privacyYn = $(this).attr("data-privacyYn");
+			// 값이 비어있는지 확인
+			if (textareaValue.trim() !== "") {
+				var obj = {
+					answerCont : textareaValue,
+					surveyNo : parseInt(surveyNoTmp),
+					privacyYn : privacyYn
+				};
+
+				selectedValues.push(obj);
+			}
+
+		});
+		
+		if(selectedValues.length === 0){
+			showMsgBox("INF", "답변이 체크(입력)되지 않았습니다.");
+			return;
+		}
+
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : JSON.stringify(selectedValues),
+			contentType : 'application/json',
+			dataType : 'json',
+			beforeSend : function(xmlHttpRequest) {
+				xmlHttpRequest.setRequestHeader("AJAX", "true"); //Header에 AJAX여부 추가
+			},
+			success : function(result) {
+				showMsgBox("INF", result.msg);
+			},
+			error : function(request, status, error) {
+				ajaxErrorCallback(request, status, error, 'ERROR');
+			}
+		});
+
+		// 의견 제출 후 모달 닫기
+		closeMicroDataSurveyModal();
+		window.location.href = downHref;
+	});
+
+}
+
+function afterSelectFileList(result){	// 파일 목록 조회 후 출력
+	if(result.code==1){
+		var list = result.data;
+		if(Array.isArray(list) && list.length>0){
+			var appendHtml = "";
+			$.each(list, function(idx) {
+				var row = list[idx];
+				//파일 다운로드시, 마이크로데이터 의견 수렴 화면 출력할 수 있도록
+				if(bbsId == "mcdtPdsMntOwn" //전국산주현황
+						|| bbsId == "microdataboard" //국가산림자원조사
+						|| bbsId == "mcdtPdsMntHouseEcono" //임가경제조사
+						|| bbsId == "mcdtPdsmntProdPrice" //임산물생산비조사 
+						|| bbsId == "mcdtPdsMntBusiness" //임업경영실태조사 
+						|| bbsId == "mcdtPdsMntIncome" // 임산물소득조사
+						//임산물생산조사 추가
+						|| bbsId == "mcdtPdsmntProd" // 임산물생산조사
+				){
+					appendHtml += "<div>"
+					            + "<a class='microDataDownBtn' href='" + _ctxPath + "/ptl/article/articleFileDown.do?fileSeq=" + row.fileSeq + "&workSeq=" + articleSeq + "' target='_blank' onclick='openMicroDataSurveyModal(event,this);'>"
+					            + row.fileNm
+					            + "<img src='" + _ctxPath + "/images/main/icon_file_download.png' alt='첨부파일 다운로드 아이콘'>"
+					            + "</a>"
+								+ "</div>";
+				}else{
+					appendHtml += "<div>"
+					            + "<a href='"+_ctxPath+'/ptl/article/articleFileDown.do'+"?fileSeq="+row.fileSeq+"&workSeq="+articleSeq+"' target='_blank'>"
+					            + row.fileNm
+					            + "<img src='" + _ctxPath + "/images/main/icon_file_download.png' alt='첨부파일 다운로드 아이콘'>"
+					            + "</a>"
+					            + "</div>";					
+				}
+			});
+			$("#fileDspArea").html(appendHtml);
+		}
+	}
+}
+
+
+
+// 이전 글 제목 가져오기
+function prvDetailBoard() {	
+	if(prevArticleSeq) {
+		var url = _ctxPath + '/ptl/article/selectArticleDtl.do';
+		articleSeq = prevArticleSeq;
+		ajaxCallSyncGet(url, {articleSeq : prevArticleSeq, bbsId : bbsId}, function(result){
+			// 이전글, 다음글 넣기
+			if(!result.data.prevArticleSeq) {
+				$("#prevTitle").text("이전 글이 없습니다.");			
+			} else {
+				prevArticleSeq = result.data.prevArticleSeq;
+				$("#prevTitle").text(result.data.prevTitle);
+			}
+			
+			if(!result.data.nextArticleSeq) {
+				$("#nextTitle").text("다음 글이 없습니다.");
+			} else {
+				nextArticleSeq = result.data.nextArticleSeq;
+				$("#nextTitle").text(result.data.nextTitle);
+			}
+			
+			afterSelectDtl(result);
+		});	
+	}
+	
+}
+
+//다음 글 제목 가져오기
+function nxtDetailBoard() {
+	if(nextArticleSeq) {
+		var url = _ctxPath + '/ptl/article/selectArticleDtl.do';
+		articleSeq = nextArticleSeq;
+		ajaxCallSyncGet(url, {articleSeq : nextArticleSeq, bbsId : bbsId}, function(result){
+			// 이전글, 다음글 넣기
+			if(!result.data.prevArticleSeq) {
+				$("#prevTitle").text("이전 글이 없습니다.");			
+			} else {
+				prevArticleSeq = result.data.prevArticleSeq;
+				$("#prevTitle").text(result.data.prevTitle);
+			}
+			
+			if(!result.data.nextArticleSeq) {
+				$("#nextTitle").text("다음 글이 없습니다.");
+			} else {
+				nextArticleSeq = result.data.nextArticleSeq;
+				$("#nextTitle").text(result.data.nextTitle);
+			}
+			
+			afterSelectDtl(result);
+		});	
+	}
+	
+}
+</script>
+			</div>
+		</div>	
+		
+
+<!-- Footer :S -->
+
+<footer>
+	<div class="footer_top">
+		<div class="box1400">
+			<!--banner-container-->
+			<div class="banner-container">
+				<button class="banner-prev"></button>
+				<!--banner-slider-->
+				<div class="banner-slider">
+					<ul class="banner-wrapper">
+						<li class="banner-item"><a href="https://www.forest.go.kr/" target="_blank">산림청</a></li>
+						<li class="banner-item"><a href="https://www.mafra.go.kr/sites/home/index.do" target="_blank">농림축산식품부</a></li>
+						<li class="banner-item"><a href="https://kostat.go.kr/index.es?sid=a1" target="_blank">국가데이터처</a></li>
+						<li class="banner-item"><a href="https://www.kofpi.or.kr/index.do" target="_blank">한국입업진흥원</a></li>
+						<li class="banner-item"><a href="https://kosis.kr/index/index.do" target="_blank">국가통계포털</a></li>
+						<li class="banner-item"><a href="https://sgis.mods.go.kr/view/index" target="_blank">통계지리정보서비스</a></li>
+						<li class="banner-item"><a href="https://mdis.kostat.go.kr/index.do" target="_blank">MDIS</a></li>
+						<li class="banner-item"><a href="https://www.k-stat.go.kr/metasvc/main" target="_blank">통계설명자료</a></li>
+						<li class="banner-item"><a href="https://kass.mafra.go.kr/newkass/kas/index.do" target="_blank">국가농식품통계서비스</a></li>
+						<li class="banner-item"><a href="https://stat.molit.go.kr/portal/main/portalMain.do" target="_blank">국토교통 통계누리</a></li>
+						<li class="banner-item"><a href="https://ecos.bok.or.kr/#/" target="_blank">한국은행 경제통계시스템</a></li>
+						<li class="banner-item"><a href="https://data.kma.go.kr/cmmn/main.do" target="_blank">기상자료개방포털</a></li>
+						<li class="banner-item"><a href="https://www.forestinfo.or.kr/main/index.do" target="_blank">임산물유통정보시스템</a></li>						
+						<li class="banner-item"><a href="https://www.nongnet.or.kr/" target="_blank">농넷</a></li>
+					</ul>
+				</div>
+				<!--//banner-slider-->
+				<button class="banner-next"></button>
+			</div>
+			<!--//banner-container-->
+		</div>
+		<!--//box1400-->
+	</div>
+	<!--//footer_top-->
+
+	<div class="footer_middle">
+		<div class="box1400">
+			<!--업무링크-->
+			<div class="work_link_box">
+				<ul>
+					<li><a href="javascript:void(0);" onclick="window.open('/stat/font/onlineHelpPtl.pdf', '_blank')"><div>온라인도움말</div></a></li>
+					<li><a href="javascript:void(0);" onclick="window.open('/stat/ptl/openApi/openApiList.do?curMenu=904', '_self')">OpenAPI</a></li>
+					<li><a href="javascript:void(0);" onclick="window.open('https://kfss.forest.go.kr/frsas','_blank')">내부업무 바로가기</a></li>
+					<li><a href="javascript:void(0);" onclick="window.open('/stat/ptl/main/privacyPolicy.do', '_self')">개인정보처리방침</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="footer_bottom">
+		<div class="box1400">
+			<div class="copyright_box">
+				<!--<div class="txt" style="display: none;">
+					<a href="https://www.forest.go.kr/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_04&cmsId=FC_000087" target="_blank">
+						찾아오시는 길
+					</a>
+				</div>
+				-->
+				<div class="txt mb-1">
+					<ul>
+						<li>(우)35208 대전광역시 서구 청사로 189 2동(산림청)</li>
+						<li>
+						<a href="https://www.forest.go.kr/kfsweb/kfi/kfs/cms/cmsView.do?mn=NKFS_01_01_04&cmsId=FC_000087" target="_blank">찾아오시는 길 <img alt="찾아오시는길 새창" src="/stat/images/main/map_info_icon.svg" style="width:12px;margin-left: 5px;height: 12px;"></a>
+						</li>						
+					</ul>
+				</div>
+				<div class="txt">
+					<ul>
+						<li>TEL : 042-481-4167 (월~금 09:00~18:00, 공휴일 제외)</li>
+						<li>E-mail : dkh89@korea.kr</li>
+						<li>헬프데스크 : 042-485-3007</li>
+					</ul>
+				</div>
+				<div class="txt txt_gray">COPYRIGHTⒸ 산림청 SINCE1967. ALL RIGHTS
+					RESERVED.</div>
+			</div>
+			<!--//copyright_box-->
+		</div>
+		<!--//box1400-->
+	</div>
+	<!--//fooer_bottom-->
+</footer>
+
+<script>
+$(function() {
+	const bannerSlider = {
+	    container: document.querySelector('.banner-slider'),
+	    wrapper: document.querySelector('.banner-wrapper'),
+	    banners: document.querySelectorAll('.banner-item'),
+	    prevBtn: document.querySelector('.banner-prev'),
+	    nextBtn: document.querySelector('.banner-next'),
+	    
+	    currentIndex: 0,
+	    visibleCount: 5,
+	    totalBanners: 0,
+	    
+	    // 터치 관련 변수
+	    touchStartX: 0,
+	    touchEndX: 0,
+	    touchStartY: 0,
+	    touchEndY: 0,
+	    isDragging: false,
+	    
+	    // 자동 슬라이드 관련 변수
+	    autoSlideInterval: null,
+	    autoSlideDelay: 3000, // 3초마다 자동 슬라이드 (원하는 시간으로 조정 가능)
+	    isAutoSliding: true, // 자동 슬라이드 활성화 여부
+	    
+	    init: function() {
+	      if (!this.container || !this.wrapper || !this.banners.length) return;
+	      
+	      this.totalBanners = this.banners.length;
+	      this.updateVisibleCount();
+	      this.updateButtons();
+	      this.bindEvents();
+	      
+	      // 자동 슬라이드 시작
+	      if (this.isAutoSliding) {
+	        this.startAutoSlide();
+	      }
+	    },
+	    
+	    // 화면 크기에 따라 보이는 배너 개수 계산
+	    updateVisibleCount: function() {
+	      const containerWidth = this.container.offsetWidth;
+	      
+	      if (containerWidth >= 1200) {
+	        this.visibleCount = 5;
+	      } else if (containerWidth >= 900) {
+	        this.visibleCount = 4;
+	      } else if (containerWidth >= 600) {
+	        this.visibleCount = 3;
+	      } else if (containerWidth >= 571) {
+	        this.visibleCount = 2;
+	      } else {
+	        this.visibleCount = 1;
+	      }
+	      
+	      const maxIndex = this.totalBanners - this.visibleCount;
+	      if (this.currentIndex > maxIndex) {
+	        this.currentIndex = maxIndex;
+	      }
+	      
+	      this.updateSlider();
+	    },
+	    
+	    // 슬라이더 위치 업데이트
+	    updateSlider: function(transition = true) {
+	      if (this.banners.length === 0) return;
+	      
+	      const bannerWidth = this.banners[0].offsetWidth;
+	      const computedStyle = window.getComputedStyle(this.wrapper);
+	      const gap = parseFloat(computedStyle.gap) || 0;
+	      const moveDistance = -(this.currentIndex * (bannerWidth + gap));
+	      
+	      this.wrapper.style.transform = `translateX(${moveDistance}px)`;
+	      this.wrapper.style.transition = transition ? 'transform 0.3s ease' : 'none';
+	    },
+	    
+	    // 버튼 상태 업데이트
+	    updateButtons: function() {
+	      const maxIndex = this.totalBanners - this.visibleCount;
+	      
+	      if (this.currentIndex <= 0) {
+	        this.prevBtn.classList.add('disabled');
+	        this.prevBtn.disabled = true;
+	      } else {
+	        this.prevBtn.classList.remove('disabled');
+	        this.prevBtn.disabled = false;
+	      }
+	      
+	      if (this.currentIndex >= maxIndex) {
+	        this.nextBtn.classList.add('disabled');
+	        this.nextBtn.disabled = true;
+	      } else {
+	        this.nextBtn.classList.remove('disabled');
+	        this.nextBtn.disabled = false;
+	      }
+	    },
+	    
+	    // 이전 배너로 이동
+	    prev: function() {
+	      if (this.currentIndex > 0) {
+	        this.currentIndex--;
+	        this.updateSlider();
+	        this.updateButtons();
+	      }
+	    },
+	    
+	    // 다음 배너로 이동
+	    next: function() {
+	      const maxIndex = this.totalBanners - this.visibleCount;
+	      if (this.currentIndex < maxIndex) {
+	        this.currentIndex++;
+	        this.updateSlider();
+	        this.updateButtons();
+	      } else {
+	        // 마지막에 도달하면 처음으로 돌아가기
+	        this.currentIndex = 0;
+	        this.updateSlider();
+	        this.updateButtons();
+	      }
+	    },
+	    
+	    // 자동 슬라이드 시작
+	    startAutoSlide: function() {
+	      const self = this;
+	      this.autoSlideInterval = setInterval(function() {
+	        self.next();
+	      }, this.autoSlideDelay);
+	    },
+	    
+	    // 자동 슬라이드 정지
+	    stopAutoSlide: function() {
+	      if (this.autoSlideInterval) {
+	        clearInterval(this.autoSlideInterval);
+	        this.autoSlideInterval = null;
+	      }
+	    },
+	    
+	    // 자동 슬라이드 재시작
+	    resetAutoSlide: function() {
+	      this.stopAutoSlide();
+	      if (this.isAutoSliding) {
+	        this.startAutoSlide();
+	      }
+	    },
+	    
+	    // 터치 시작
+	    handleTouchStart: function(e) {
+	      this.touchStartX = e.touches[0].clientX;
+	      this.touchStartY = e.touches[0].clientY;
+	      this.isDragging = true;
+	      
+	      // 터치 시작 시 자동 슬라이드 정지
+	      this.stopAutoSlide();
+	    },
+	    
+	    // 터치 이동
+	    handleTouchMove: function(e) {
+	      if (!this.isDragging) return;
+	      
+	      this.touchEndX = e.touches[0].clientX;
+	      this.touchEndY = e.touches[0].clientY;
+	      
+	      // 세로 스크롤과 구분하기 위한 체크
+	      const deltaX = Math.abs(this.touchEndX - this.touchStartX);
+	      const deltaY = Math.abs(this.touchEndY - this.touchStartY);
+	      
+	      // 가로 방향 스와이프가 세로보다 크면 기본 스크롤 방지
+	      if (deltaX > deltaY) {
+	        e.preventDefault();
+	      }
+	    },
+	    
+	    // 터치 종료
+	    handleTouchEnd: function(e) {
+	      if (!this.isDragging) return;
+	      
+	      const deltaX = this.touchStartX - this.touchEndX;
+	      const deltaY = Math.abs(this.touchStartY - this.touchEndY);
+	      const minSwipeDistance = 50; // 최소 스와이프 거리
+	      
+	      // 세로 스크롤이 더 크면 무시
+	      if (deltaY > Math.abs(deltaX)) {
+	        this.isDragging = false;
+	        this.resetAutoSlide(); // 자동 슬라이드 재시작
+	        return;
+	      }
+	      
+	      // 왼쪽으로 스와이프 (다음으로)
+	      if (deltaX > minSwipeDistance) {
+	        this.next();
+	      }
+	      // 오른쪽으로 스와이프 (이전으로)
+	      else if (deltaX < -minSwipeDistance) {
+	        this.prev();
+	      }
+	      
+	      this.isDragging = false;
+	      this.resetAutoSlide(); // 자동 슬라이드 재시작
+	    },
+	    
+	    // 이벤트 바인딩
+	    bindEvents: function() {
+	      const self = this;
+	      
+	      // 버튼 클릭 이벤트
+	      this.prevBtn.addEventListener('click', function() {
+	        self.prev();
+	        self.resetAutoSlide(); // 버튼 클릭 시 자동 슬라이드 리셋
+	      });
+	      
+	      this.nextBtn.addEventListener('click', function() {
+	        self.next();
+	        self.resetAutoSlide(); // 버튼 클릭 시 자동 슬라이드 리셋
+	      });
+	      
+	      // 마우스 호버 시 자동 슬라이드 일시정지
+	      this.container.addEventListener('mouseenter', function() {
+	        self.stopAutoSlide();
+	      });
+	      
+	      this.container.addEventListener('mouseleave', function() {
+	        if (self.isAutoSliding) {
+	          self.startAutoSlide();
+	        }
+	      });
+	      
+	      // 터치 이벤트
+	      this.wrapper.addEventListener('touchstart', function(e) {
+	        self.handleTouchStart(e);
+	      }, { passive: false });
+	      
+	      this.wrapper.addEventListener('touchmove', function(e) {
+	        self.handleTouchMove(e);
+	      }, { passive: false });
+	      
+	      this.wrapper.addEventListener('touchend', function(e) {
+	        self.handleTouchEnd(e);
+	      });
+	      
+	      // 윈도우 리사이즈 이벤트 (디바운스 적용)
+	      let resizeTimer;
+	      window.addEventListener('resize', function() {
+	        clearTimeout(resizeTimer);
+	        resizeTimer = setTimeout(function() {
+	          self.updateVisibleCount();
+	          self.updateButtons();
+	        }, 150);
+	      });
+	    }
+	  };
+	  
+	  // 초기화
+	  bannerSlider.init();
+});
+</script>
+
+
+		
+		
+	</div>
+	<!-- wrap end -->
+</body>	
+</html>
