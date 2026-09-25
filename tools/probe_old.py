@@ -4,8 +4,16 @@ import os, re, sys
 sys.path.insert(0, 'radar')
 import collect_prod as cp
 OUT = 'probe/old'; os.makedirs(OUT, exist_ok=True)
-op = cp.opener()
-arts = cp.articles(op)
+import traceback
+try:
+    op = cp.opener()
+except Exception:
+    open(OUT + '/err.txt', 'w').write(traceback.format_exc()); raise
+try:
+    arts = cp.articles(op)
+except Exception:
+    open(OUT + '/err.txt', 'w').write(traceback.format_exc()); raise
+open(OUT + '/arts.txt', 'w').write(repr(arts))
 for y in (2021, 2019, 2016, 2013):
     seq, title = arts[y]
     try:
