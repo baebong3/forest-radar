@@ -235,3 +235,34 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
                 o.append('<text class="vs" x="%.1f" y="%.1f" style="font-size:%.1fpx;fill:%s">%s</text>' % (x - 6, y + 4, fs, col, fmt(v, nd)))
     o.append('</svg>')
     return ''.join(o)
+
+
+def spark(vals, color, light=None, w=150, h=38, kind='bar'):
+    """KPI 안의 작은 추이 그림 (수치 라벨 없음 · 마지막 값 강조)
+    kind='bar' : 막대(마지막만 진한 색) · 'line' : 선 + 옅은 면 + 끝점"""
+    v2 = [v for v in vals if v is not None]
+    if len(v2) < 2:
+        return ''
+    light = light or color
+    mx = max(v2) or 1
+    o = ['<svg class="sp" viewBox="0 0 %d %d" preserveAspectRatio="none" aria-hidden="true">' % (w, h)]
+    n = len(vals)
+    if kind == 'bar':
+        slot = w / n
+        bw = max(2.0, slot * .64)
+        for i, v in enumerate(vals):
+            if v is None:
+                continue
+            bh = max(1.5, (h - 2) * v / mx)
+            o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="1.2" fill="%s"/>'
+                     % (slot * i + (slot - bw) / 2, h - bh, bw, bh, color if i == n - 1 else light))
+    else:
+        mn = min(v2)
+        rng = (mx - mn) or 1
+        pts = [(w * i / (n - 1), 4 + (h - 8) * (1 - (v - mn) / rng)) for i, v in enumerate(vals) if v is not None]
+        o.append('<path d="M%.1f,%d %s L%.1f,%d Z" fill="%s" fill-opacity=".14"/>'
+                 % (pts[0][0], h, ' '.join('L%.1f,%.1f' % p for p in pts), pts[-1][0], h, color))
+        o.append('<polyline fill="none" stroke="%s" stroke-width="1.8" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="%s"/>'
+                 % (color, ' '.join('%.1f,%.1f' % p for p in pts)))
+    o.append('</svg>')
+    return ''.join(o)
