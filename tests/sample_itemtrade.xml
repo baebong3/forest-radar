@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<response><header><resultCode>00</resultCode><resultMsg>NORMAL SERVICE.</resultMsg></header>
+<body><items>
+<item><balPayments>-120000</balPayments><expDlr>50000</expDlr><expWgt>12000</expWgt><hsCd>0813401000</hsCd><impDlr>170000</impDlr><impWgt>40000</impWgt><statKor>감</statKor><year>2025.01</year></item>
+<item><balPayments>-90000</balPayments><expDlr>0</expDlr><expWgt>0</expWgt><hsCd>0813402000</hsCd><impDlr>90000</impDlr><impWgt>21000</impWgt><statKor>대추</statKor><year>2025.01</year></item>
+<item><balPayments>-10</balPayments><expDlr>1</expDlr><expWgt>1</expWgt><hsCd>0813409000</hsCd><impDlr>11</impDlr><impWgt>3</impWgt><statKor>기타</statKor><year>2025.01</year></item>
+<item><balPayments>-210000</balPayments><expDlr>50001</expDlr><expWgt>12001</expWgt><hsCd>-</hsCd><impDlr>260011</impDlr><impWgt>61003</impWgt><statKor>-</statKor><year>총계</year></item>
+</items><numOfRows>10</numOfRows><pageNo>1</pageNo><totalCount>4</totalCount></body></response>
