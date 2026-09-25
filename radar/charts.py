@@ -46,6 +46,8 @@ def _hl(s, n):
 
 
 def _col(s, i, hl):
+    if s.get('colors'):                                   # 막대마다 명암을 준 경우
+        return s['colors'][i]
     return s['color'] if (i in hl or not s.get('light')) else s['light']
 
 
