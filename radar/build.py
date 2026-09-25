@@ -696,6 +696,7 @@ def main():
            % (css, today.strftime('%Y.%m.%d %H:%M'), (ref.replace('-', '.') if ref else '수집 대기'), radios, tabs,
               ''.join(body), err, meta.get('news_run', '-'), meta.get('trade_run', '-')))
     doc = doc.replace('—', '-').replace('–', '-')
+    doc = re.sub(r'<ul class="dek">.*?</ul>', '', doc, flags=re.S)   # 요약부는 헤드라인과 주요 수치만
     errs = verify(doc)
     if errs:
         print('검증 실패 - 페이지를 쓰지 않음')
