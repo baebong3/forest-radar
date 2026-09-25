@@ -108,3 +108,77 @@ def dual(labels2, series, nd=0, w=580, h=230, mob_labels=None):
 def legend(series):
     return '<div class="lg">%s</div>' % ''.join(
         '<span><i style="background:%s"></i>%s</span>' % (s['color'], esc(s['name'])) for s in series)
+
+
+def _nice(vmin, vmax, n=4):
+    import math
+    span = (vmax - vmin) or abs(vmax) or 1
+    raw = span / n
+    mag = 10 ** math.floor(math.log10(raw))
+    step = min((s * mag for s in (1, 2, 2.5, 5, 10) if s * mag >= raw), default=raw)
+    lo = math.floor(vmin / step) * step
+    hi = math.ceil(vmax / step) * step
+    ticks, t = [], lo
+    while t <= hi + step * 1e-9:
+        ticks.append(t); t += step
+    return lo, hi, ticks
+
+
+def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
+    """월별 꺾은선. xs=['YYYY-MM',…], series=[{'name','color','values'(None=결측)}]
+    - 선 끝(최근 값)과 시작 값에 수치 라벨, 라벨끼리 겹치지 않게 세로로 밀어냄
+    - 오른쪽에 옅은 눈금(천 단위 콤마), x축은 해마다 1월 위치에 연도"""
+    vals = [v for s in series for v in s['values'] if v is not None]
+    if not vals or len(xs) < 2:
+        return ''
+    lo, hi, ticks = _nice(min(vals), max(vals))
+    lab_w = max(tw(fmt(v, nd), fs) for v in vals) + 14
+    L, R, T, B = 8 + lab_w, 10 + max(tw(fmt(t, nd), fs - 1) for t in ticks) + 8 + lab_w, 14, 30
+    pw, ph = w - L - R, h - T - B
+    X = lambda i: L + pw * i / (len(xs) - 1)
+    Y = lambda v: T + ph - ph * (v - lo) / ((hi - lo) or 1)
+    o = ['<svg viewBox="0 0 %d %d" role="img">' % (w, h)]
+    for t in ticks:
+        o.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" class="grid"/>' % (L, L + pw, Y(t), Y(t)))
+        o.append('<text class="tk" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>' % (w - 4, Y(t) + 4, fs - 1, fmt(t, nd)))
+    for i, ym in enumerate(xs):
+        if ym.endswith('-01') or i == 0:
+            o.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" class="xt"/>' % (X(i), X(i), T + ph, T + ph + 4))
+            o.append('<text class="x" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>' % (X(i), T + ph + 18, fs, ym[:4]))
+    ends, starts = [], []
+    for s in series:
+        seg, pts = [], []
+        for i, v in enumerate(s['values']):
+            if v is None:
+                if len(seg) > 1:
+                    pts.append(seg)
+                elif len(seg) == 1:
+                    pts.append(seg)
+                seg = []
+            else:
+                seg.append((X(i), Y(v)))
+        if seg:
+            pts.append(seg)
+        for sg in pts:
+            if len(sg) == 1:
+                o.append('<circle cx="%.1f" cy="%.1f" r="2.2" fill="%s"/>' % (sg[0][0], sg[0][1], s['color']))
+            else:
+                o.append('<polyline fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" points="%s"/>'
+                         % (s['color'], ' '.join('%.1f,%.1f' % p for p in sg)))
+        idx = [i for i, v in enumerate(s['values']) if v is not None]
+        if idx:
+            ends.append([Y(s['values'][idx[-1]]), X(idx[-1]), s['values'][idx[-1]], s['color']])
+            starts.append([Y(s['values'][idx[0]]), X(idx[0]), s['values'][idx[0]], s['color']])
+    for group, side in ((ends, 'end'), (starts, 'start')):
+        group.sort(key=lambda e: e[0])
+        for k in range(1, len(group)):                       # 라벨 겹침 방지 (세로 최소 간격)
+            if group[k][0] - group[k - 1][0] < fs + 2:
+                group[k][0] = group[k - 1][0] + fs + 2
+        for y, x, v, col in group:
+            o.append('<circle cx="%.1f" cy="%.1f" r="3" fill="%s"/>' % (x, Y(v), col))
+            if side == 'end':
+                o.append('<text class="ve" x="%.1f" y="%.1f" style="font-size:%.1fpx;fill:%s">%s</text>' % (x + 6, y + 4, fs, col, fmt(v, nd)))
+            else:
+                o.append('<text class="vs" x="%.1f" y="%.1f" style="font-size:%.1fpx;fill:%s">%s</text>' % (x - 6, y + 4, fs, col, fmt(v, nd)))
+    o.append('</svg>')
+    return ''.join(o)

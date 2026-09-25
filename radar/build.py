@@ -3,7 +3,7 @@
 data/radar.db + data/production.csv → docs/index.html (GitHub Pages 공개 페이지)
 
 디자인 : 서던 하우스(딥그린 #1E4A4A · 오렌지 #F08900), Pretendard 서브셋 자체 호스팅
-  - 탭 : 종합 · 밤 · 호두 · 대추 · 잣 · 표고버섯 · 곶감 (라디오 토글, 자바스크립트 없이 동작)
+  - 탭 : 종합 · 밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감 (라디오 토글, 자바스크립트 없이 동작)
   - 품목 탭 : 헤드라인 → KPI → 최근 13개월 수입 · 수출량 → 연도별 같은 기간 누계 → 연간 생산량
              → 월별 상세표 → 최근 뉴스 → HS 코드 주석
   - 수입 = 딥그린, 수출 = 오렌지 (모든 차트 공통)
@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import KST, ROOT, DB, db, fmt, pct, fmt_pct, rnd
 from items import ITEMS, POLICY
-from charts import dual, hbars, legend, esc
+from charts import dual, hbars, legend, esc, lines
 
 OUT = os.path.join(ROOT, 'docs', 'index.html')
 PROD = os.path.join(ROOT, 'data', 'production.csv')
@@ -90,6 +90,11 @@ svg .x2{fill:var(--muted);text-anchor:middle}
 svg .yl{fill:var(--sub);font-size:12px;text-anchor:end;font-weight:600}
 svg .vh{fill:var(--ink);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
 svg .base{stroke:#BFC7C4;stroke-width:1}
+svg .grid{stroke:#EEF1EF;stroke-width:1}
+svg .xt{stroke:#BFC7C4}
+svg .tk{fill:var(--muted);text-anchor:end;font-variant-numeric:tabular-nums}
+svg .ve{font-weight:800;text-anchor:start;font-variant-numeric:tabular-nums}
+svg .vs{font-weight:700;text-anchor:end;font-variant-numeric:tabular-nums}
 .ch-m{display:none}
 .empty{background:var(--tint);color:var(--sub);font-size:13px;padding:14px 16px;border-radius:4px;word-break:keep-all}
 .empty b{color:var(--ink)}
@@ -198,6 +203,72 @@ def load_krei(con):
             continue
         out[item] = {'ym': ym, 'title': title, 'pdf': pdf, 'view': view, 'heads': hs}
     return out
+
+
+def load_krei_ts(con):
+    """item → [{tkey, title, unit, subs:{sub:{ym:v}}}] (최근 18개월 안에 값이 있는 표만)"""
+    out = defaultdict(dict)
+    try:
+        rows = con.execute('SELECT item,tkey,title,unit,sub,ym,value,src FROM krei_ts').fetchall()
+    except Exception:
+        return {}
+    for item, k, title, unit, sub, ym, v, src in rows:
+        d = out[item].setdefault(k, {'tkey': k, 'title': title, 'unit': unit, 'src': src, 'subs': defaultdict(dict)})
+        if src >= d['src']:
+            d['title'], d['unit'], d['src'] = title, unit or d['unit'], src
+        d['subs'][sub][ym] = v
+    res = {}
+    for item, tabs in out.items():
+        last = max(ym for t in tabs.values() for sd in t['subs'].values() for ym in sd)
+        keep = [t for t in tabs.values() if max(ym for sd in t['subs'].values() for ym in sd) >= ym_add(last, -18)]
+        keep.sort(key=lambda t: (0 if '가격' in t['title'] else 1 if '수입' in t['title'] else 2 if '수출' in t['title'] else 3, t['title']))
+        res[item] = keep
+    return res
+
+
+TS_COL = ['#1E4A4A', '#F08900', '#6F8F7F', '#9AA5A2']
+
+
+def ts_cards(item_key, KT):
+    tabs = KT.get(item_key) or []
+    if not tabs:
+        return ''
+    o = []
+    for t in tabs:
+        subs = sorted(t['subs'].items(), key=lambda kv: -sum(kv[1].values()))[:4]
+        allym = sorted({ym for _, sd in subs for ym in sd})
+        last = allym[-1]
+        first = max(allym[0], ym_add(last, -95))
+        xs, cur = [], first
+        while cur <= last:
+            xs.append(cur); cur = ym_add(cur, 1)
+        vals = [v for _, sd in subs for v in sd.values()]
+        nd = 0 if all(float(v).is_integer() for v in vals) else 1
+        series = [{'name': sub or t['title'], 'color': TS_COL[i], 'values': [sd.get(x) for x in xs]} for i, (sub, sd) in enumerate(subs)]
+        lg = legend(series) if len(series) > 1 else ''
+        chart = ('<div class="ch-d">%s</div><div class="ch-m">%s</div>'
+                 % (lines(xs, series, nd), lines(xs, series, nd, w=360, h=230, fs=10.5)))
+        # 최근 3개 연도 × 월 표
+        yrs = sorted({int(x[:4]) for x in allym})[-3:][::-1]
+        body = []
+        cells = []
+        for sub, sd in subs:
+            for y in yrs:
+                row = [sd.get('%04d-%02d' % (y, m)) for m in range(1, 13)]
+                if not any(v is not None for v in row):
+                    continue
+                cells.append((sub, y, [fmt(v, nd) if v is not None else '-' for v in row]))
+        ws = [span_w([c[2][m] for c in cells]) for m in range(12)]
+        for sub, y, row in cells:
+            body.append('<tr><td class="l">%s</td>%s</tr>' % (esc(('%s ' % sub if sub else '') + '%d년' % y),
+                                                             ''.join(numtd(v, ws[m]) for m, v in enumerate(row))))
+        tb = ('<div class="tw"><table class="t"><thead><tr><th class="l">구분</th>%s</tr></thead><tbody>%s</tbody></table></div>'
+              % (''.join('<th>%d월</th>' % m for m in range(1, 13)), ''.join(body)))
+        o.append('<div class="card span"><div class="sec">KREI MONTHLY</div><div class="h2">%s</div>'
+                 '<div class="cap">단위 : %s · %s ~ %s · 농경연 임업관측 월보 표에서 추출(같은 달은 최신 호 값 사용, 평년 행 제외)</div>'
+                 '%s%s%s</div>' % (esc(t['title'].lstrip('\uf06c ').strip()), esc(t['unit'] or '-'), xs[0].replace('-', '.'),
+                                    last.replace('-', '.'), lg, chart, tb))
+    return '<div class="grid">%s</div>' % ''.join(o)
 
 
 def ko_ym(ym):
@@ -314,7 +385,7 @@ def wait_card():
             '다음 자동 실행 때 2016년 1월부터 채워짐</div>')
 
 
-def item_pane(it, T, forms, P, ref, news, K):
+def item_pane(it, T, forms, P, ref, news, K, KT):
     key, lab = it['key'], it['label']
     S = T.get(key, {})
     g = lambda ym: S.get(ym, {'exp_kg': 0, 'exp_usd': 0, 'imp_kg': 0, 'imp_usd': 0})
@@ -336,6 +407,7 @@ def item_pane(it, T, forms, P, ref, news, K):
         o.append('<div class="hero"><div class="eyebrow">%s</div><h1>%s</h1><ul class="dek">%s</ul></div>'
                  % (esc(eb), esc(h1), ''.join('<li>%s</li>' % d for d in dek)))
         o.append(krei_card(key, K))
+        o.append(ts_cards(key, KT))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
     else:
         y, m = int(ref[:4]), int(ref[5:])
@@ -384,6 +456,7 @@ def item_pane(it, T, forms, P, ref, news, K):
                 '임산물생산조사' if py else '공표값 입력 대기')))
 
         o.append(krei_card(key, K))
+        o.append(ts_cards(key, KT))
         labs = [mlabel(x, i == 0) for i, x in enumerate(ms13)]
         mob = ['%s.%s' % (x[2:4], x[5:]) for x in ms13]
         si = [{'name': '수입량', 'color': IMP, 'values': [t_(g(x)['imp_kg']) for x in ms13]}]
@@ -454,7 +527,7 @@ def summary_pane(T, P, ref, allnews, K):
     o = ['<section class="pane p-all">']
     if not ref:
         o.append('<div class="hero"><div class="eyebrow">임산물 수급 레이더 · 종합</div><h1>임산물 6개 품목 수출입 · 생산 · 뉴스 모니터링</h1>'
-                 '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 잣 · 표고버섯 · 곶감을 각각 확인</li>'
+                 '<ul class="dek"><li>품목 탭에서 밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감을 각각 확인</li>'
                  '<li>뉴스는 매일, 관세청 수출입 통계는 매월 자동 갱신</li></ul></div>')
         o.append(krei_overview(K))
         o.append('<div class="grid"><div class="card span">%s</div></div>' % wait_card())
@@ -517,7 +590,7 @@ NUM = re.compile(r'^-?\d{1,3}(,\d{3})*(\.\d+)?$')
 
 def verify(doc):
     errs = []
-    for tag in re.findall(r'<text class="(?:v|vh)"[^>]*>([^<]*)</text>', doc):
+    for tag in re.findall(r'<text class="(?:v|vh|ve|vs|tk)"[^>]*>([^<]*)</text>', doc):
         if not tag.strip():
             errs.append('빈 수치 라벨')
         elif not NUM.match(tag):
@@ -557,8 +630,9 @@ def main():
     css = CSS.replace('%%', '%').replace('%(TOGGLE)s', '\n'.join(tog))
 
     K = load_krei(con)
+    KT = load_krei_ts(con)
     body = [summary_pane(T, P, ref, allnews, K)]
-    body += [item_pane(it, T, forms, P, ref, news[it['key']], K) for it in ITEMS]
+    body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
     tabs = '<nav class="tabs"><label for="t-all">종합</label>%s</nav>' % ''.join(
         '<label for="t-%s">%s</label>' % (it['key'], it['label']) for it in ITEMS)
@@ -566,7 +640,7 @@ def main():
     doc = ('<!doctype html><html lang="ko"><head><meta charset="utf-8">'
            '<meta name="viewport" content="width=device-width,initial-scale=1">'
            '<title>임산물 수급 레이더</title>'
-           '<meta name="description" content="밤 · 호두 · 대추 · 잣 · 표고버섯 · 곶감 월별 수출입, 연간 생산량, 최근 뉴스">%s</head><body>'
+           '<meta name="description" content="밤 · 호두 · 대추 · 잣 · 표고버섯 · 떫은감 월별 수출입, 연간 생산량, 최근 뉴스">%s</head><body>'
            '<header class="mast"><div class="in"><div class="wm">SOUTHERN<b>POST</b></div><div class="vr"></div>'
            '<div class="team"><span class="t1">(주)서던포스트</span><span class="t2">임산물 수급 레이더</span></div>'
            '<div class="upd">페이지 갱신 <b>%s</b><br>수출입 기준월 <b>%s</b></div></div>'
