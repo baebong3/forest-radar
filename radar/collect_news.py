@@ -130,6 +130,15 @@ def main():
         con.commit()
         total += n
         print('[%s] 후보 %d건 · 품목 기사 %d건 · 신규 %d건' % (cfg['label'], len(got), len(ok), n))
+    # 규칙이 바뀌면 이미 쌓인 기사도 다시 걸러냄
+    removed = 0
+    for cfg in ITEMS + [POLICY]:
+        for url, title in con.execute('SELECT url,title FROM news WHERE item=?', (cfg['key'],)).fetchall():
+            if not relevant(title, cfg):
+                con.execute('DELETE FROM news WHERE url=? AND item=?', (url, cfg['key']))
+                removed += 1
+    if removed:
+        print('규칙에 맞지 않는 기존 기사 %d건 정리' % removed)
     con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)',
                 ('news_run', datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
     con.commit()

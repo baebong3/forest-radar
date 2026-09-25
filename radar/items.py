@@ -31,7 +31,8 @@ ITEMS = [
             {'q': '080232', 'form': '호두(껍데기 없는 것)'},
         ],
         'news': ['호두 농가', '호두 수확', '호두 수입', '호두 가격', '천안 호두', '호두 생산', '국산 호두'],
-        'core': [r'호두(?!과자)'],
+        'core': [r'호두(?!\s?과자)'],
+        'exclude': [r'호두\s?과자', r'휴게소'],
         'prod': '호두',
     },
     {
@@ -109,11 +110,14 @@ def _compile(pats):
 
 for _it in ITEMS + [POLICY]:
     _it['_core'] = _compile(_it['core'])
+    _it['_ex'] = _compile(_it.get('exclude', []))
 
 
 def relevant(title, cfg):
     """품목 핵심어가 제목에 있을 때만 품목 기사로 인정 (밤 = night 같은 오탐 차단)"""
     t = title or ''
+    if any(p.search(t) for p in cfg['_ex']):
+        return False
     return any(p.search(t) for p in cfg['_core'])
 
 
