@@ -50,6 +50,11 @@ jobs:
       - name: Collect KREI 임업관측
         run: python radar/collect_krei.py
 
+      - name: Collect 임산물생산조사 (연 1회 공표분)
+        run: |
+          sudo apt-get install -y -q poppler-utils > /dev/null
+          python radar/collect_prod.py
+
       - name: Build page
         run: python radar/build.py
 
