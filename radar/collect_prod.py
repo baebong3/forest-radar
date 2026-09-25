@@ -213,6 +213,12 @@ def main():
     if not con.execute('SELECT COUNT(*) FROM prod_nat').fetchone()[0]:
         done = set()                                        # 5년 표를 새로 읽도록 한 번 다시 받음
     tried = {r[0] for r in con.execute("SELECT year FROM prod_done WHERE rows = 0")}
+    # 「최근 5년」 표를 아직 못 읽은 보고서는 한 번 더 받아 봄 (못 읽으면 발췌를 남기고 다시 시도하지 않음)
+    srcs = {r[0] for r in con.execute('SELECT DISTINCT src FROM prod_nat')}
+    metak = {r[0] for r in con.execute("SELECT k FROM meta WHERE k LIKE 'nat_tried_%'")}
+    for y in sorted(done):
+        if y not in srcs and 'nat_tried_%d' % y not in metak:
+            done.discard(y)
     for y in sorted(arts):
         if y < a.since or y in done or (y in tried and not a.retry):   # 글꼴 문제로 못 읽는 옛 보고서는 다시 받지 않음
             continue
@@ -220,7 +226,14 @@ def main():
         try:
             t = pdf_text(op, seq)
             rows = parse(t) if t else []
-            for yy, item, sub, tn in (parse_nat(t) if t else []):
+            natr = parse_nat(t) if t else []
+            if t and not natr:
+                con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('nat_tried_%d' % y, 'x'))
+                dd = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug')
+                os.makedirs(dd, exist_ok=True)
+                segs = [t[m.start():m.start() + 3500] for m in re.finditer(r'최근\s*5\s*년', t)][:6]
+                open(os.path.join(dd, 'nat_%d.txt' % y), 'w', encoding='utf-8').write('\n=========\n'.join(segs))
+            for yy, item, sub, tn in natr:
                 old = con.execute('SELECT src FROM prod_nat WHERE year=? AND item=? AND sub=?', (yy, item, sub)).fetchone()
                 if not old or old[0] <= y:                   # 나중 보고서(수정치)가 우선
                     con.execute('INSERT OR REPLACE INTO prod_nat(year,item,sub,tonnes,src) VALUES(?,?,?,?,?)', (yy, item, sub, tn, y))
@@ -245,6 +258,7 @@ def main():
         con.commit()
         print('[%d] %s · %d행' % (y, title, len(rows)))
         time.sleep(1)
+    con.execute("DELETE FROM meta WHERE k='prod_err'")
     con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('prod_run', datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
     con.commit()
 
