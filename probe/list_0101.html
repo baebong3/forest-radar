@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="ko">    
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>임업관측정보 : 한국농촌경제연구원</title>
+    <link rel="shortcut icon" href="/site/krei/images/common/favicon.ico">
+    <link rel="stylesheet" href="/krei/css/style.css">
+    <link rel="stylesheet" href="/krei/css/sub.css?v=20260123">
+    <link rel="stylesheet" href="/krei/editor/froala_editor/css/froala_style.css">
+    <script src="/krei/js/jquery-3.7.1.min.js"></script>
+    
+    
+    <style type="text/css">    
+    .conts_box .forestry li:nth-child(7) div {
+
+    background-color: #608043;
+
+}
+
+
+
+.conts_box .forestry li:nth-child(8) div {
+
+    background-color: #608043;
+
+}
+
+
+
+.conts_box .forestry li {
+
+    width: calc(24% - 10px)!important;
+
+}
+
+
+
+.forestry ul.cover{
+
+    place-content: center;
+
+}
+
+
+
+.forestry .cover li {
+
+    width: calc(20% - 10px)!important;
+
+   flex: none!important;
+
+}
+
+
+
+.forestry .cover li img{
+
+     max-width:177px!important;
+
+}
+
+
+
+.forestry .cover  li a{
+
+     justify-items: center
+
+}</style>
+    <script src="/krei/js/mobile/mobile.js"></script>
+    <script>
+	    function linkPage(num){
+	    	var form = document.frmSearch;
+	    	form.pageIndex.value = num;
+	    	form.submit();
+	    }
+	   
+	    $(function() {
+	        function fetchMonths(yr) {
+	        	let urlParams = new URL(location.href).searchParams;
+
+	        	let ctgry = urlParams.get('ctgry');
+	        	if(ctgry === null) {
+	        		ctgry = "0101";
+	        	}
+	        	console.log(ctgry)
+	            $.ajax({
+	                url: '/krei/page/21?cmd=mmAjax&yr='+yr+'&ctgry='+ctgry,
+	                type: 'GET',
+	                dataType: 'json',
+	                success: function(response) {
+	                    var $mmSelect = $('#searchCateg2');
+	                    $mmSelect.empty();
+	                    
+	                    if (response.mmList && response.mmList.length > 0) {
+	                        $.each(response.mmList, function(index, value) {
+	                            var isSelected = (value === '') ? ' selected' : '';
+	                            $mmSelect.append('<option value="' + value + '"' + isSelected + '>' + value + '월</option>');
+	                        });
+	                    } else {
+	                        $mmSelect.append('<option value="">월</option>');
+	                    }
+	                },
+	                error: function(xhr, status, error) {
+	                    console.error('AJAX 요청 실패:', error);
+	                    alert('연도 데이터를 가져오는 중 오류가 발생했습니다.');
+	                }
+	            });
+	        }
+
+	        var initialYear = $('#yearSelect').val();
+	        fetchMonths(initialYear);
+
+	        $('#yearSelect').on('change', function() {
+	            var yr = $(this).val();
+	            fetchMonths(yr);
+	        });
+	    });
+    </script>
+<script>
+    
+    	
+    	
+    </script>
+</head>	
+<body>
+	<div class="skip_nav">
+        <a href="#contentWrap" title="본문바로가기">본문바로가기</a>
+        <a href="#footer" title="푸터바로가기">푸터바로가기</a>
+    </div>
+	<header class="header">
+    	<div class="full_inner">
+            <h1 class="logo">
+                <a href="/krei" title="KREI 한국농촌경제연구원"><span class="blind">한국농촌경제연구원 로고</span></a>
+            </h1>
+            <nav  class="gnb_menu">
+                <div>
+                	<div class="depth1">
+                        <a href="/krei/page/53" target="_self" title="연구정보">연구정보</a>
+			        		<ul class="depth2_wrap">
+                            <li class="inner">
+                                <ol class="depth2">
+                                	<li>
+                                        <a href="/krei/page/53" target="_self" title="연구보고서">연구보고서</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/53" target="_self" title="연구보고서">연구보고서</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/54" target="_self" title="수시연구과제">수시연구과제</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/55" target="_self" title="2025년 기본·일반연구보고서">2025년 기본·일반연구보고서</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/107" target="_self" title="KREI RESEARCHER">KREI RESEARCHER</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/56" target="_self" title="학술지">학술지</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/56" target="_self" title="농촌경제">농촌경제</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/57" target="_self" title="논문기고안내">논문기고안내</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/58" target="_self" title="논문작성도우미">논문작성도우미</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/59" target="_self" title="글로벌 정보">글로벌 정보</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/59" target="_self" title="세계농업정보">세계농업정보</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/60" target="_self" title="해외곡물시장동향">해외곡물시장동향</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/61" target="_self" title="농축산물수출입동향(FTA)">농축산물수출입동향(FTA)</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/66" target="_self" title="세미나">세미나</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/66" target="_self" title="자료집">자료집</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    </ol>
+                            </li>
+                        </ul>
+                        </div>
+                    <div class="depth1">
+                        <a href="/krei/page/14" target="_self" title="이슈&amp;동향">이슈&amp;동향</a>
+			        		<ul class="depth2_wrap">
+                            <li class="inner">
+                                <ol class="depth2">
+                                	<li>
+                                        <a href="/krei/page/14" target="_self" title="이슈+">이슈+</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/15" target="_self" title="농정포커스">농정포커스</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/16" target="_self" title="KREI논단">KREI논단</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/17" target="_self" title="주간브리프">주간브리프</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/18" target="_self" title="농업농촌경제동향">농업농촌경제동향</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/19" target="_self" title="농식품재정사업리포트">농식품재정사업리포트</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/20" target="_self" title="농업관측정보">농업관측정보</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/21" target="_self" title="임업관측정보">임업관측정보</a>
+								         	</li>
+                                    </ol>
+                            </li>
+                        </ul>
+                        </div>
+                    <div class="depth1">
+                        <a href="/krei/page/68" target="_self" title="소통">소통</a>
+			        		<ul class="depth2_wrap">
+                            <li class="inner">
+                                <ol class="depth2">
+                                	<li>
+                                        <a href="/krei/page/68" target="_self" title="인재채용">인재채용</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/68" target="_self" title="채용안내">채용안내</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/69" target="_self" title="채용공고">채용공고</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/70" target="_self" title="친인척 채용인원 공개">친인척 채용인원 공개</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/23" target="_self" title="공지사항">공지사항</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/24" target="_self" title="보도자료">보도자료</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/25" target="_self" title="KREI I-zine">KREI I-zine</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/26" target="_self" title="농경나눔터">농경나눔터</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/27" target="_self" title="동정&amp;행사">동정&amp;행사</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/28" target="_self" title="연구제안">연구제안</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/29" target="_self" title="신고센터">신고센터</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/30" target="_self" title="질의응답">질의응답</a>
+								         	</li>
+                                    </ol>
+                            </li>
+                        </ul>
+                        </div>
+                    <div class="depth1">
+                        <a href="/krei/page/31" target="_self" title="연구원소개">연구원소개</a>
+			        		<ul class="depth2_wrap">
+                            <li class="inner">
+                                <ol class="depth2">
+                                	<li>
+                                        <a href="/krei/page/31" target="_self" title="연구원개요">연구원개요</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/32" target="_self" title="조직도">조직도</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/71" target="_self" title="원장실">원장실</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/71" target="_self" title="원장 인사말">원장 인사말</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/72" target="_self" title="원장 약력">원장 약력</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/73" target="_self" title="역대 원장소개">역대 원장소개</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/34" target="_self" title="연구사업소개">연구사업소개</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/35" target="_self" title="경영목표">경영목표</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/481" target="_self" title="윤리경영">윤리경영</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/481" target="_self" title="윤리헌장">윤리헌장</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/484" target="_self" title="윤리경영 추진체계">윤리경영 추진체계</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/482" target="_self" title="윤리경영 운영기준·자료">윤리경영 운영기준·자료</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/78" target="_self" title="인권경영">인권경영</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/78" target="_self" title="인권경영비전">인권경영비전</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/79" target="_self" title="인권경영 추진체계">인권경영 추진체계</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/80" target="_self" title="인권침해 구제절차 신고">인권침해 구제절차 신고</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/81" target="_self" title="인권경영 활동/교육">인권경영 활동/교육</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/82" target="_self" title="인권경영 지침/자료">인권경영 지침/자료</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/466" target="_self" title="ESG경영">ESG경영</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/466" target="_self" title="ESG경영목표및전략">ESG경영목표및전략</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/467" target="_self" title="ESG경영 추진체계">ESG경영 추진체계</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/468" target="_self" title="ESG 경영보고서">ESG 경영보고서</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/469" target="_self" title="ESG성과평가">ESG성과평가</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/470" target="_self" title="ESG경영위원회 운영기준">ESG경영위원회 운영기준</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/38" target="_self" title="KREI CI">KREI CI</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/39" target="_self" title="찾아오시는 길">찾아오시는 길</a>
+								         	</li>
+                                    </ol>
+                            </li>
+                        </ul>
+                        </div>
+                    <div class="depth1">
+                        <a href="/krei/page/40" target="_self" title="정보공개">정보공개</a>
+			        		<ul class="depth2_wrap">
+                            <li class="inner">
+                                <ol class="depth2">
+                                	<li>
+                                        <a href="/krei/page/40" target="_self" title="정보공개">정보공개</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/83" target="_self" title="공공데이터 개방">공공데이터 개방</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/83" target="_self" title="안내">안내</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/84" target="_self" title="공공데이터 수요조사">공공데이터 수요조사</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/474" target="_self" title="공공데이터 오픈 API">공공데이터 오픈 API</a>
+									        		</li>
+                                            <li>
+                                            	<a href="/krei/page/480" target="_self" title="공공데이터 신청">공공데이터 신청</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/85" target="_self" title="KREI 정보공개">KREI 정보공개</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/85" target="_self" title="경영정보공시">경영정보공시</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/91" target="_self" title="사전정보공표">사전정보공표</a>
+									        		</li>
+                                            <li>
+                                            	<a href="/krei/page/97" target="_self" title="KREI 핵심정보">KREI 핵심정보</a>
+									        		</li>
+                                            <li>
+                                            	<a href="/krei/page/88" target="_self" title="참고자료">참고자료</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/43" target="_self" title="사업실명제">사업실명제</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/89" target="_self" title="연구협력협정 체결현황">연구협력협정 체결현황</a>
+								        		<ol class="depth3">
+                                        	<li>
+                                            	<a href="/krei/page/89" target="_self" title="국내">국내</a>
+									         	</li>
+                                            <li>
+                                            	<a href="/krei/page/90" target="_self" title="국외">국외</a>
+									         	</li>
+                                            </ol>
+                                        </li>
+                                    <li>
+                                        <a href="/krei/page/45" target="_self" title="해외출장연수보고">해외출장연수보고</a>
+								         	</li>
+                                    <li>
+                                        <a href="/krei/page/418" target="_self" title="뉴스레터">뉴스레터</a>
+								         	</li>
+                                    </ol>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+            </nav>
+            <ol class="etc_menu">
+                <li><a href="/eng" title="영문홈페이지 바로가기" class="lang_link">ENG</a></li>
+                <li class="search_btn position-relative">
+                    <button type="button"><i class="blind">검색</i></button>
+                    
+                </li>
+                <li>
+                    <a href="#" title="" class="hambug pc_ham">
+                        <i class="blind">사이트맵 열기</i>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                    <!-- 사이트맵 -->
+                    <div class="sitemap">
+                        <div class="sitemap_inner">
+                            <div class="stm_header h-100 d-flex align-items-center justify-content-between">
+                                <h1 class="logo">
+                                    <a href="#" title="KREI 한국농촌경제연구원"><span class="blind">한국농촌경제연구원 로고</span></a>
+                                </h1>
+                                <div class="position-relative">
+                                    <div class="lang_link">
+                                        <a href="/eng" title="영문페이지 바로가기"  class="d-inline">ENG</a>
+                                    </div>
+                                    <a href="#" title="" class="hambug close">
+                                        <i class="blind">사이트맵 끄기</i>
+                                        <span></span>
+                                        <span></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="d-xl-flex mt-xl-4 position-relative">
+
+                                <!-- 대표 홈페이지 영역 -->
+                                <ul class="d-xl-flex justify-content-between col-xl-10">
+                                	<li class="dep1 col-xl-2">
+                                        <button type="button">연구정보</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/53" target="_self" title="연구보고서">연구보고서</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/54" target="_self" title="수시연구과제">수시연구과제</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/55" target="_self" title="2025년 기본·일반연구보고서">2025년 기본·일반연구보고서</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/107" target="_self" title="KREI RESEARCHER">KREI RESEARCHER</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="학술지" class="is-active mb-xl-3">학술지</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/56" target="_self" title="농촌경제">농촌경제</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/57" target="_self" title="논문기고안내">논문기고안내</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/58" target="_self" title="논문작성도우미">논문작성도우미</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="글로벌 정보" class="is-active mb-xl-3">글로벌 정보</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/59" target="_self" title="세계농업정보">세계농업정보</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/60" target="_self" title="해외곡물시장동향">해외곡물시장동향</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/61" target="_self" title="농축산물수출입동향(FTA)">농축산물수출입동향(FTA)</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="세미나" class="is-active mb-xl-3">세미나</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/66" target="_self" title="자료집">자료집</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    <li class="dep1 col-xl-2">
+                                        <button type="button">이슈&amp;동향</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/14" target="_self" title="이슈+" class="mb-xl-3">이슈+</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/15" target="_self" title="농정포커스" class="mb-xl-3">농정포커스</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/16" target="_self" title="KREI논단" class="mb-xl-3">KREI논단</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/17" target="_self" title="주간브리프" class="mb-xl-3">주간브리프</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/18" target="_self" title="농업농촌경제동향" class="mb-xl-3">농업농촌경제동향</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/19" target="_self" title="농식품재정사업리포트" class="mb-xl-3">농식품재정사업리포트</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/20" target="_self" title="농업관측정보" class="mb-xl-3">농업관측정보</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/21" target="_self" title="임업관측정보" class="mb-xl-3">임업관측정보</a>
+										         	</li>
+                                            </ul>
+                                        </li>
+                                    <li class="dep1 col-xl-2">
+                                        <button type="button">소통</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="인재채용" class="is-active mb-xl-3">인재채용</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/68" target="_self" title="채용안내">채용안내</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/69" target="_self" title="채용공고">채용공고</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/70" target="_self" title="친인척 채용인원 공개">친인척 채용인원 공개</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/23" target="_self" title="공지사항" class="mb-xl-3">공지사항</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/24" target="_self" title="보도자료" class="mb-xl-3">보도자료</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/25" target="_self" title="KREI I-zine" class="mb-xl-3">KREI I-zine</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/26" target="_self" title="농경나눔터" class="mb-xl-3">농경나눔터</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/27" target="_self" title="동정&amp;행사" class="mb-xl-3">동정&amp;행사</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/28" target="_self" title="연구제안" class="mb-xl-3">연구제안</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/29" target="_self" title="신고센터" class="mb-xl-3">신고센터</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/30" target="_self" title="질의응답" class="mb-xl-3">질의응답</a>
+										         	</li>
+                                            </ul>
+                                        </li>
+                                    <li class="dep1 col-xl-2">
+                                        <button type="button">연구원소개</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/31" target="_self" title="연구원개요" class="mb-xl-3">연구원개요</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/32" target="_self" title="조직도" class="mb-xl-3">조직도</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="원장실" class="is-active mb-xl-3">원장실</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/71" target="_self" title="원장 인사말">원장 인사말</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/72" target="_self" title="원장 약력">원장 약력</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/73" target="_self" title="역대 원장소개">역대 원장소개</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/34" target="_self" title="연구사업소개" class="mb-xl-3">연구사업소개</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/35" target="_self" title="경영목표" class="mb-xl-3">경영목표</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="윤리경영" class="is-active mb-xl-3">윤리경영</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/481" target="_self" title="윤리헌장">윤리헌장</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/484" target="_self" title="윤리경영 추진체계">윤리경영 추진체계</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/482" target="_self" title="윤리경영 운영기준·자료">윤리경영 운영기준·자료</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="인권경영" class="is-active mb-xl-3">인권경영</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/78" target="_self" title="인권경영비전">인권경영비전</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/79" target="_self" title="인권경영 추진체계">인권경영 추진체계</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/80" target="_self" title="인권침해 구제절차 신고">인권침해 구제절차 신고</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/81" target="_self" title="인권경영 활동/교육">인권경영 활동/교육</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/82" target="_self" title="인권경영 지침/자료">인권경영 지침/자료</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="ESG경영" class="is-active mb-xl-3">ESG경영</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/466" target="_self" title="ESG경영목표및전략">ESG경영목표및전략</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/467" target="_self" title="ESG경영 추진체계">ESG경영 추진체계</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/468" target="_self" title="ESG 경영보고서">ESG 경영보고서</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/469" target="_self" title="ESG성과평가">ESG성과평가</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/470" target="_self" title="ESG경영위원회 운영기준">ESG경영위원회 운영기준</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/38" target="_self" title="KREI CI" class="mb-xl-3">KREI CI</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/39" target="_self" title="찾아오시는 길" class="mb-xl-3">찾아오시는 길</a>
+										         	</li>
+                                            </ul>
+                                        </li>
+                                    <li class="dep1 col-xl-2">
+                                        <button type="button">정보공개</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/40" target="_self" title="정보공개" class="mb-xl-3">정보공개</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="공공데이터 개방" class="is-active mb-xl-3">공공데이터 개방</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/83" target="_self" title="안내">안내</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/84" target="_self" title="공공데이터 수요조사">공공데이터 수요조사</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/page/474" target="_self" title="공공데이터 오픈 API">공공데이터 오픈 API</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/480" target="_self" title="공공데이터 신청">공공데이터 신청</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="KREI 정보공개" class="is-active mb-xl-3">KREI 정보공개</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/85" target="_self" title="경영정보공시">경영정보공시</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/page/91" target="_self" title="사전정보공표">사전정보공표</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/page/97" target="_self" title="KREI 핵심정보">KREI 핵심정보</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/88" target="_self" title="참고자료">참고자료</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/43" target="_self" title="사업실명제" class="mb-xl-3">사업실명제</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="#" title="연구협력협정 체결현황" class="is-active mb-xl-3">연구협력협정 체결현황</a>
+							                       	<ul class="dep3">
+                                                	<li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/89" target="_self" title="국내">국내</a>
+											         	</li>
+                                                    <li>
+                                                        <!-- <a href="#" title="연구보고서">연구보고서</a> -->
+                                                        <a href="/krei/page/90" target="_self" title="국외">국외</a>
+											         	</li>
+                                                    </ul>
+                                                </li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/45" target="_self" title="해외출장연수보고" class="mb-xl-3">해외출장연수보고</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/418" target="_self" title="뉴스레터" class="mb-xl-3">뉴스레터</a>
+										         	</li>
+                                            </ul>
+                                        </li>
+                                    <li class="dep1 col-xl-2">
+                                        <button type="button">서비스정책</button>
+                                        <ul class="dep2">
+                                        	<li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/46" target="_self" title="고객헌장 및 서비스 이행표준" class="mb-xl-3">고객헌장 및 서비스 이행표준</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/47" target="_self" title="VOC 처리절차" class="mb-xl-3">VOC 처리절차</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/48" target="_self" title="개인정보 처리방침" class="mb-xl-3">개인정보 처리방침</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/49" target="_self" title="CCTV 설치 및 운영안내" class="mb-xl-3">CCTV 설치 및 운영안내</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/50" target="_self" title="홈페이지 저작권 정책" class="mb-xl-3">홈페이지 저작권 정책</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/51" target="_self" title="이메일 무단수집 금지" class="mb-xl-3">이메일 무단수집 금지</a>
+										         	</li>
+                                            <li class="mb-xl-4">
+                                                <!-- <a href="#" title="연구보고서" class="is-active mb-xl-3">연구보고서</a> -->
+                                                <a href="/krei/page/52" target="_self" title="체육시설 및 주차장 운영안내" class="mb-xl-3">체육시설 및 주차장 운영안내</a>
+										         	</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                <!-- 대표 홈페이지 영역 -->
+                                
+                                <!-- 개별 홈페이지 영역 -->
+                                <div class="plus_menu col-xl-2">
+                                    <button>+ 개별홈페이지</button>
+                                    <div class="plus_wrap">
+                                        <ul class="plus_site">
+                                            <li><a href="//aglook.krei.re.kr" target="_blank" title="농업관측센터 새창열림">농업관측센터</a></li>
+                                            <li><a href="/support" target="_blank" title="FTA 이행지원센터 새창열림">FTA 이행지원센터</a></li>
+                                            <li><a href="/consumptioninfo/index.do" target="_blank" title="농식품 소비정보 분석사업 새창열림">농식품 소비정보 분석사업</a></li>
+                                            <li><a href="/foodSurvey/index.do" target="_blank" title="식품소비행태조사 새창열림">식품소비행태조사</a></li>
+                                            <li>
+                                            	<a href="/foodInfo/index.do" target="_blank" title="식품산업 정보분석 전문기관 사업 새창열림">식품산업 정보분석 전문기관 사업</a>
+                                            	<a class="sub" href="/foodInfo/page/316" target="_blank" title="가공식품소비자태도조사">가공식품소비자태도조사</a>
+                                            	<a class="sub" href="/foodInfo/page/323" target="_blank" title="외식업체경영실태조사">외식업체경영실태조사</a>
+                                            </li>   
+                                            <li><a href="/kapex" target="_blank" title="국제농업 개발협력센터 새창열림">국제농업 개발협력센터</a></li>
+                                            <li><a href="/committee" target="_blank" title="삶의질정책연구센터 새창열림">삶의질정책연구센터</a></li>
+                                            <li><a href="/wldagr" target="_blank" title="세계농업정보 새창열림">세계농업정보</a></li>
+                                            <li><a href="/grain" target="_blank" title="해외곡물시장정보 새창열림">해외곡물시장정보</a></li>
+                                            <li><a href="/yonwoo" target="_blank" title="연우회 새창열림">연우회</a></li>
+                                            <li><a href="/reporter" target="_blank" title="리포터사랑방 새창열림">리포터사랑방</a></li>
+                                            <li><a href="//www.aglook.kr" target="_blank" title="농업전망 2026 새창열림">농업전망 2026</a></li>
+                                            <li><a href="//library.krei.re.kr" target="_blank" title="KREI 전자도서관">KREI 전자도서관</a></li>
+                                        </ul>
+                                        <ul class="sns">
+                                            <li><a href="https://www.youtube.com/c/KREIpr" target="_blank" title="유튜브 새창열림" class="d-flex align-items-center">유튜브</a></li>
+                                            <li><a href="https://blog.naver.com/kreipr" target="_blank" title="네이버 블로그 새창열림" class="d-flex align-items-center">네이버 블로그</a></li>
+                                            <li><a href="https://www.facebook.com/kreipr" target="_blank" title="페이스북 새창열림" class="d-flex align-items-center">페이스북</a></li>                                            
+                                            <li><a href="https://www.instagram.com/krei__official" target="_blank" title="인스타그램 새창열림" class="d-flex align-items-center">인스타그램</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- 패밀리 사이트 영역 -->
+
+                            </div>
+                            <!-- 뎁스 -->
+                        </div>
+                    </div>
+                </li>
+                <li><a href="#" title="" class="hambug mo_ham d-none">메뉴열기</a></li>
+            </ol>
+        </div>
+    </header>
+<section id="contentWrap" class="content">
+		<script>
+$(document).on('click', '#linkCopy', function(){
+	$('#data-area').val(window.location.href);
+	
+    // 화면에서 hidden 처리한 input box type을 text로 일시 변환
+    $('#data-area').attr('type', 'text');
+    
+    // input에 담긴 데이터를 선택
+    $('#data-area').select();
+    
+    //  clipboard에 데이터 복사
+    var copy = document.execCommand('copy');
+    
+    // input box를 다시 hidden 처리
+    $('#data-area').attr('type', 'hidden');
+    
+    // 사용자 알림
+    if(copy) {
+    	alert("링크가 복사되었습니다.");
+    }
+})
+
+</script>
+		<!--서브 레이아웃-->
+        <div class="inner subLayout">
+            <section class="sub_nav d-flex flex-row align-items-center">
+                <a href="#" title="메인으로 이동" class="home"><span class="blind">메인으로 이동</span></a>
+                <ul class="d-flex flex-row align-items-center">
+                    <li class="sub_depth"><!--1뎁스-->
+                    	
+                        <button type="button" class="border-0 bg-transparent">이슈&amp;동향<i></i></button>                        
+                        <ol class="position-absolute ">
+                        	<li>
+                            	<a href="/krei/page/53" target="_self" title="연구정보">연구정보</a>
+					        		</li>
+                            <li>
+                            	<a href="/krei/page/14" target="_self" title="이슈&amp;동향" class="active">이슈&amp;동향</a>
+					        		</li>
+                            <li>
+                            	<a href="/krei/page/68" target="_self" title="소통">소통</a>
+					        		</li>
+                            <li>
+                            	<a href="/krei/page/31" target="_self" title="연구원소개">연구원소개</a>
+					        		</li>
+                            <li>
+                            	<a href="/krei/page/40" target="_self" title="정보공개">정보공개</a>
+					        		</li>
+                            <li>
+                            	<a href="/krei/page/46" target="_self" title="서비스정책">서비스정책</a>
+					        		</li>
+                            </ol>
+                    </li>                    
+                    <li class="sub_depth"><!--2뎁스-->
+                        <button type="button" class="border-0 bg-transparent">임업관측정보<i></i></button>
+                        <ol class="position-absolute ">                        
+                        	<li class="d-none">
+                            	<a href="/krei/page/53" target="_self" title="연구보고서">연구보고서</a>
+					        		</li>
+                            <li class="">
+                            	<a href="/krei/page/14" target="_self" title="이슈+">이슈+</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/68" target="_self" title="인재채용">인재채용</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/31" target="_self" title="연구원개요">연구원개요</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/40" target="_self" title="정보공개">정보공개</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/46" target="_self" title="고객헌장 및 서비스 이행표준">고객헌장 및 서비스 이행표준</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/56" target="_self" title="학술지">학술지</a>
+					        		</li>
+                            <li class="">
+                            	<a href="/krei/page/15" target="_self" title="농정포커스">농정포커스</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/23" target="_self" title="공지사항">공지사항</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/32" target="_self" title="조직도">조직도</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/83" target="_self" title="공공데이터 개방">공공데이터 개방</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/47" target="_self" title="VOC 처리절차">VOC 처리절차</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/59" target="_self" title="글로벌 정보">글로벌 정보</a>
+					        		</li>
+                            <li class="">
+                            	<a href="/krei/page/16" target="_self" title="KREI논단">KREI논단</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/24" target="_self" title="보도자료">보도자료</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/71" target="_self" title="원장실">원장실</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/85" target="_self" title="KREI 정보공개">KREI 정보공개</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/48" target="_self" title="개인정보 처리방침">개인정보 처리방침</a>
+					         	</li>
+                            <li class="">
+                            	<a href="/krei/page/17" target="_self" title="주간브리프">주간브리프</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/25" target="_self" title="KREI I-zine">KREI I-zine</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/34" target="_self" title="연구사업소개">연구사업소개</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/43" target="_self" title="사업실명제">사업실명제</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/49" target="_self" title="CCTV 설치 및 운영안내">CCTV 설치 및 운영안내</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/66" target="_self" title="세미나">세미나</a>
+					        		</li>
+                            <li class="">
+                            	<a href="/krei/page/18" target="_self" title="농업농촌경제동향">농업농촌경제동향</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/26" target="_self" title="농경나눔터">농경나눔터</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/35" target="_self" title="경영목표">경영목표</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/89" target="_self" title="연구협력협정 체결현황">연구협력협정 체결현황</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/50" target="_self" title="홈페이지 저작권 정책">홈페이지 저작권 정책</a>
+					         	</li>
+                            <li class="">
+                            	<a href="/krei/page/19" target="_self" title="농식품재정사업리포트">농식품재정사업리포트</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/27" target="_self" title="동정&amp;행사">동정&amp;행사</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/481" target="_self" title="윤리경영">윤리경영</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/45" target="_self" title="해외출장연수보고">해외출장연수보고</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/51" target="_self" title="이메일 무단수집 금지">이메일 무단수집 금지</a>
+					         	</li>
+                            <li class="">
+                            	<a href="/krei/page/20" target="_self" title="농업관측정보">농업관측정보</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/28" target="_self" title="연구제안">연구제안</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/29" target="_self" title="신고센터">신고센터</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/30" target="_self" title="질의응답">질의응답</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/78" target="_self" title="인권경영">인권경영</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/52" target="_self" title="체육시설 및 주차장 운영안내">체육시설 및 주차장 운영안내</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/418" target="_self" title="뉴스레터">뉴스레터</a>
+					         	</li>
+                            <li class="">
+                            	<a href="/krei/page/21" target="_self" title="임업관측정보" class="active">임업관측정보</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/466" target="_self" title="ESG경영">ESG경영</a>
+					        		</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/38" target="_self" title="KREI CI">KREI CI</a>
+					         	</li>
+                            <li class="d-none">
+                            	<a href="/krei/page/39" target="_self" title="찾아오시는 길">찾아오시는 길</a>
+					         	</li>
+                            </ol>
+                    </li>
+                    </ul>
+
+                <ul class="etc_button d-flex flex-row align-items-center ms-auto">
+                    <li class="print">
+                        <button type="button" title="현재 페이지 프린트" onclick="window.print()" class="border-0 bg-transparent d-block">
+                            <img src="/krei/images/ico_print.png" alt="프린트 아이콘"/>
+                        </button>
+                    </li>
+                    <li class="link_copy">
+                        <button type="button" id="linkCopy" title="현재 페이지 링크복사" class="border-0 bg-transparent d-block">
+                            <img src="/krei/images/ico_copy.png" alt="링크아이콘"/>
+                        </button>
+                        <input type="hidden"  id="data-area" value=""/>
+                    </li>
+                    <li class="page_zoom d-lg-flex flex-row align-items-center ">
+                        <a href="#" onclick="zoomIn();" title="확대" class="zoomin">
+                            <span class="blind">페이지 확대</span>
+                        </a>
+                        <span id="zoomTxt">100%</span>
+                        <a href="#" onclick="zoomOut();" title="축소" class="zoomout">
+                            <span class="blind">페이지 축소</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+
+            <h2 class="sub_title"><!--항상 마지막뎁스 타이틀 적용-->
+                임업관측정보</h2>
+        </div>
+        
+	<div class="contentStart">
+	
+	<div class=""><div class="conts_box bg_gradient py-5"><div class="forestry inner"><p>임업관측은 <strong>밤, 표고버섯, 대추, 감, 산채, 조경수</strong>의 단기 시장동향을 조사하여 다음 <strong>각 월 4일</strong>에 발표됩니다.</p><ul class="d-flex flex-row flex-wrap gap-md-3 gap-2"><li class="d-flex"><div>밤</div><span>5/8/9/10/12월</span></li><li class="d-flex"><div>표고버섯</div><span>5/7/9/10/11/12월</span></li><li class="d-flex"><div>대추</div><span>5/9/10/12월</span></li><li class="d-flex"><div>감</div><span>5/9/10/12월</span></li><li class="d-flex"><div>산채</div><span>5/6/9/10월</span></li><li class="d-flex"><div>호두</div><span>5/9/10/12월</span></li><li class="d-flex"><div>오미자</div><span>5/7/9/11월</span></li><li class="d-flex"><div>조경수</div><span>12월</span></li></ul></div></div><div class="forestry inner mt-5 mb-4"><ul class="cover d-flex flex-wrap gap-xl-5 gap-4 sm-4 gap-3 p-sm-5 p-4 border rounded-3"><li><a href="./21?cmd=list&ctgry=0101" title="[밤] 2025년 5월 관측월보"><img src="https://www.krei.re.kr/v/observ/2026/09/04/ccd0d688-c03e-4802-acd1-1ae40099406a.jpg" alt="밤월보표지" class="w-100 shadow fr-fic fr-dii" width="180' height="></a></li><li><a href="./21?cmd=list&ctgry=0102" title=""><img src="https://www.krei.re.kr/v/observ/2026/09/04/5eb82f44-de3f-4aaa-9e40-6d14bf3776bb.jpg" alt="표고버섯월보표지" class="w-100 shadow fr-fic fr-dii" width="180' height="></a></li><li><a href="./21?cmd=list&ctgry=0103" title=""><img src="https://www.krei.re.kr/v/observ/2026/09/04/28796622-6cd9-4533-a0d7-2fcc4421315f.jpg" alt="대추월보표지" class="w-100 shadow fr-fic fr-dii" width="180' height="></a></li><li><a href="./21?cmd=list&ctgry=0104" title=""><img src="https://www.krei.re.kr/v/observ/2026/09/04/62b6993f-029d-4bf3-ba18-d4e4a558f9b0.jpg" alt="떫은감월보표지" class="w-100 shadow fr-fic fr-dii" width="180' height="></a> <a href="./21?cmd=list&ctgry=0107" title=""><p><br></p></a></li><li><a href="./21?cmd=list&ctgry=0107" title=""></a><p><a href="./21?cmd=list&ctgry=0107" title=""></a> <a href="https://www.krei.re.kr/krei/page/21?cmd=list&ctgry=0105"><img src="https://www.krei.re.kr/v/observ/2026/09/04/c56030b2-eebc-4478-a9c0-b245929f7d10.jpg" style="width: 680px;" class="fr-fic fr-dib"></a><br></p></li><li><a href="./21?cmd=list&ctgry=0107" title=""><p><img src="https://www.krei.re.kr/v/observ/2026/09/04/7f60627d-78f9-4653-a041-5fb5673e1e86.jpg" alt="호두월보표지" class="fr-fic fr-dib w-100 shadow" width="180' height="><br></p></a></li><li><a href="./21?cmd=list&ctgry=0108" title=""><img src="https://www.krei.re.kr/v/observ/2026/09/04/de1ed1c2-c4fa-449b-bed0-fa0b591102d1.jpg" alt="오미자월보표지" class="fr-fic fr-dib w-100 shadow" width="180' height="></a></li><li><a href="./21?cmd=list&ctgry=0106" title=""><img src="https://www.krei.re.kr/v/observ/2025/12/04/d1652adc-f65b-4552-bd07-a0129fcb15e0.jpg" alt="조경수월보표지" class="w-100 shadow fr-fic fr-dii" width="180' height="></a></li></ul></div><p><br></p></div>
+				<section class="inner">
+					<form method="get" id="frmSearch" name="frmSearch">
+						<input type="hidden" name="pageIndex" value="1">
+						<input type="hidden" name="ctgry" value="0101">
+						<div class="board_search d-flex flex-column flex-md-row align-items-end justify-content-between">
+			                <p class="mt-3 mt-md-0 order-2 order-md-1">[총
+			                    <strong>121</strong>
+			                    건]
+			                    <strong>1</strong>
+			                    /
+			                    <span>13</span>
+			                    page
+			                </p>
+			                <div class="d-flex flex-row justify-content-end order-1 order-md-2 ps-md-4 w-100">
+			                    <div class="search_wrap input-group d-flex justify-content-md-end flex-md-nowrap flex-wrap">
+									<div class="item search_select position-relative">
+										<label class="blind" for="yearSelect">검색 분류</label>
+										<select class="form-select text-truncate" id="yearSelect" name="searchYr" aria-label="연도 선택">
+											<option value="">연도</option>
+											<option value="2026" >2026년</option>
+											<option value="2025" >2025년</option>
+											<option value="2024" >2024년</option>
+											<option value="2023" >2023년</option>
+											<option value="2022" >2022년</option>
+											<option value="2021" >2021년</option>
+											<option value="2020" >2020년</option>
+											<option value="2019" >2019년</option>
+											<option value="2018" >2018년</option>
+											<option value="2017" >2017년</option>
+											<option value="2016" >2016년</option>
+											<option value="2015" >2015년</option>
+											<option value="2014" >2014년</option>
+											<option value="2013" >2013년</option>
+											<option value="2012" >2012년</option>
+											<option value="2011" >2011년</option>
+											<option value="2010" >2010년</option>
+											<option value="2009" >2009년</option>
+											<option value="2008" >2008년</option>
+											</select>
+										<button type="submit" class="border-0"></button>
+									</div>
+									<div class="item search_select position-relative">
+										<label class="blind" for="searchCateg2">검색 분류</label>
+										<select class="form-select text-truncate" id="searchCateg2" name="searchMm">
+											<option value="">월</option>
+											</select>
+										<button type="submit" class="border-0"></button>
+									</div>
+			                    </div>
+			                </div>
+			            </div>
+					</form>
+					<section class="board_sect">
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">121</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2026&mm=09" title="[밤] 2026년 09월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2026년 09월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2026/09/04/7d649f56-9ab9-4fef-90fc-4012699d38da.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">120</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2026&mm=08" title="[밤] 2026년 08월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2026년 08월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2026/08/04/364d34c0-49ce-49d3-bce6-086d3b5be152.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">119</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2026&mm=05" title="[밤] 2026년 05월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2026년 05월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2026/05/04/47e1955c-e883-45a8-851d-f024b2f75db2.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">118</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2025&mm=12" title="[밤] 2025년 12월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2025년 12월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2025/12/04/955d8646-b410-4b24-a356-504cedbf6398.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">117</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2025&mm=10" title="[밤] 2025년 10월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2025년 10월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2025/10/02/5e86244d-c3b8-46fa-a423-6963a71e2693.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">116</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2025&mm=09" title="[밤] 2025년 09월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2025년 09월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2025/09/04/d375db2d-99dd-450f-92dc-8231b351316c.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">115</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2025&mm=08" title="[밤] 2025년 08월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2025년 08월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2025/08/04/27afb7ce-9930-4d28-8c8f-396133fea0e2.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">114</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2025&mm=05" title="[밤] 2025년 05월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2025년 05월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2025/05/02/ef613e49-5d9d-486e-8184-a37f8a6694f9.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">113</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2024&mm=12" title="[밤] 2024년 12월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2024년 12월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2024/12/16/f38647cc-aa05-4687-a43e-2fcbfee671e0.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						<div class="item d-flex flex-row align-items-center justify-content-start">
+		                    	<span class="numb">112</span>
+			                    <a href="?cmd=view&ctgry=0101&yr=2024&mm=10" title="[밤] 2024년 10월" class="d-flex flex-wrap">
+			                        <strong class="w-100 d-flex align-items-center">
+			                            <span class="titl d-block text-truncate">[
+											밤
+											] 2024년 10월 관측월보
+										</span>
+		                            </strong>
+			                    </a>
+			                    <a href="/attach/observ/2024/12/16/2da50dfe-cffe-48f9-985c-738eab3908d9.pdf" title="파일 다운로드" onclick="fn_download(534293)" class="file_down" data-extension="pdf" target="_blank"><span class="blind">파일다운로드</span></a>
+		                    </div>
+						</section>
+				</section>
+				<ul class="pagination d-flex flex-row justify-content-center">
+						<li class="page-item page_arr"> <a class="page-link first" href="#" aria-label="first page" onclick="linkPage(1); return false;"><span class="blind">첫번째페이지로</span></a></li><li class="page-item page_arr"> <a class="page-link prev" href="#" aria-label="Previous" onclick="linkPage(1); return false;"><span class="blind">이전페이지로</span></a></li><li class="page-item active"><a class="page-link" href="#">1</a><li class="page-item"><a class="page-link" href="#" onclick="linkPage(2); return false;">2</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(3); return false;">3</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(4); return false;">4</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(5); return false;">5</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(6); return false;">6</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(7); return false;">7</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(8); return false;">8</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(9); return false;">9</a></li><li class="page-item"><a class="page-link" href="#" onclick="linkPage(10); return false;">10</a></li><li class="page-item page_arr"> <a class="page-link next" href="#" aria-label="Next" onclick="linkPage(11); return false;"><span class="blind">다음페이지로</span></a></li><li class="page-item page_arr"><a class="page-link last" href="#" aria-label="last" onclick="linkPage(13); return false;"><span class="blind">마지막페이지로</span></a></li>
+</ul>
+				</div>
+</section>	
+	<!--footer-->
+    <footer id="footer">
+        <div class="full_inner">
+            <a href="#" title="KREI 한국농촌경제연구원" class="ft_logo"><span class="blind">한국농촌경제연구원 푸터</span></a>
+            <div class="conts">
+                <ul class="ft_nav">
+                    <li><a href="/krei/page/48" class="fw-bolder" title="개인정보처리방침">개인정보처리방침</a></li>
+                    <li><a href="/krei/page/49" title="CCTV설치및운영안내">CCTV설치및운영안내</a></li>
+                    <li><a href="/krei/page/50" title="홈페이지저작권정책">홈페이지저작권정책</a></li>
+                    <li><a href="/krei/page/51" title="이메일무단수집금지">이메일무단수집금지</a></li>
+                    <li><a href="/krei/page/52" title="체육시설및주차장운영안내">체육시설및주차장운영안내</a></li>
+                    <li><a href="/krei/page/46" title="고객헌장 및 서비스 이행표준">고객헌장 및 서비스 이행표준</a></li>
+                    <li><a href="/krei/page/47" title="VOC 처리절차">VOC 처리절차</a></li>
+                </ul>
+                <address>(우)58321 전남광주통합특별시 나주시 빛가람로 601 (지번주소 : 빛가람동 175)</address>
+                <ul class="tell mt-1 d-flex flex-row flex-wrap">
+                    <li class="me-3 d-flex flex-row flex-wrap">대표전화 : 1833-5500(국내전용), 061-820-2000</li>
+                    <li class="d-flex flex-row flex-wrap">팩스 : 061-820-2211</li>
+                </ul>
+                <p class="mt-3 text-uppercase">copyright &copy; 2024 korea rural economic institute. all rights reserved.</p>
+            </div>
+            <div class="family_site position-relative">
+                <button type="button" class="text-start ps-3 border-0 bg-transparent text-uppercase w-100 h-100">family site</button>
+                <ul class="family_conts position-absolute">
+                    <li><a href="https://www.foodnuri.go.kr/portal/main/main.do" target="_blank" title="새창열림|홈페이지 바로가기">농식품정보누리</a></li>
+                    <li><a href="https://www.ekr.or.kr" target="_blank" title="새창열림|홈페이지 바로가기">한국농어촌공사</a></li>
+                    <li><a href="https://www.kfia.or.kr/" target="_blank" title="새창열림|홈페이지 바로가기">한국식품산업협회</a></li>
+                    <li><a href="https://blog.naver.com/nong-up" target="_blank" title="새창열림|홈페이지 바로가기">더농부 네이버 팜</a></li>
+                    <li><a href="https://1398.acrc.go.kr/case/ISGAcase" target="_blank" title="새창열림|홈페이지 바로가기">청탁금지범 통합검색</a></li>
+                    <li><a href="https://www.clean.go.kr/menu.es?mid=a10202000000" target="_blank" title="새창열림|홈페이지 바로가기">부패 공익 신고</a></li>
+                    <li><a href="https://www.hrdb.go.kr/OpenRecommend/index" target="_blank" title="새창열림|홈페이지 바로가기">국가인재DB</a></li>
+                    <li><a href="https://www.opm.go.kr/opm/index.do" target="_blank" title="새창열림|홈페이지 바로가기">국무조정실</a></li>
+                    <li><a href="https://www.mafra.go.kr/sites/home/index.do" target="_blank" title="새창열림|홈페이지 바로가기">농림축산식품부</a></li>
+                    <li><a href="https://www.rda.go.kr/main/mainPage.do" target="_blank" title="새창열림|홈페이지 바로가기">농촌진흥청</a></li>
+                    <li><a href="https://www.forest.go.kr/kfsweb/kfs/idx/Index.do" target="_blank" title="새창열림|홈페이지 바로가기">산림청</a></li>
+                    <li><a href="https://www.nrc.re.kr/index.es?sid=a1" target="_blank" title="새창열림|홈페이지 바로가기">경제인문사회연구회</a></li>
+                    <li><a href="https://www.nkis.re.kr/main.do" target="_blank" title="새창열림|홈페이지 바로가기">국가정책연구포털</a></li>
+                </ul>
+            </div>
+        </div>
+        
+    </footer>   
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D11T030XWC"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-D11T030XWC');
+</script><script src="/krei/js/swiper-bundle.min.js"></script>
+    <script src="/krei/js/bootstrap.min.js"></script>
+    <script src="/krei/js/slick.min.js"></script>
+    <script src="/krei/js/datepicker/bootstrap-datepicker.js"></script>
+    <script src="/krei/js/common.js"></script>
+    <script src="/krei/js/sub.js"></script>
+</body>
+</html>
