@@ -1,45 +1,34 @@
 # -*- coding: utf-8 -*-
-"""KREI 임업관측정보 게시판 구조 점검 (Actions에서 1회성 실행 → probe/ 에 원본 저장)"""
-import os, re, urllib.parse, urllib.request, html, json, sys
-BASE = 'https://www.krei.re.kr'
-LIST = BASE + '/krei/selectBbsNttList.do?key=81&bbsNo=74&searchCtgry={c}&searchCnd=all&pageIndex=1'
-OUT = 'probe'
-os.makedirs(OUT, exist_ok=True)
+"""KREI 접속 점검 2차 - 여러 주소의 응답 코드 · 본문 앞부분 기록"""
+import os, json, urllib.request, urllib.error, ssl
+OUT = 'probe'; os.makedirs(OUT, exist_ok=True)
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36',
-      'Accept-Language': 'ko-KR,ko;q=0.9'}
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'ko-KR,ko;q=0.9'}
+URLS = [
+ 'https://www.krei.re.kr/',
+ 'https://www.krei.re.kr/krei/page/21',
+ 'https://krei.re.kr/krei/page/21',
+ 'https://www.krei.re.kr/krei/selectBbsNttList.do?key=81&bbsNo=74&searchCtgry=%EB%96%AB%EC%9D%80%EA%B0%90&searchCnd=all',
+ 'https://www.krei.re.kr/krei/selectBbsNttList.do?bbsNo=74&key=81',
+ 'https://krei.re.kr/krei/selectBbsNttView2.do?bbsNo=74&integrDeptCode=&key=81&nttNo=74028&pageIndex=9&searchCnd=all&searchCtgry=%ED%91%9C%EA%B3%A0%EB%B2%84%EC%84%AF&searchKrwd=',
+ 'https://krei.re.kr/attach/observ/2026/07/03/2f4606da-f57f-429f-bf5e-cb7ec23e91b6.pdf',
+ 'https://aglook.krei.re.kr/',
+]
 log = []
-
-def get(url, binary=False):
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=30) as r:
-        b = r.read()
-        return b, r.headers.get('Content-Type', ''), r.geturl()
-
-for cat in ['', '밤', '떫은감', '표고버섯', '호두', '대추', '잣']:
-    url = LIST.format(c=urllib.parse.quote(cat))
+for i, u in enumerate(URLS):
+    rec = {'url': u}
     try:
-        b, ct, final = get(url)
+        req = urllib.request.Request(u, headers=UA)
+        with urllib.request.urlopen(req, timeout=30) as r:
+            b = r.read(); rec.update(status=r.status, final=r.geturl(), ctype=r.headers.get('Content-Type'), bytes=len(b))
+    except urllib.error.HTTPError as e:
+        b = e.read(); rec.update(status=e.code, ctype=e.headers.get('Content-Type'), bytes=len(b), server=e.headers.get('Server'))
     except Exception as ex:
-        log.append({'cat': cat, 'error': str(ex)}); continue
-    name = 'list_%s.html' % (cat or 'all')
-    open(os.path.join(OUT, name), 'wb').write(b)
-    t = b.decode('utf-8', 'ignore')
-    links = re.findall(r'href="([^"]*selectBbsNttView[^"]*)"', t)
-    log.append({'cat': cat, 'status': 'ok', 'bytes': len(b), 'final': final, 'posts': len(links), 'first': links[:3]})
-    if cat in ('밤', '표고버섯', '떫은감') and links:
-        purl = urllib.parse.urljoin(url, html.unescape(links[0]))
-        try:
-            pb, _, _ = get(purl)
-            open(os.path.join(OUT, 'post_%s.html' % cat), 'wb').write(pb)
-            pt = pb.decode('utf-8', 'ignore')
-            files = re.findall(r'href="([^"]*(?:\.pdf|fileDown|download|FileDown)[^"]*)"', pt, re.I)
-            log[-1]['post'] = purl; log[-1]['files'] = files[:6]
-            for f in files[:1]:
-                furl = urllib.parse.urljoin(purl, html.unescape(f))
-                fb, fct, _ = get(furl)
-                open(os.path.join(OUT, 'file_%s.pdf' % cat), 'wb').write(fb)
-                log[-1]['file'] = {'url': furl, 'ctype': fct, 'bytes': len(fb)}
-        except Exception as ex:
-            log[-1]['post_error'] = str(ex)
+        b = b''; rec['error'] = repr(ex)
+    ext = 'pdf' if b[:4] == b'%PDF' else 'html'
+    if b:
+        open(os.path.join(OUT, 'p%02d.%s' % (i, ext)), 'wb').write(b[:3000000])
+    rec['head'] = b[:300].decode('utf-8', 'ignore') if ext == 'html' else '%PDF'
+    log.append(rec)
 json.dump(log, open(os.path.join(OUT, 'log.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print(json.dumps(log, ensure_ascii=False, indent=1))
