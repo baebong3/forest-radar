@@ -164,9 +164,13 @@ def main():
         return
     fails = 0
     for it in ITEMS:
-        have = con.execute('SELECT COUNT(*) FROM trade WHERE item=?', (it['key'],)).fetchone()[0]
-        ms = months(a.start, end) if have == 0 else months(a.start, end)[-a.recent:]
         for src in it['hs']:
+            # 코드마다 따로 판단 : 새로 추가한 코드는 처음부터 채우고, 이미 있는 코드는 최근 몇 달만 다시 받음
+            have = con.execute('SELECT COUNT(*) FROM trade WHERE item=? AND hs LIKE ?', (it['key'], src['q'] + '%')).fetchone()[0]
+            ms = months(a.start, end) if have == 0 else months(a.start, end)[-a.recent:]
+            ms = [m for m in ms if src.get('since', '0000') <= m <= src.get('until', '9999')]
+            if not ms:
+                continue
             got = kept = 0
             names = set()
             for ch in chunks(ms):
