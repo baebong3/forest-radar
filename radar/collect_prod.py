@@ -213,6 +213,8 @@ def main():
     if not con.execute('SELECT COUNT(*) FROM prod_nat').fetchone()[0]:
         done = set()                                        # 5년 표를 새로 읽도록 한 번 다시 받음
     tried = {r[0] for r in con.execute("SELECT year FROM prod_done WHERE rows = 0")}
+    # 가장 최근에 읽은 해보다 새로운 보고서는 못 읽었어도 매일 다시 시도 (공표 직후 파일 교체 · 일시 오류 대비)
+    tried = {y for y in tried if y <= max(done or {0})}
     # 「최근 5년」 표를 아직 못 읽은 보고서는 한 번 더 받아 봄 (못 읽으면 발췌를 남기고 다시 시도하지 않음)
     srcs = {r[0] for r in con.execute('SELECT DISTINCT src FROM prod_nat')}
     metak = {r[0] for r in con.execute("SELECT k FROM meta WHERE k LIKE 'nat_tried_%'")}
@@ -238,10 +240,7 @@ def main():
                 if not old or old[0] <= y:                   # 나중 보고서(수정치)가 우선
                     con.execute('INSERT OR REPLACE INTO prod_nat(year,item,sub,tonnes,src) VALUES(?,?,?,?,?)', (yy, item, sub, tn, y))
         except Exception as ex:
-            print('[%d] 실패 : %s' % (y, ex))
-            con.execute('INSERT OR REPLACE INTO prod_done(year,article,rows,at) VALUES(?,?,?,?)',
-                        (y, ('실패 : %s' % ex)[:500], 0, datetime.now(KST).strftime('%Y-%m-%d %H:%M')))
-            con.commit()
+            print('[%d] 실패(다음 실행 때 재시도) : %s' % (y, ex))    # 일시 오류는 완료 기록 없이 넘김
             continue
         if not rows and t:                                  # 서식이 달라 못 읽은 해 : 점검용 발췌를 남김
             os.makedirs(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'prod_debug'), exist_ok=True)

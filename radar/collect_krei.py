@@ -351,9 +351,9 @@ def main():
             try:
                 b = it.get('_pdf') or get(it['pdf'])
                 recs = extract_tables(b)
-            except Exception as ex:
-                print('[%s] %s 표 추출 실패 : %s' % (item, it['ym'], ex))
-                recs = []
+            except Exception as ex:                  # 일시 오류 : 완료 기록을 남기지 않아 다음 실행 때 다시 받음
+                print('[%s] %s 표 추출 실패(다음 실행 때 재시도) : %s' % (item, it['ym'], ex))
+                continue
             cells += store_ts(con, item, it['ym'], recs)
             con.execute('INSERT OR REPLACE INTO krei_done(item,ym,n) VALUES(?,?,?)', (item, it['ym'], len(recs)))
             new_t += 1
