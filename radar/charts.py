@@ -38,62 +38,95 @@ def fit(texts, room, size=12, low=8.5):
     return s
 
 
+def _hl(s, n):
+    """강조할 막대 위치 (기본 : 마지막 = 최신)"""
+    if 'hl' in s:
+        return set(s['hl'])
+    return {n - 1} if s.get('light') else set(range(n))
+
+
+def _col(s, i, hl):
+    return s['color'] if (i in hl or not s.get('light')) else s['light']
+
+
+def _topbar(x, y, w, h, r, fill):
+    """윗모서리만 둥근 막대"""
+    if h <= 0:
+        return ''
+    r = min(r, w / 2, h)
+    return ('<path d="M%.1f,%.1f v%.1f a%.1f,%.1f 0 0 1 %.1f,%.1f h%.1f a%.1f,%.1f 0 0 1 %.1f,%.1f v%.1f z" fill="%s"/>'
+            % (x, y + h, -(h - r), r, r, r, -r, w - 2 * r, r, r, r, r, h - r, fill))
+
+
 def vbars(labels, series, nd=0, w=580, h=230, unit=''):
-    """세로 묶음 막대. labels=[(1줄, 2줄)], series=[{'name','color','values'}]"""
+    """세로 묶음 막대. labels=[(1줄, 2줄)], series=[{'name','color','light','values','hl'}]
+    - 최신(강조) 막대만 진한 색, 나머지는 옅은 색 · 윗모서리 둥근 막대
+    - 값 축 없이 막대 끝 수치, 강조 막대 수치는 굵게"""
     n, k = len(labels), len(series)
     if not n:
         return ''
-    top, bot, pad = 26, 40, 6
+    top, bot, pad = 28, 40, 6
     slot = (w - 2 * pad) / n
-    bw = min(46, slot * (0.78 if k == 1 else 0.86) / k)
+    bw = min(44, slot * (0.62 if k == 1 else 0.8) / k)
+    gapb = 3 if k > 1 else 0
     vmax = max([v or 0 for s in series for v in s['values']] + [0]) or 1
     texts = [fmt(v, nd) for s in series for v in s['values']]
-    vs = fit(texts, (bw - 2) if k > 1 else slot - 4, 12)    # 이웃 막대 라벨과 겹치지 않는 폭
+    vs = fit(texts, (bw + gapb - 2) if k > 1 else slot - 4, 12)    # 이웃 막대 라벨과 겹치지 않는 폭
     xs = fit([a for a, b in labels] + [b for a, b in labels], slot - 2, 11.5)
     ph = h - top - bot
     o = ['<svg viewBox="0 0 %d %d" role="img">' % (w, h)]
     for i, (l1, l2) in enumerate(labels):
-        gx = pad + slot * i + (slot - bw * k) / 2
+        gx = pad + slot * i + (slot - (bw + gapb) * k + gapb) / 2
         for j, s in enumerate(series):
+            hl = _hl(s, n)
             v = s['values'][i] or 0
             bh = max(0.0, ph * v / vmax)
-            x = gx + bw * j
+            x = gx + (bw + gapb) * j
             y = top + ph - bh
-            op = '' if s.get('hi', {}).get(i, True) else ' fill-opacity=".45"'
-            o.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" fill="%s"%s/>' % (x, y, bw - 1, bh, s['color'], op))
-            o.append('<text class="v" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>'
-                     % (x + (bw - 1) / 2, y - 5, vs, fmt(v, nd)))
+            o.append(_topbar(x, y, bw, bh, 3, _col(s, i, hl)))
+            cls = 'v hi' if (i in hl and s.get('light')) else 'v'
+            o.append('<text class="%s" x="%.1f" y="%.1f" style="font-size:%.1fpx%s">%s</text>'
+                     % (cls, x + bw / 2, y - 6, vs, (';fill:%s' % s['color']) if cls == 'v hi' else '', fmt(v, nd)))
         cx = pad + slot * i + slot / 2
-        o.append('<text class="x" x="%.1f" y="%d" style="font-size:%.1fpx">%s</text>' % (cx, top + ph + 16, xs, esc(l1)))
+        o.append('<text class="x" x="%.1f" y="%d" style="font-size:%.1fpx">%s</text>' % (cx, top + ph + 17, xs, esc(l1)))
         if l2:
-            o.append('<text class="x2" x="%.1f" y="%d" style="font-size:%.1fpx">%s</text>' % (cx, top + ph + 31, xs, esc(l2)))
+            o.append('<text class="x2" x="%.1f" y="%d" style="font-size:%.1fpx">%s</text>' % (cx, top + ph + 32, xs, esc(l2)))
     o.append('<line x1="%d" x2="%d" y1="%.1f" y2="%.1f" class="base"/>' % (pad, w - pad, top + ph + .5, top + ph + .5))
     o.append('</svg>')
     return ''.join(o)
 
 
 def hbars(labels, series, nd=0, w=360, row=None, lab_w=None):
-    """가로 막대 (모바일 · 품목 비교용). labels=[문자열] 위→아래 순서 그대로"""
+    """가로 막대 (모바일 · 품목 비교용). labels=[문자열] 위→아래 순서 그대로
+    - 옅은 바탕 트랙 위에 끝이 둥근 막대, 강조 행만 진한 색"""
     n, k = len(labels), len(series)
     if not n:
         return ''
-    bh = 14 if k == 1 else 11
-    row = row or (bh * k + 12)
-    lab_w = lab_w or int(max(tw(l, 12) for l in labels) + 10)
+    bh = 12 if k == 1 else 9
+    row = row or (bh * k + (k - 1) * 3 + 14)
+    lab_w = lab_w or int(max(tw(l, 12) for l in labels) + 12)
     vmax = max([v or 0 for s in series for v in s['values']] + [0]) or 1
-    vw = max(tw(fmt(v, nd), 12) for s in series for v in s['values']) + 8
+    vw = max(tw(fmt(v, nd), 12) for s in series for v in s['values']) + 10
     room = w - lab_w - vw - 4
     h = n * row + 6
     o = ['<svg viewBox="0 0 %d %d" role="img">' % (w, h)]
     for i, l in enumerate(labels):
-        y0 = 3 + i * row + (row - bh * k) / 2
-        o.append('<text class="yl" x="%d" y="%.1f">%s</text>' % (lab_w - 8, y0 + bh * k / 2 + 4, esc(l)))
+        blk = bh * k + (k - 1) * 3
+        y0 = 3 + i * row + (row - blk) / 2
+        o.append('<text class="yl" x="%d" y="%.1f">%s</text>' % (lab_w - 10, y0 + blk / 2 + 4, esc(l)))
         for j, s in enumerate(series):
+            hl = _hl(s, n)
             v = s['values'][i] or 0
             bw = max(0.0, room * v / vmax)
-            y = y0 + bh * j
-            o.append('<rect x="%d" y="%.1f" width="%.1f" height="%d" fill="%s"/>' % (lab_w, y, bw, bh - 1, s['color']))
-            o.append('<text class="vh" x="%.1f" y="%.1f">%s</text>' % (lab_w + bw + 5, y + bh / 2 + 3.6, fmt(v, nd)))
+            y = y0 + (bh + 3) * j
+            o.append('<rect x="%d" y="%.1f" width="%.1f" height="%d" rx="%.1f" class="trk"/>' % (lab_w, y, room, bh, bh / 2))
+            if bw > 0:
+                o.append('<rect x="%d" y="%.1f" width="%.1f" height="%d" rx="%.1f" fill="%s"/>'
+                         % (lab_w, y, max(bw, bh), bh, bh / 2, _col(s, i, hl)))
+            cls = 'vh hi' if (i in hl and s.get('light')) else 'vh'
+            o.append('<text class="%s" x="%.1f" y="%.1f"%s>%s</text>'
+                     % (cls, lab_w + max(bw, bh) + 6, y + bh / 2 + 4, (' style="fill:%s"' % s['color']) if cls == 'vh hi' else '',
+                        fmt(v, nd)))
     o.append('</svg>')
     return ''.join(o)
 
@@ -108,6 +141,10 @@ def dual(labels2, series, nd=0, w=580, h=230, mob_labels=None):
 def legend(series):
     return '<div class="lg">%s</div>' % ''.join(
         '<span><i style="background:%s"></i>%s</span>' % (s['color'], esc(s['name'])) for s in series)
+
+
+import itertools
+_GID = itertools.count(1)
 
 
 def _nice(vmin, vmax, n=4):
@@ -137,7 +174,11 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
     pw, ph = w - L - R, h - T - B
     X = lambda i: L + pw * i / (len(xs) - 1)
     Y = lambda v: T + ph - ph * (v - lo) / ((hi - lo) or 1)
-    o = ['<svg viewBox="0 0 %d %d" role="img">' % (w, h)]
+    import itertools
+    gid = 'g%d' % next(_GID)
+    o = ['<svg viewBox="0 0 %d %d" role="img"><defs><linearGradient id="%s" x1="0" y1="0" x2="0" y2="1">'
+         '<stop offset="0" stop-color="%s" stop-opacity=".16"/><stop offset="1" stop-color="%s" stop-opacity="0"/>'
+         '</linearGradient></defs>' % (w, h, gid, series[0]['color'], series[0]['color'])]
     for t in ticks:
         o.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" class="grid"/>' % (L, L + pw, Y(t), Y(t)))
         o.append('<text class="tk" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>' % (w - 4, Y(t) + 4, fs - 1, fmt(t, nd)))
@@ -159,12 +200,17 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
                 seg.append((X(i), Y(v)))
         if seg:
             pts.append(seg)
+        if s is series[0] and len(series) == 1:              # 단일 계열일 때만 면 채움
+            for sg in pts:
+                if len(sg) > 1:
+                    o.append('<path d="M%.1f,%.1f %s L%.1f,%.1f Z" fill="url(#%s)"/>'
+                             % (sg[0][0], T + ph, ' '.join('L%.1f,%.1f' % p for p in sg), sg[-1][0], T + ph, gid))
         for sg in pts:
             if len(sg) == 1:
                 o.append('<circle cx="%.1f" cy="%.1f" r="2.2" fill="%s"/>' % (sg[0][0], sg[0][1], s['color']))
             else:
-                o.append('<polyline fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" points="%s"/>'
-                         % (s['color'], ' '.join('%.1f,%.1f' % p for p in sg)))
+                o.append('<polyline fill="none" stroke="%s" stroke-width="%s" stroke-linejoin="round" stroke-linecap="round" points="%s"/>'
+                         % (s['color'], '2.4' if s is series[0] else '1.6', ' '.join('%.1f,%.1f' % p for p in sg)))
         idx = [i for i, v in enumerate(s['values']) if v is not None]
         if idx:
             ends.append([Y(s['values'][idx[-1]]), X(idx[-1]), s['values'][idx[-1]], s['color']])
@@ -175,7 +221,9 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
             if group[k][0] - group[k - 1][0] < fs + 2:
                 group[k][0] = group[k - 1][0] + fs + 2
         for y, x, v, col in group:
-            o.append('<circle cx="%.1f" cy="%.1f" r="3" fill="%s"/>' % (x, Y(v), col))
+            if side == 'end':
+                o.append('<circle cx="%.1f" cy="%.1f" r="7" fill="%s" fill-opacity=".14"/>' % (x, Y(v), col))
+            o.append('<circle cx="%.1f" cy="%.1f" r="3.2" fill="#fff" stroke="%s" stroke-width="2"/>' % (x, Y(v), col))
             if side == 'end':
                 o.append('<text class="ve" x="%.1f" y="%.1f" style="font-size:%.1fpx;fill:%s">%s</text>' % (x + 6, y + 4, fs, col, fmt(v, nd)))
             else:

@@ -24,7 +24,9 @@ from charts import dual, hbars, legend, esc, lines
 
 OUT = os.path.join(ROOT, 'docs', 'index.html')
 PROD = os.path.join(ROOT, 'data', 'production.csv')
-IMP, EXP = '#1E4A4A', '#F08900'
+IMP, EXP = '#1F3D2B', '#B8742A'          # 수입 = 숲 초록, 수출 = 밤색 앰버
+IMP_L, EXP_L = '#C3D1BE', '#EBD6BC'
+PRD, PRD_L = '#5E7F4F', '#CFDBC8'
 NEWS_DAYS = 30
 SHOW_NEWS, SHOW_ROWS = 10, 12
 
@@ -32,8 +34,8 @@ CSS = """<style>
 @font-face{font-family:'PretendardSub';font-weight:400;font-display:swap;src:url(assets/fonts/pretendard-sub-Regular.woff2) format('woff2')}
 @font-face{font-family:'PretendardSub';font-weight:600;font-display:swap;src:url(assets/fonts/pretendard-sub-SemiBold.woff2) format('woff2')}
 @font-face{font-family:'PretendardSub';font-weight:800;font-display:swap;src:url(assets/fonts/pretendard-sub-ExtraBold.woff2) format('woff2')}
-:root{--green:#1E4A4A;--green-d:#123232;--org:#F08900;--org-d:#B86700;--ink:#182222;--sub:#475353;--muted:#859090;
-  --rule:#E2E6E4;--rule2:#EFF2F0;--bg:#F7F8F6;--card:#fff;--tint:#EAF1EF;--otint:#FDF1E1}
+:root{--green:#1F3D2B;--green-d:#142A1D;--moss:#5E7F4F;--sage:#A9BBA2;--org:#B8742A;--org-d:#8C5518;
+  --ink:#17211B;--sub:#4B5A50;--muted:#8A968D;--rule:#E4E9E3;--rule2:#F0F3EE;--bg:#FFFFFF;--card:#fff;--tint:#EEF3EC;--otint:#F8EEE2}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;letter-spacing:-.1px;
@@ -49,7 +51,7 @@ a{color:inherit;text-decoration:none}
 .team .t2{font-size:17px;font-weight:800;letter-spacing:-.4px}
 .upd{margin-left:auto;text-align:right;font-size:12px;color:var(--muted);line-height:1.45}
 .upd b{color:var(--ink);font-weight:600}
-.ribbon{display:flex;height:4px}.ribbon i{flex:3;background:var(--green)}.ribbon i+i{flex:1;background:var(--org)}
+.ribbon{display:flex;height:4px}.ribbon i{flex:6;background:var(--green)}.ribbon i:nth-child(2){flex:2;background:var(--moss)}.ribbon i:nth-child(3){flex:1;background:var(--org)}
 .wrap{max-width:1240px;margin:0 auto;padding:0 16px}
 .tg{position:absolute;opacity:0;pointer-events:none}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 22px}
@@ -57,14 +59,14 @@ a{color:inherit;text-decoration:none}
 .tabs label:hover{border-color:var(--green)}
 .pane{display:none}
 %(TOGGLE)s
-.hero{padding:2px 0 20px 18px;border-left:5px solid var(--green);margin:0 0 20px}
-.eyebrow{font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--green)}
+.hero{padding:2px 0 18px 18px;border-left:5px solid var(--green);margin:0 0 22px}
+.eyebrow{font-size:11.5px;font-weight:800;letter-spacing:1.4px;color:var(--moss)}
 .hero h1{font-size:30px;line-height:1.3;font-weight:800;letter-spacing:-1px;margin:6px 0 10px;word-break:keep-all}
 .dek{list-style:none;margin:0;padding:0;font-size:14px;color:var(--sub)}
 .dek li{padding-left:14px;position:relative;margin:3px 0;word-break:keep-all}
 .dek li:before{content:'';position:absolute;left:2px;top:.72em;width:5px;height:5px;background:var(--org);border-radius:50%%}
 .dek a{color:var(--ink);font-weight:600;border-bottom:1px solid var(--rule)}
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border:1px solid var(--rule);border-top:3px solid var(--green);margin-bottom:20px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border-top:3px solid var(--green);border-bottom:1px solid var(--rule);margin-bottom:22px}
 .kpi{padding:14px 16px;border-left:1px solid var(--rule2);min-width:0}
 .kpi:first-child{border-left:0}
 .kv{font-size:27px;font-weight:800;letter-spacing:-.8px;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -75,22 +77,26 @@ a{color:inherit;text-decoration:none}
 .ks .up{color:#C0392B;font-weight:700}.ks .dn{color:#2E6DA4;font-weight:700}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;margin-bottom:18px}
 .grid>*{min-width:0}
-.card{background:#fff;border:1px solid var(--rule);padding:18px 20px 20px}
+.card{background:#fff;border:1px solid var(--rule);border-top:2px solid var(--green);padding:18px 22px 22px}
 .span{grid-column:1/-1}
-.sec{font-size:11.5px;font-weight:800;letter-spacing:1px;color:var(--org-d)}
-.h2{font-size:18px;font-weight:800;letter-spacing:-.5px;margin:3px 0 2px;word-break:keep-all}
+.sec{font-size:11px;font-weight:800;letter-spacing:1.6px;color:var(--moss)}
+.sec:before{content:'◆';color:var(--org);font-size:8px;margin-right:6px;vertical-align:2px}
+.h2{font-size:19px;font-weight:800;letter-spacing:-.6px;margin:4px 0 2px;word-break:keep-all;color:var(--ink)}
 .cap{font-size:12px;color:var(--muted);margin-bottom:10px;word-break:keep-all}
 .lg{display:flex;gap:14px;font-size:12px;color:var(--sub);margin:0 0 6px}
-.lg i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+.lg i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:3px}
 svg{width:100%%;height:auto;display:block;overflow:visible}
 svg text{font-family:'PretendardSub','Pretendard','Malgun Gothic',sans-serif}
-svg .v{fill:var(--ink);font-weight:800;text-anchor:middle;font-variant-numeric:tabular-nums}
+svg .v{fill:#5B6A60;font-weight:600;text-anchor:middle;font-variant-numeric:tabular-nums}
+svg .v.hi{font-weight:800}
 svg .x{fill:var(--sub);text-anchor:middle;font-weight:600}
 svg .x2{fill:var(--muted);text-anchor:middle}
 svg .yl{fill:var(--sub);font-size:12px;text-anchor:end;font-weight:600}
-svg .vh{fill:var(--ink);font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
-svg .base{stroke:#BFC7C4;stroke-width:1}
-svg .grid{stroke:#EEF1EF;stroke-width:1}
+svg .vh{fill:#5B6A60;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+svg .vh.hi{font-weight:800}
+svg .trk{fill:#F2F5F0}
+svg .base{stroke:#9FAEA3;stroke-width:1}
+svg .grid{stroke:#DCE3DA;stroke-width:1;stroke-dasharray:2 3}
 svg .xt{stroke:#BFC7C4}
 svg .tk{fill:var(--muted);text-anchor:end;font-variant-numeric:tabular-nums}
 svg .ve{font-weight:800;text-anchor:start;font-variant-numeric:tabular-nums}
@@ -122,7 +128,7 @@ table.t{width:100%%;border-collapse:collapse;font-size:13px}
 .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:3px;padding:1px 7px;background:var(--tint);color:var(--green);white-space:nowrap;margin-right:6px}
 .chip.o{background:var(--otint);color:var(--org-d)}
 .kgs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.kh{font-size:12px;font-weight:800;color:var(--org-d);border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:4px}
+.kh{font-size:12px;font-weight:800;color:var(--moss);letter-spacing:.6px;border-bottom:2px solid var(--green);padding-bottom:6px;margin-bottom:4px}
 .kl2{list-style:none;margin:0;padding:0}
 .kl2 li{padding:9px 0;border-bottom:1px solid var(--rule2);word-break:keep-all}
 .kl2 li b{display:block;font-size:14px;line-height:1.45;color:var(--ink)}
@@ -272,7 +278,7 @@ def load_krei_ts(con):
     return res
 
 
-TS_COL = ['#1E4A4A', '#F08900', '#6F8F7F', '#9AA5A2']
+TS_COL = ['#1F3D2B', '#B8742A', '#6E8F5E', '#A9BBA2']
 
 
 def ts_cards(item_key, KT):
@@ -502,8 +508,8 @@ def item_pane(it, T, forms, P, ref, news, K, KT):
         o.append(ts_cards(key, KT))
         labs = [mlabel(x, i == 0) for i, x in enumerate(ms13)]
         mob = ['%s.%s' % (x[2:4], x[5:]) for x in ms13]
-        si = [{'name': '수입량', 'color': IMP, 'values': [t_(g(x)['imp_kg']) for x in ms13]}]
-        se = [{'name': '수출량', 'color': EXP, 'values': [t_(g(x)['exp_kg']) for x in ms13]}]
+        si = [{'name': '수입량', 'color': IMP, 'light': IMP_L, 'values': [t_(g(x)['imp_kg']) for x in ms13]}]
+        se = [{'name': '수출량', 'color': EXP, 'light': EXP_L, 'values': [t_(g(x)['exp_kg']) for x in ms13]}]
         o.append('<div class="grid">')
         o.append('<div class="card"><div class="sec">MONTHLY IMPORT</div><div class="h2">최근 13개월 수입량</div>'
                  '<div class="cap">단위 : 톤 · %s ~ %s</div>%s</div>' % (ms13[0].replace('-', '.'), ref.replace('-', '.'),
@@ -515,8 +521,8 @@ def item_pane(it, T, forms, P, ref, news, K, KT):
         first_year = int(min(S)[:4])
         yrs = [yy for yy in range(max(first_year, y - 7), y + 1)]
         sp = lambda yy, f: sum(t_(g('%04d-%02d' % (yy, k))[f]) for k in range(1, m + 1))
-        sy = [{'name': '수입량', 'color': IMP, 'values': [sp(yy, 'imp_kg') for yy in yrs]},
-              {'name': '수출량', 'color': EXP, 'values': [sp(yy, 'exp_kg') for yy in yrs]}]
+        sy = [{'name': '수입량', 'color': IMP, 'light': IMP_L, 'values': [sp(yy, 'imp_kg') for yy in yrs]},
+              {'name': '수출량', 'color': EXP, 'light': EXP_L, 'values': [sp(yy, 'exp_kg') for yy in yrs]}]
         o.append('<div class="card span"><div class="sec">YEAR TO DATE</div><div class="h2">연도별 %s 누계 수출입량</div>'
                  '<div class="cap">단위 : 톤 · 해마다 같은 기간(%s)끼리 비교</div>%s%s</div>'
                  % (rng, rng, legend(sy), dual([('%d년' % yy, '') for yy in yrs], sy, nd, w=1180, h=250,
@@ -524,7 +530,7 @@ def item_pane(it, T, forms, P, ref, news, K, KT):
         o.append('<div class="card span"><div class="sec">PRODUCTION</div><div class="h2">연간 생산량</div>')
         if prod:
             pyrs = sorted(prod)[-8:]
-            spp = [{'name': '생산량', 'color': '#6F8F7F', 'values': [prod[yy] for yy in pyrs]}]
+            spp = [{'name': '생산량', 'color': PRD, 'light': PRD_L, 'values': [prod[yy] for yy in pyrs]}]
             o.append('<div class="cap">단위 : 톤 · 산림청 임산물생산조사(연 1회, 다음 해 10월 공표)</div>%s'
                      % dual([('%d년' % yy, '') for yy in pyrs], spp, nd_for(prod.values()), w=1180, h=230,
                             mob_labels=['%d년' % yy for yy in pyrs]))
@@ -618,7 +624,7 @@ def summary_pane(T, P, ref, allnews, K):
             o.append('<div class="card"><div class="sec">%s · 12 MONTHS</div><div class="h2">%s</div>'
                      '<div class="cap">단위 : 톤 · %s ~ %s 합계</div>%s</div>'
                      % (sec, title, last12[0].replace('-', '.'), ref.replace('-', '.'),
-                        hbars([a for a, _ in arr], [{'name': title, 'color': col, 'values': [v for _, v in arr]}], nd, w=560)))
+                        hbars([a for a, _ in arr], [{'name': title, 'color': col, 'light': (IMP_L if col == IMP else EXP_L), 'hl': [0], 'values': [v for _, v in arr]}], nd, w=560)))
         o.append('</div>')
     o.append('<div class="grid"><div class="card span"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
              '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 최신순</div>%s</div></div>'
@@ -687,7 +693,7 @@ def main():
            '<header class="mast"><div class="in"><div class="wm">SOUTHERN<b>POST</b></div><div class="vr"></div>'
            '<div class="team"><span class="t1">(주)서던포스트</span><span class="t2">임산물 수급 레이더</span></div>'
            '<div class="upd">페이지 갱신 <b>%s</b><br>수출입 기준월 <b>%s</b></div></div>'
-           '<div class="ribbon"><i></i><i></i></div></header>%s<main class="wrap">%s%s'
+           '<div class="ribbon"><i></i><i></i><i></i></div></header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
            '한국농촌경제연구원 임업관측 월보(매월 4일) · 산림청 임산물생산조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 뉴스 매일 07:00 · 수출입 매일 확인(최근 14개월 재수집으로 잠정치 수정 반영) · '
