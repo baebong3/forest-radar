@@ -58,7 +58,9 @@ svg text{font-family:'PretendardSub','Pretendard','Malgun Gothic',sans-serif}
 .team{display:flex;flex-direction:column;line-height:1.25}
 .team .t1{font-size:12px;font-weight:600;color:var(--muted)}
 .team .t2{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--green)}
-.fresh{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.maplink{margin-left:auto;border:1px solid #1F3D2B;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:800;color:#1F3D2B;white-space:nowrap}
+.maplink:hover{background:#1F3D2B;color:#fff}
+.fresh{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 .fresh span{display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--rule);border-radius:8px;padding:4px 10px;font-size:12px;white-space:nowrap}
 .fresh em{font-style:normal;color:var(--muted);font-weight:600}
 .fresh b{font-weight:800;font-variant-numeric:tabular-nums}
@@ -237,7 +239,7 @@ details.dt[open] summary{margin-bottom:8px}
 @media(max-width:1180px){.board{grid-template-columns:repeat(3,minmax(0,1fr))}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:980px){.grid,.g2{grid-template-columns:1fr}.kgs{grid-template-columns:1fr}
   .brief{grid-template-columns:1fr}.brief .br svg{height:96px}.brief .bl{padding:22px 20px 4px}
-  .fresh{margin-left:0;justify-content:flex-start;width:100%}}
+  .fresh{margin-left:0;justify-content:flex-start;width:100%}.maplink{margin-left:0}}
 @media(max-width:640px){
   .hl1{font-size:22px}.kv{font-size:21px}.board{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .vr{display:none}.lg-sp{height:20px}.lg-kf{height:27px}.team .t2{font-size:16px}
@@ -1191,7 +1193,7 @@ def main():
            '<header class="mast"><div class="in"><div class="logos"><img class="lg-sp" src="assets/logo_southernpost.png" alt="서던포스트">'
            '<span class="x">×</span><img class="lg-kf" src="assets/logo_kofpi.png" alt="한국임업진흥원"></div><div class="vr"></div>'
            '<div class="team"><span class="t1">품목별 수출입 · 가격 · 전망 · 뉴스 데일리</span><span class="t2">임산물 수급 레이더</span></div>'
-           '<div class="fresh">%s</div></div>%s</header>%s<main class="wrap">%s%s'
+           '<a class="maplink" href="map/">임산물 생산지도 ›</a><div class="fresh">%s</div></div>%s</header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
            '한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 매일 07:00 자동 · 수출입은 최근 14개월 재수집으로 잠정치 수정 반영 · 새 임업관측 · 생산조사는 공표 뒤 첫 실행에 반영 · '
