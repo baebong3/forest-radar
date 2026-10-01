@@ -1210,6 +1210,10 @@ def main():
         sys.exit(1)
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     open(a.out, 'w', encoding='utf-8').write(doc)
+    if a.out == OUT:                                   # 저장소 첫 주소(…/forest-radar/)에서도 바로 수급 레이더가 보이게 같은 페이지를 한 벌 더 씀
+        top = (doc.replace('src="assets/', 'src="docs/assets/').replace('url(assets/', 'url(docs/assets/')
+               .replace('href="map/"', 'href="docs/map/"'))
+        open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(top)
     print('작성 %s · 기준월 %s · 뉴스 %d건 · 검증 통과' % (a.out, ref, len(allnews)))
 
 
