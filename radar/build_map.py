@@ -187,7 +187,8 @@ button{font:inherit;color:inherit}
 #map .mk line{stroke:#6F7B72;stroke-width:.8}
 #map .mk{cursor:pointer}
 #map .sel-mk circle{stroke:var(--amber);stroke-width:2.6}
-.leg{position:absolute;left:24px;bottom:22px;background:rgba(255,255,255,.92);border:1px solid var(--rule2);border-radius:10px;padding:8px 10px;font-size:11.5px;color:var(--sub)}
+.leg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:4px 12px 0;border-top:1px solid var(--rule2);padding:10px 4px 0;font-size:11.5px;color:var(--sub)}
+.leg .r{min-width:220px}.leg label{margin-top:0!important}.leg .lgb{display:flex;flex-direction:column}
 .leg .r{display:flex;gap:2px;margin-top:4px}
 .leg .r i{width:22px;height:10px;border-radius:2px;display:block}
 .leg .r2{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px}
@@ -255,7 +256,7 @@ button{font:inherit;color:inherit}
   .pick{position:static;max-height:none}.pick .list{display:none}.msel{display:block;width:100%;margin-top:8px;border:1px solid var(--rule);border-radius:10px;padding:9px 10px;font:inherit;font-size:14.5px;font-weight:700;background:#fff}
   .head{padding:14px 14px 6px}.head h1{font-size:23px}.ctl{margin-left:0;align-items:flex-start}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr));padding:6px 14px}.kpi .v{font-size:18px}
-  .mapw{padding:4px 4px 8px}.leg{position:static;margin:6px 10px 0}.note{padding:0 14px 12px}
+  .mapw{padding:4px 4px 8px}.leg{margin:6px 10px 0}.note{padding:0 14px 12px}
   .vr{display:none}.lg-sp{height:20px}.lg-kf{height:27px}.nav{margin-left:0}
 }
 </style></head><body>
@@ -360,7 +361,7 @@ function draw(){
   $('#mk').innerHTML=pts.map(p=>(Math.hypot(p.x-p.x0,p.y-p.y0)>3?'<line x1="'+p.x0+'" y1="'+p.y0+'" x2="'+p.x+'" y2="'+p.y+'"/>':'')
     +'<g class="mk'+(S.sel===p.i?' sel-mk':'')+'" data-i="'+p.i+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="'+RR+'" fill="'+mix(c,'#000000',.12)+'"/><text x="'+p.x+'" y="'+(p.y+.5)+'" style="font-size:'+(10.5*K)+'px">'+(p.r+1)+'</text></g>').join('');
   const sw=[];for(let r=0;r<Math.max(n,1);r++)sw.push('<i style="background:'+rankCol(it,r,Math.max(n,1))+'"></i>');
-  $('#leg').innerHTML='<b>주 생산지 순위 · '+MN[S.m]+' 기준</b><div class="r">'+sw.join('')+'</div><div class="r2"><span>1위</span><span>'+Math.max(n,1)+'위</span></div>'
+  $('#leg').innerHTML='<div class="lgb"><b>주 생산지 순위 · '+MN[S.m]+' 기준</b><div class="r">'+sw.join('')+'</div><div class="r2"><span>1위</span><span>'+Math.max(n,1)+'위</span></div></div>'
     +'<label><input type="checkbox" id="rest"'+(S.rest?' checked':'')+'> '+(S.n)+'위 밖 생산지도 옅게 표시</label>';
   $('#note').innerHTML='지도와 순위의 지역을 누르면 오른쪽에 지역 상세가 나옴 · 원 안 숫자는 순위, 겹치는 원은 옆으로 비켜 선으로 이음';
   $('#rtitle').innerHTML=esc(it.id)+' 주 생산지 상위 '+S.n+'곳';
@@ -388,8 +389,8 @@ function drawChg(it,c){
     if(S.sel===i)p.classList.add('sel');});
   $('#mk').innerHTML='';
   const st=[.15,.4,.7,1];
-  $('#leg').innerHTML='<b>'+Y[0]+'→'+S.y+' '+MN[S.m]+' 변동</b><div class="r">'+st.slice().reverse().map(t=>'<i style="background:'+mix('#E3ECF5','#1F5C99',Math.sqrt(t))+'"></i>').join('')
-    +st.map(t=>'<i style="background:'+mix(mix(c,'#FFFFFF',.85),mix(c,'#000000',.1),Math.sqrt(t))+'"></i>').join('')+'</div><div class="r2"><span>감소</span><span>증가</span></div>';
+  $('#leg').innerHTML='<div class="lgb"><b>'+Y[0]+'→'+S.y+' '+MN[S.m]+' 변동</b><div class="r">'+st.slice().reverse().map(t=>'<i style="background:'+mix('#E3ECF5','#1F5C99',Math.sqrt(t))+'"></i>').join('')
+    +st.map(t=>'<i style="background:'+mix(mix(c,'#FFFFFF',.85),mix(c,'#000000',.1),Math.sqrt(t))+'"></i>').join('')+'</div><div class="r2"><span>감소</span><span>증가</span></div></div>';
   $('#note').innerHTML=S.y==Y[0]?'조사 연도를 '+Y[Y.length-1]+'년으로 바꾸면 '+Y[0]+'년 대비 변동이 나옴':'색이 진할수록 변동량이 큼 · 생산이 새로 생기거나 없어진 곳도 포함';
   const up=rows.filter(r=>r.d>0).sort((x,y)=>y.d-x.d).slice(0,S.n),dn=rows.filter(r=>r.d<0).sort((x,y)=>x.d-y.d).slice(0,S.n);
   $('#rtitle').innerHTML=esc(it.id)+' 생산지 변동 상위 '+S.n+'곳';
