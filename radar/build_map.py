@@ -232,6 +232,21 @@ button{font:inherit;color:inherit}
 .chips button{border:1px solid var(--rule);background:#fff;border-radius:999px;padding:3px 10px 3px 4px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
 .chips button b{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:50%;color:#fff;font-size:10.5px;padding:0 3px}
 .chips button:hover{border-color:var(--ink)}
+.rk li.hd2{cursor:default;padding:10px 6px 2px;border-bottom:0}.rk li.hd2 .nm{font-size:12.5px;color:var(--sub)}
+.csv{display:block;width:100%;margin-top:12px;border:1px solid var(--c);color:var(--c);background:#fff;border-radius:999px;padding:7px;font-size:12.5px;font-weight:800;cursor:pointer}
+.csv:hover{background:var(--c);color:#fff}
+.rsel{width:100%;border:1px solid var(--rule);border-radius:10px;padding:7px 9px;font:inherit;font-size:13px;margin:6px 0 12px;background:#fff}
+.rt{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px}
+.rt th{font-size:11.5px;color:var(--sub);font-weight:800;text-align:center;border-bottom:1.5px solid var(--ink);padding:5px 4px;line-height:1.3}
+.rt th:first-child{text-align:left}
+.rt td{padding:6px 4px;border-bottom:1px solid var(--rule2);text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rt td:first-child{text-align:left;font-weight:700;white-space:normal}
+.rt td:first-child i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.rt td:last-child{text-align:center}
+.rt b.t10{display:inline-block;min-width:22px;border-radius:999px;background:var(--c);color:#fff;font-size:11px;padding:0 5px}
+.rt tr{cursor:pointer}.rt tr:hover td{background:#F6F8F5}.rt tr.cur td{background:#FBF3E8}
+.rt tr.ex{display:none}.det.all .rt tr.ex{display:table-row}
+.mbtn2{display:block;width:100%;margin-top:8px;border:0;background:#F3F6F2;border-radius:8px;padding:6px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer}
 .foot{margin:26px 0 0;padding:16px 0 0;border-top:1px solid var(--rule);font-size:12px;color:var(--muted);line-height:1.7}
 .foot b{color:var(--sub)}
 @media(max-width:1180px){.lay{grid-template-columns:230px minmax(0,1fr)}.side{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}}
@@ -253,24 +268,25 @@ button{font:inherit;color:inherit}
 <input class="srch" id="q" type="search" placeholder="품목 이름 찾기 (예 : 오미자)" autocomplete="off">
 <div class="cats" id="cats"></div><select class="msel" id="msel" aria-label="품목"></select></div><div class="list" id="list"></div></aside>
 <section class="card"><div class="head"><div><span class="cat" id="hcat"></span><h1 id="htitle"></h1></div>
-<div class="ctl"><div><label>조사 연도</label><span class="seg" id="yseg"></span></div><div><label>주 생산지</label><span class="seg n" id="nseg"></span></div></div></div>
+<div class="ctl"><div><label>조사 연도</label><span class="seg" id="yseg"></span></div><div><label>주 생산지</label><span class="seg n" id="nseg"></span></div>
+<div><label>기준</label><span class="seg" id="mseg"></span><label style="margin-left:10px">보기</label><span class="seg" id="vseg"></span></div></div></div>
 <div class="kpis" id="kpis"></div>
 <div class="mapw"><svg id="map" role="img" aria-label="시군구 생산지도"></svg>
 <div class="leg" id="leg"></div></div>
 <div class="note" id="note"></div></section>
-<aside class="side"><div class="card box"><div class="sec">RANKING</div><div class="h2" id="rtitle"></div><div class="cap" id="rcap"></div><ul class="rk" id="rank"></ul></div>
-<div class="card box det"><div class="sec">REGION</div><div class="h2">지역 상세</div><div id="det"></div></div></aside>
+<aside class="side"><div class="card box"><div class="sec">RANKING</div><div class="h2" id="rtitle"></div><div class="cap" id="rcap"></div><ul class="rk" id="rank"></ul><button class="csv" id="csv1">전체 시군구 표 내려받기 (CSV)</button></div>
+<div class="card box det" id="detc"><div class="sec">REGION</div><div class="h2">지역 상세</div><div id="det"></div></div></aside>
 </div>
 <footer class="foot"><b>자료</b> 산림청 「임산물생산조사」 연도별 보고서 부록 시군구 통계표(__YEARS__년) · 경계는 2024년 말 시군구(일반구는 시로 합침, 229개)<br>
-<b>읽는 법</b> 순위 · 비중은 시군구 생산량 기준 · 전국 합계에는 지방산림청 · 국립기관(국유림) 생산분이 포함되어 시군구 합보다 클 수 있음 · 군위군은 2023년 대구 편입에 맞춰 대구로 표기 · 생산액은 백만 원<br>
+<b>읽는 법</b> 순위 · 비중은 고른 기준(생산량 또는 생산액)의 시군구 값 · 변동 보기는 첫 조사 연도와 고른 연도의 차이 · 전국 합계에는 지방산림청 · 국립기관(국유림) 생산분이 포함되어 시군구 합보다 클 수 있음 · 군위군은 2023년 대구 편입에 맞춰 대구로 표기 · 생산액은 백만 원<br>
 <b>갱신</b> 새 연도 보고서가 공표되면 매일 07:00 자동 실행 때 반영 · 페이지 작성 __BUILT__ · <b>(주)서던포스트</b></footer></main>
 <div class="tip" id="tip"></div>
 <script>
 const G=__GEO__, D=__DATA__, CC=__CATCOL__, CI=__CATICON__;
 const $=s=>document.querySelector(s);
 const Y=D.years, U=G.units;
-let S={item:'밤', y:Y[Y.length-1], n:10, sel:null, cat:'전체', rest:false};
-try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('i'))S.item=h.get('i');if(h.get('y'))S.y=+h.get('y');if(h.get('n'))S.n=Math.max(1,Math.min(10,+h.get('n')));if(h.get('r'))S.sel=+h.get('r');}catch(e){}
+let S={item:'밤', y:Y[Y.length-1], n:10, sel:null, cat:'전체', rest:false, m:'q', v:'rank', rall:false};
+try{const h=new URLSearchParams(location.hash.slice(1));if(h.get('i'))S.item=h.get('i');if(h.get('y'))S.y=+h.get('y');if(h.get('n'))S.n=Math.max(1,Math.min(10,+h.get('n')));if(h.get('r'))S.sel=+h.get('r');if(h.get('m')=='w')S.m='w';if(h.get('v')=='chg')S.v='chg';}catch(e){}
 const IT={};D.items.forEach(it=>IT[it.id]=it);
 if(!IT[S.item])S.item=D.items[0].id; if(Y.indexOf(S.y)<0)S.y=Y[Y.length-1];
 function fmt(v,nd){if(v==null||isNaN(v))return '-';const p=Math.pow(10,nd||0);const r=Math.round(Math.abs(v)*p+1e-9)/p*(v<0?-1:1);
@@ -308,87 +324,148 @@ function drawList(){
   const on=$('#list .it.on');if(on&&on.scrollIntoViewIfNeeded)on.scrollIntoViewIfNeeded(false);
 }
 // ── 본문 ──
-function ranks(it,y){return it.vals[String(y)]||[]}
+const MN={q:'생산량',w:'생산액'};
+function rk(it,y){                                   // [{i,q,w,v}] : v = 고른 기준(생산량 · 생산액)으로 내림차순
+  return (it.vals[String(y)]||[]).map(r=>({i:r[0],q:r[1],w:r[2],v:S.m=='w'?r[2]:r[1]})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v)}
+function natv(it,yi){return S.m=='w'?it.natw[yi]:it.nat[yi]}
+function vu(it){return S.m=='w'?'백만 원':it.du}
+function vf(it,v){return S.m=='w'?fmt(v,v<100?1:0):fmt(dv(it,v),nd(it))}
+function seg(id,arr,cur,attr){$(id).innerHTML=arr.map(([k,l])=>'<button '+attr+'="'+k+'" class="'+(k==cur?'on':'')+'">'+l+'</button>').join('')}
 function draw(){
-  const it=IT[S.item],yi=Y.indexOf(S.y),c=col(it),R=ranks(it,S.y),top=R.slice(0,S.n),n=top.length;
+  const it=IT[S.item],yi=Y.indexOf(S.y),c=col(it),R=rk(it,S.y),top=R.slice(0,S.n),n=top.length;
   document.documentElement.style.setProperty('--c',c);
   $('#hcat').innerHTML=(CI[it.cat]||'')+' '+it.cat;
-  $('#htitle').innerHTML=esc(it.id)+'<small>'+S.y+'년 · 단위 '+it.du+'</small>';
-  $('#yseg').innerHTML=Y.map(y=>'<button data-y="'+y+'" class="'+(y==S.y?'on':'')+'">'+y+'</button>').join('');
-  $('#nseg').innerHTML=[1,2,3,4,5,6,7,8,9,10].map(k=>'<button data-n="'+k+'" class="'+(k==S.n?'on':'')+'">'+k+'</button>').join('');
-  const nat=it.nat[yi],pn=yi>0?it.nat[yi-1]:null,ssum=R.reduce((a,b)=>a+b[1],0),tsum=top.reduce((a,b)=>a+b[1],0);
+  $('#htitle').innerHTML=esc(it.id)+'<small>'+S.y+'년 · 단위 '+vu(it)+'</small>';
+  seg('#yseg',Y.map(y=>[y,y]),S.y,'data-y');
+  seg('#nseg',[1,2,3,4,5,6,7,8,9,10].map(k=>[k,k]),S.n,'data-n');
+  seg('#mseg',[['q','생산량'],['w','생산액']],S.m,'data-m');
+  seg('#vseg',[['rank','순위'],['chg',Y[0]+'→'+S.y+' 변동']],S.v,'data-v');
+  const nat=natv(it,yi),pn=yi>0?natv(it,yi-1):null,tsum=top.reduce((a,b)=>a+b.v,0);
   const k=(l,v,u,s)=>'<div class="kpi"><div class="l">'+l+'</div><div class="v">'+v+'<small>'+u+'</small></div><div class="s">'+s+'</div></div>';
-  $('#kpis').innerHTML=k('전국 생산량',fmt(dv(it,nat),nd(it)),it.du,yi>0?'전년 대비 '+ptxt(pctx(nat,pn)):'생산액 '+fmt(it.natw[yi],0)+'백만 원')
-    +k('상위 '+S.n+'곳 비중',nat?fmt(tsum/nat*100,1):'-','%','전국 생산량 대비')
-    +k('1위 생산지',R.length?esc(U[R[0][0]].name):'-','',R.length?esc(U[R[0][0]].sido)+' · 전국의 '+fmt(R[0][1]/nat*100,1)+'%':'시군구 생산 없음')
-    +k('생산 시군구',fmt(R.length,0),'곳',(it.inst[yi]&&nat)?'국유림 생산분 '+fmt(it.inst[yi]/nat*100,1)+'% 별도':'229개 시군구 중');
-  // 지도
-  const rk={};R.forEach((r,i)=>rk[r[0]]=i);
+  $('#kpis').innerHTML=k('전국 '+MN[S.m],vf(it,nat),vu(it),yi>0?'전년 대비 '+ptxt(pctx(nat,pn)):(S.m=='q'?'생산액 '+fmt(it.natw[yi],0)+'백만 원':''))
+    +k('상위 '+S.n+'곳 비중',nat?fmt(tsum/nat*100,1):'-','%','전국 '+MN[S.m]+' 대비')
+    +k('1위 생산지',R.length?esc(U[R[0].i].name):'-','',R.length?esc(U[R[0].i].sido)+' · 전국의 '+fmt(R[0].v/nat*100,1)+'%':'시군구 생산 없음')
+    +k('생산 시군구',fmt(R.length,0),'곳',(it.inst[yi]&&it.nat[yi])?'국유림 생산분 '+fmt(it.inst[yi]/it.nat[yi]*100,1)+'% 별도':'229개 시군구 중');
+  if(S.v=='chg'){drawChg(it,c);drawDet();saveHash();return}
+  // 지도 : 순위
+  const ri={};R.forEach((r,x)=>ri[r.i]=x);
   P.forEach(p=>{const i=+p.dataset.i;p.classList.remove('o','t','sel');p.style.removeProperty('--o');
-    if(i in rk&&rk[i]<S.n){p.classList.add('o','t');p.style.setProperty('--o',rankCol(it,rk[i],S.n))}
-    else if(S.rest&&i in rk){p.classList.add('o');p.style.setProperty('--o',mix(c,'#FFFFFF',.88))}
+    if(i in ri&&ri[i]<S.n){p.classList.add('o','t');p.style.setProperty('--o',rankCol(it,ri[i],S.n))}
+    else if(S.rest&&i in ri){p.classList.add('o');p.style.setProperty('--o',mix(c,'#FFFFFF',.88))}
     if(S.sel===i)p.classList.add('sel');});
-  // 순위 표지 (겹침 피해 밀어냄)
   const K=Math.min(1.7,Math.max(1,600/(svg.clientWidth||600)*.85)),RR=9.5*K,DD=21*K;
-  const pts=top.map((r,i)=>({i:r[0],r:i,x:U[r[0]].c[0],y:U[r[0]].c[1],x0:U[r[0]].c[0],y0:U[r[0]].c[1]}));
+  const pts=top.map((r,x)=>({i:r.i,r:x,x:U[r.i].c[0],y:U[r.i].c[1],x0:U[r.i].c[0],y0:U[r.i].c[1]}));
   for(let t=0;t<60;t++){let mv=false;for(let a=0;a<pts.length;a++)for(let b=a+1;b<pts.length;b++){const A=pts[a],B=pts[b];let dx=B.x-A.x,dy=B.y-A.y,d=Math.hypot(dx,dy)||.01;
     if(d<DD){const m=(DD-d)/2;dx/=d;dy/=d;A.x-=dx*m;A.y-=dy*m;B.x+=dx*m;B.y+=dy*m;mv=true}}if(!mv)break}
   $('#mk').innerHTML=pts.map(p=>(Math.hypot(p.x-p.x0,p.y-p.y0)>3?'<line x1="'+p.x0+'" y1="'+p.y0+'" x2="'+p.x+'" y2="'+p.y+'"/>':'')
     +'<g class="mk'+(S.sel===p.i?' sel-mk':'')+'" data-i="'+p.i+'"><circle cx="'+p.x+'" cy="'+p.y+'" r="'+RR+'" fill="'+mix(c,'#000000',.12)+'"/><text x="'+p.x+'" y="'+(p.y+.5)+'" style="font-size:'+(10.5*K)+'px">'+(p.r+1)+'</text></g>').join('');
-  // 범례
   const sw=[];for(let r=0;r<Math.max(n,1);r++)sw.push('<i style="background:'+rankCol(it,r,Math.max(n,1))+'"></i>');
-  $('#leg').innerHTML='<b>주 생산지 순위</b><div class="r">'+sw.join('')+'</div><div class="r2"><span>1위</span><span>'+Math.max(n,1)+'위</span></div>'
+  $('#leg').innerHTML='<b>주 생산지 순위 · '+MN[S.m]+' 기준</b><div class="r">'+sw.join('')+'</div><div class="r2"><span>1위</span><span>'+Math.max(n,1)+'위</span></div>'
     +'<label><input type="checkbox" id="rest"'+(S.rest?' checked':'')+'> '+(S.n)+'위 밖 생산지도 옅게 표시</label>';
   $('#note').innerHTML='지도와 순위의 지역을 누르면 오른쪽에 지역 상세가 나옴 · 원 안 숫자는 순위, 겹치는 원은 옆으로 비켜 선으로 이음';
-  // 순위표
   $('#rtitle').innerHTML=esc(it.id)+' 주 생산지 상위 '+S.n+'곳';
-  $('#rcap').innerHTML='단위 : '+it.du+' · '+S.y+'년 · 막대는 1위 대비 · 오른쪽 아래는 전국 대비 비중과 전년 대비';
-  const prev=yi>0?Object.fromEntries(ranks(it,Y[yi-1]).map(r=>[r[0],r[1]])):{};
-  const mx=top.length?top[0][1]:1;
-  let li=top.map((r,i)=>'<li data-i="'+r[0]+'" class="'+(S.sel===r[0]?'sel':'')+'"><span class="no" style="background:'+rankCol(it,i,S.n)+';'+(i>=S.n*.5&&S.n>2?'color:#17211B':'')+'">'+(i+1)+'</span>'
-    +'<span class="nm">'+esc(U[r[0]].name)+'<small>'+esc(U[r[0]].sido)+'</small></span><span class="v">'+fmt(dv(it,r[1]),nd(it))+'</span>'
-    +'<span class="bar"><i style="width:'+(r[1]/mx*100)+'%;background:'+rankCol(it,i,S.n)+'"></i></span><span class="sh">'+fmt(r[1]/nat*100,1)+'% · '+(yi>0?ptxt(pctx(r[1],prev[r[0]])):'-')+'</span></li>').join('');
-  if(R.length>S.n){const rs=R.slice(S.n).reduce((a,b)=>a+b[1],0);li+='<li class="rest"><span></span><span class="nm">그 밖 '+fmt(R.length-S.n,0)+'곳</span><span class="v">'+fmt(dv(it,rs),nd(it))+'</span><span></span><span class="sh">'+fmt(rs/nat*100,1)+'%</span></li>'}
+  $('#rcap').innerHTML='단위 : '+vu(it)+' · '+S.y+'년 '+MN[S.m]+' 기준 · 막대는 1위 대비 · 오른쪽 아래는 전국 대비 비중과 전년 대비';
+  const prev=yi>0?Object.fromEntries(rk(it,Y[yi-1]).map(r=>[r.i,r.v])):{};
+  const mx=top.length?top[0].v:1;
+  let li=top.map((r,x)=>'<li data-i="'+r.i+'" class="'+(S.sel===r.i?'sel':'')+'"><span class="no" style="background:'+rankCol(it,x,S.n)+';'+(x>=S.n*.5&&S.n>2?'color:#17211B':'')+'">'+(x+1)+'</span>'
+    +'<span class="nm">'+esc(U[r.i].name)+'<small>'+esc(U[r.i].sido)+'</small></span><span class="v">'+vf(it,r.v)+'</span>'
+    +'<span class="bar"><i style="width:'+(r.v/mx*100)+'%;background:'+rankCol(it,x,S.n)+'"></i></span><span class="sh">'+fmt(r.v/nat*100,1)+'% · '+(yi>0?ptxt(pctx(r.v,prev[r.i])):'-')+'</span></li>').join('');
+  if(R.length>S.n){const rs=R.slice(S.n).reduce((a,b)=>a+b.v,0);li+='<li class="rest"><span></span><span class="nm">그 밖 '+fmt(R.length-S.n,0)+'곳</span><span class="v">'+vf(it,rs)+'</span><span></span><span class="sh">'+fmt(rs/nat*100,1)+'%</span></li>'}
   if(!R.length)li='<li class="rest"><span></span><span class="nm">'+S.y+'년 시군구 생산 기록 없음</span></li>';
   $('#rank').innerHTML=li;
-  drawDet();
-  try{history.replaceState(null,'','#i='+encodeURIComponent(S.item)+'&y='+S.y+'&n='+S.n+(S.sel!=null?'&r='+S.sel:''))}catch(e){}
+  drawDet();saveHash();
 }
+// 변동 보기 : 첫 조사 연도 → 고른 연도, 늘어난 곳은 품목색 · 줄어든 곳은 청색
+function chgRows(it){
+  const a=Object.fromEntries(rk(it,Y[0]).map(r=>[r.i,r.v])),b=Object.fromEntries(rk(it,S.y).map(r=>[r.i,r.v]));
+  const ids=new Set([...Object.keys(a),...Object.keys(b)].map(Number));
+  return [...ids].map(i=>({i,a:a[i]||0,b:b[i]||0,d:(b[i]||0)-(a[i]||0)})).filter(r=>r.d!=0)}
+function drawChg(it,c){
+  const rows=chgRows(it),mx=Math.max(1,...rows.map(r=>Math.abs(r.d))),D_={};rows.forEach(r=>D_[r.i]=r);
+  P.forEach(p=>{const i=+p.dataset.i;p.classList.remove('o','t','sel');p.style.removeProperty('--o');
+    const r=D_[i];if(r){const t=Math.pow(Math.abs(r.d)/mx,.5);p.classList.add('o');
+      p.style.setProperty('--o',r.d>0?mix(mix(c,'#FFFFFF',.85),mix(c,'#000000',.1),t):mix('#E3ECF5','#1F5C99',t));if(t>.25)p.classList.add('t')}
+    if(S.sel===i)p.classList.add('sel');});
+  $('#mk').innerHTML='';
+  const st=[.15,.4,.7,1];
+  $('#leg').innerHTML='<b>'+Y[0]+'→'+S.y+' '+MN[S.m]+' 변동</b><div class="r">'+st.slice().reverse().map(t=>'<i style="background:'+mix('#E3ECF5','#1F5C99',Math.sqrt(t))+'"></i>').join('')
+    +st.map(t=>'<i style="background:'+mix(mix(c,'#FFFFFF',.85),mix(c,'#000000',.1),Math.sqrt(t))+'"></i>').join('')+'</div><div class="r2"><span>감소</span><span>증가</span></div>';
+  $('#note').innerHTML=S.y==Y[0]?'조사 연도를 '+Y[Y.length-1]+'년으로 바꾸면 '+Y[0]+'년 대비 변동이 나옴':'색이 진할수록 변동량이 큼 · 생산이 새로 생기거나 없어진 곳도 포함';
+  const up=rows.filter(r=>r.d>0).sort((x,y)=>y.d-x.d).slice(0,S.n),dn=rows.filter(r=>r.d<0).sort((x,y)=>x.d-y.d).slice(0,S.n);
+  $('#rtitle').innerHTML=esc(it.id)+' 생산지 변동 상위 '+S.n+'곳';
+  $('#rcap').innerHTML='단위 : '+vu(it)+' · '+Y[0]+'년 → '+S.y+'년 '+MN[S.m]+' 증감 · 오른쪽 아래는 '+Y[0]+'년 값과 증감률';
+  const row=(r,x,cl)=>'<li data-i="'+r.i+'" class="'+(S.sel===r.i?'sel':'')+'"><span class="no" style="background:'+cl+'">'+(x+1)+'</span><span class="nm">'+esc(U[r.i].name)+'<small>'+esc(U[r.i].sido)+'</small></span>'
+    +'<span class="v">'+(r.d>0?'+':'-')+vf(it,Math.abs(r.d))+'</span><span class="bar"><i style="width:'+(Math.abs(r.d)/mx*100)+'%;background:'+cl+'"></i></span><span class="sh">'+vf(it,r.a)+' → '+vf(it,r.b)+' · '+(r.a?ptxt(pctx(r.b,r.a)):'새로 생산')+'</span></li>';
+  $('#rank').innerHTML=(S.y==Y[0]?'<li class="rest"><span></span><span class="nm">비교할 연도를 고르면 나옴</span></li>':
+    '<li class="rest hd2"><span></span><span class="nm">늘어난 곳</span></li>'+(up.map((r,x)=>row(r,x,mix(c,'#000000',.1))).join('')||'<li class="rest"><span></span><span class="nm">없음</span></li>')
+    +'<li class="rest hd2"><span></span><span class="nm">줄어든 곳</span></li>'+(dn.map((r,x)=>row(r,x,'#1F5C99')).join('')||'<li class="rest"><span></span><span class="nm">없음</span></li>'));
+}
+function saveHash(){try{history.replaceState(null,'','#i='+encodeURIComponent(S.item)+'&y='+S.y+'&n='+S.n+'&m='+S.m+'&v='+S.v+(S.sel!=null?'&r='+S.sel:''))}catch(e){}}
+// 지역 상세 : 이 품목 3년 추이 + 지역 전체 품목(생산액 순)
+function regionItems(i,y){const out=[];D.items.forEach(o=>{const rr=(o.vals[String(y)]||[]);const r=rr.find(r=>r[0]==i);if(r&&(r[1]>0||r[2]>0)){
+  const R=rk(o,y);out.push({o,q:r[1],w:r[2],rank:R.findIndex(x=>x.i==i)+1,of:R.length})}});out.sort((a,b)=>b.w-a.w||b.q-a.q);return out}
 function drawDet(){
   const it=IT[S.item],c=col(it);
-  if(S.sel==null){$('#det').innerHTML='<div class="emp">지도나 순위표에서 지역을 누르면 이 품목의 연도별 생산량과, 그 지역이 전국 10위 안에 드는 다른 품목이 나옴</div>';return}
-  const i=S.sel,yi=Y.indexOf(S.y),R=ranks(it,S.y),pos=R.findIndex(r=>r[0]==i),v=pos>=0?R[pos][1]:0,w=pos>=0?R[pos][2]:0;
-  const ys=Y.map(y=>{const r=ranks(it,y).find(r=>r[0]==i);return r?r[1]:0}),mx=Math.max(...ys)||1;
-  let h='<div class="rg">'+esc(U[i].name)+'<small>'+esc(U[i].sido)+'</small></div>'
-    +'<dl><dt>'+S.y+'년 '+esc(it.id)+'</dt><dd>'+(v?fmt(dv(it,v),nd(it))+' '+it.du:'생산 없음')+'</dd>'
-    +'<dt>전국 순위</dt><dd>'+(pos>=0?(pos+1)+'위 / '+R.length+'곳':'-')+'</dd>'
-    +'<dt>전국 대비 비중</dt><dd>'+(v&&it.nat[yi]?fmt(v/it.nat[yi]*100,1)+'%':'-')+'</dd>'
-    +'<dt>생산액</dt><dd>'+(w?fmt(w,w<10?1:0)+'백만 원':'-')+'</dd></dl>'
-    +'<div class="yb" style="--n:'+Y.length+'">'+ys.map((q,k)=>'<div class="'+(Y[k]==S.y?'last':'')+'"><em>'+(q?fmt(dv(it,q),nd(it)):'-')+'</em><i style="height:'+Math.max(2,q/mx*62)+'px"></i></div>').join('')+'</div>'
+  const opts='<select class="rsel" id="rsel" aria-label="지역 고르기"><option value="">지역 고르기 (229개 시군구)</option>'
+    +[...U.keys()].sort((a,b)=>(U[a].sido+U[a].name).localeCompare(U[b].sido+U[b].name,'ko')).map(i=>'<option value="'+i+'"'+(S.sel===i?' selected':'')+'>'+esc(U[i].sido+' '+U[i].name)+'</option>').join('')+'</select>';
+  if(S.sel==null){$('#det').innerHTML=opts+'<div class="emp">지도 · 순위표에서 지역을 누르거나 위에서 지역을 고르면 이 품목의 연도별 생산량과 그 지역의 전체 임산물 생산이 나옴</div>';return}
+  const i=S.sel,yi=Y.indexOf(S.y),R=rk(it,S.y),pos=R.findIndex(r=>r.i==i),me=pos>=0?R[pos]:null;
+  const ys=Y.map(y=>{const r=rk(it,y).find(r=>r.i==i);return r?r.v:0}),mx=Math.max(...ys)||1;
+  let h=opts+'<div class="rg">'+esc(U[i].name)+'<small>'+esc(U[i].sido)+'</small></div>'
+    +'<dl><dt>'+S.y+'년 '+esc(it.id)+' 생산량</dt><dd>'+(me?fmt(dv(it,me.q),nd(it))+' '+it.du:'생산 없음')+'</dd>'
+    +'<dt>생산액</dt><dd>'+(me&&me.w?fmt(me.w,me.w<10?1:0)+'백만 원':'-')+'</dd>'
+    +'<dt>전국 순위 ('+MN[S.m]+')</dt><dd>'+(pos>=0?(pos+1)+'위 / '+R.length+'곳':'-')+'</dd>'
+    +'<dt>전국 대비 비중</dt><dd>'+(me&&natv(it,yi)?fmt(me.v/natv(it,yi)*100,1)+'%':'-')+'</dd></dl>'
+    +'<div class="yb" style="--n:'+Y.length+'">'+ys.map((q,k)=>'<div class="'+(Y[k]==S.y?'last':'')+'"><em>'+(q?vf(it,q):'-')+'</em><i style="height:'+Math.max(2,q/mx*62)+'px"></i></div>').join('')+'</div>'
     +'<div class="yl" style="--n:'+Y.length+'">'+Y.map(y=>'<span>'+y+'년</span>').join('')+'</div>';
-  const oth=[];D.items.forEach(o=>{const rr=ranks(o,S.y);const p=rr.findIndex(r=>r[0]==i);if(p>=0&&p<10)oth.push([p,o])});
-  oth.sort((a,b)=>a[0]-b[0]);
-  h+='<h4>'+S.y+'년 이 지역이 전국 10위 안에 드는 품목 · '+oth.length+'개</h4><div class="chips">'
-    +(oth.length?oth.map(([p,o])=>'<button data-i="'+esc(o.id)+'"><b style="background:'+col(o)+'">'+(p+1)+'</b>'+esc(o.id)+'</button>').join(''):'<span class="cap">없음</span>')+'</div>';
+  const all=regionItems(i,S.y),wsum=all.reduce((a,b)=>a+b.w,0),SH=8;
+  h+='<h4>'+S.y+'년 '+esc(U[i].name)+' 임산물 생산 · '+all.length+'개 품목 · 생산액 '+fmt(wsum,0)+'백만 원</h4>'
+    +'<table class="rt"><thead><tr><th>품목</th><th>생산액<br>(백만 원)</th><th>비중<br>(%)</th><th>전국<br>순위</th></tr></thead><tbody>'
+    +all.map((x,k)=>'<tr class="'+(k>=SH?'ex':'')+(x.o.id==S.item?' cur':'')+'" data-i="'+esc(x.o.id)+'"><td><i style="background:'+col(x.o)+'"></i>'+esc(x.o.id)+'</td><td>'+fmt(x.w,x.w<10?1:0)+'</td><td>'+(wsum?fmt(x.w/wsum*100,1):'-')+'</td><td>'
+      +(x.rank?'<b class="'+(x.rank<=10?'t10':'')+'">'+x.rank+'</b>':'-')+'</td></tr>').join('')+'</tbody></table>'
+    +(all.length>SH?'<button class="mbtn2" id="rmore">'+(S.rall?'접기':'전체 '+all.length+'개 품목 보기')+'</button>':'')
+    +'<button class="csv" id="csv2">이 지역 표 내려받기 (CSV)</button>';
   $('#det').innerHTML=h;
+  $('#detc').classList.toggle('all',!!S.rall);
 }
+// CSV 내려받기 (엑셀에서 한글이 깨지지 않게 BOM 포함)
+function dl(name,rows){const t='﻿'+rows.map(r=>r.map(v=>{v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function csvItem(){const it=IT[S.item],yi=Y.indexOf(S.y),R=rk(it,S.y),prev=yi>0?Object.fromEntries(rk(it,Y[yi-1]).map(r=>[r.i,r])):{};
+  const rows=[['순위('+MN[S.m]+' 기준)','시도','시군구','생산량('+it.unit+')','생산액(백만 원)','전국 대비 비중(%)',(yi>0?Y[yi-1]+'년 생산량('+it.unit+')':'전년 생산량'),'전년 대비(%)']];
+  R.forEach((r,x)=>{const p=prev[r.i];rows.push([x+1,U[r.i].sido,U[r.i].name,r.q,r.w,(r.v/natv(it,yi)*100).toFixed(1),p?p.q:'',p&&p.q?((r.q-p.q)/p.q*100).toFixed(1):''])});
+  rows.push([]);rows.push(['전국 합계(국유림 포함)','','',it.nat[yi],it.natw[yi]]);rows.push(['자료 : 산림청 임산물생산조사 '+S.y+'년']);
+  dl('임산물생산지도_'+it.id+'_'+S.y+'.csv',rows)}
+function csvRegion(){const i=S.sel;if(i==null)return;const all=regionItems(i,S.y);
+  const rows=[['품목','분류','생산량','단위','생산액(백만 원)','전국 순위','생산 시군구 수']];
+  all.forEach(x=>rows.push([x.o.id,x.o.cat,x.q,x.o.unit,x.w,x.rank||'',x.of]));
+  rows.push([]);rows.push(['자료 : 산림청 임산물생산조사 '+S.y+'년 · '+U[i].sido+' '+U[i].name]);
+  dl('임산물생산지도_'+U[i].sido+U[i].name+'_'+S.y+'.csv',rows)}
 // ── 조작 ──
 function setItem(id){if(!IT[id])return;S.item=id;drawList();draw()}
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-c],[data-y],[data-n],.it,.chips button,.rk li[data-i],#map .u,#map .mk');if(!t)return;
+  if(e.target.closest('#csv1')){csvItem();return}
+  if(e.target.closest('#csv2')){csvRegion();return}
+  if(e.target.closest('#rmore')){S.rall=!S.rall;drawDet();return}
+  const t=e.target.closest('[data-c],[data-y],[data-n],[data-m],[data-v],.it,.chips button,.rt tr[data-i],.rk li[data-i],#map .u,#map .mk');if(!t)return;
   if(t.dataset.c){S.cat=t.dataset.c;drawCats();drawList();return}
   if(t.dataset.y){S.y=+t.dataset.y;drawList();draw();return}
   if(t.dataset.n){S.n=+t.dataset.n;draw();return}
-  if(t.classList.contains('it')||t.closest('.chips')){setItem(t.dataset.i);return}
+  if(t.dataset.m){S.m=t.dataset.m;draw();return}
+  if(t.dataset.v){S.v=t.dataset.v;draw();return}
+  if(t.classList.contains('it')||t.closest('.chips')||t.closest('.rt')){setItem(t.dataset.i);return}
   const i=+t.dataset.i;S.sel=(S.sel===i?null:i);draw();
 });
-document.addEventListener('change',e=>{if(e.target.id=='rest'){S.rest=e.target.checked;draw()}if(e.target.id=='msel')setItem(e.target.value)});
+document.addEventListener('change',e=>{if(e.target.id=='rest'){S.rest=e.target.checked;draw()}if(e.target.id=='msel')setItem(e.target.value)
+  if(e.target.id=='rsel'){S.sel=e.target.value===''?null:+e.target.value;draw()}});
 $('#q').addEventListener('input',drawList);
 const tip=$('#tip');
 svg.addEventListener('mousemove',e=>{const p=e.target.closest('.u,.mk');if(!p){tip.style.display='none';return}
-  const i=+p.dataset.i,it=IT[S.item],R=ranks(it,S.y),pos=R.findIndex(r=>r[0]==i);
-  tip.innerHTML='<b>'+esc(label(i))+'</b><br>'+(pos>=0?esc(it.id)+' '+fmt(dv(it,R[pos][1]),nd(it))+' '+it.du+' · '+(pos+1)+'위':esc(it.id)+' 생산 없음');
-  tip.style.display='block';tip.style.left=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=(e.clientY+14)+'px'});
+  const i=+p.dataset.i,it=IT[S.item],R=rk(it,S.y),pos=R.findIndex(r=>r.i==i);
+  let tx='<b>'+esc(label(i))+'</b><br>';
+  if(S.v=='chg'){const r=chgRows(it).find(r=>r.i==i);tx+=r?esc(it.id)+' '+Y[0]+'년 '+vf(it,r.a)+' → '+S.y+'년 '+vf(it,r.b)+' '+vu(it):esc(it.id)+' 변동 없음'}
+  else tx+=pos>=0?esc(it.id)+' '+vf(it,R[pos].v)+' '+vu(it)+' · '+(pos+1)+'위':esc(it.id)+' 생산 없음';
+  tip.innerHTML=tx;tip.style.display='block';tip.style.left=Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8)+'px';tip.style.top=(e.clientY+14)+'px'});
 svg.addEventListener('mouseleave',()=>tip.style.display='none');
 drawCats();drawList();draw();addEventListener('resize',()=>{clearTimeout(window._rt);window._rt=setTimeout(draw,200)});
 </script></body></html>"""

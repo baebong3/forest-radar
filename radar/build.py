@@ -213,6 +213,7 @@ details.dt[open] summary{margin-bottom:8px}
 .nl .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:36px}
 .nl .d.new{color:#B23A2A;font-weight:800}
 .nl .tt{font-size:14px;font-weight:700;line-height:1.45;word-break:keep-all}
+.dupn{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--rule);border-radius:999px;padding:0 7px;vertical-align:1px;white-space:nowrap}
 .nl .tt a:hover{color:var(--c);text-decoration:underline}
 .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:0 6px;background:#F1F4F0;color:var(--sub);white-space:nowrap;margin-right:5px;vertical-align:1px}
 .chip.i{color:#fff}
@@ -284,18 +285,106 @@ def load_prod(path=PROD):
     return P
 
 
+# 단순 행사 · 기부 기사 (담당자 확인 대상이 아님) - 수급 · 가격 · 정책 단어가 함께 있으면 남김
+LOWV = re.compile(r'일손|기탁|위문|성금|나눔|봉사|이웃돕기|후원|전달식|기부|장학|사랑의|김장|명절 맞아|추석 맞아|추석맞이|설맞이|헌혈|감사패|표창|취임|이취임|체육대회|등반대회|워크숍')
+KEEPV = re.compile(r'수매|가격|시세|수출|수입|수급|생산량|작황|피해|고시|개정|지원사업|예산|직불|보험|통계|단속')
+STOPW = {'개최', '실시', '추진', '진행', '나서', '위한', '대한', '관련', '올해', '지역', '최근', '뉴스', '기자', '전국', '시작', '오는'}
+
+
+def toks(t):
+    t = re.sub(r'\[[^\]]*\]|\([^)]*\)|…|\.\.\.', ' ', t)
+    out = set()
+    for w in re.findall(r'[가-힣A-Za-z0-9]+', t):
+        w = re.sub(r'(으로|에서|에게|까지|부터|하고|이며|이다|했다|한다|에도|으로써|와|과|은|는|이|가|을|를|의|에|도|로|만)$', '', w)
+        if len(w) >= 2 and w not in STOPW:
+            out.add(w)
+    return out
+
+
+def similar(a, b):
+    """제목 핵심어 겹침 : 짧은 쪽 기준 60% 이상, 또는 4어절 이상 겹치면 같은 기사로 봄"""
+    if not a or not b:
+        return False
+    n = len(a & b)
+    return n >= 4 or n / min(len(a), len(b)) >= 0.6
+
+
+def cluster(rows):
+    """최신순 기사 → 같은 내용끼리 묶어 대표(가장 최신) 1건 + 묶인 수"""
+    reps = []
+    for n in rows:
+        tk = toks(n['title'])
+        for r in reps:
+            if abs((datetime.strptime(r['date'], '%Y-%m-%d') - datetime.strptime(n['date'], '%Y-%m-%d')).days) <= 7 and similar(r['_tk'], tk):
+                r['dup'] += 1
+                r['_tk'] |= tk if len(r['_tk']) < 6 else set()
+                break
+        else:
+            n['_tk'], n['dup'] = tk, 0
+            reps.append(n)
+    return reps
+
+
 def load_news(con, key, today, days=NEWS_DAYS):
     since = (today - timedelta(days=days)).strftime('%Y-%m-%d')
     rows = con.execute('SELECT title,url,date,category,summary FROM news WHERE item=? AND date>=? '
                        'ORDER BY date DESC, collected_at DESC', (key, since)).fetchall()
-    seen, out = set(), []
+    out = []
     for t, u, d, c, s in rows:
-        k = re.sub(r'[^0-9A-Za-z가-힣]', '', t)[:40]
-        if k in seen:
+        if LOWV.search(t) and not KEEPV.search(t):
             continue
-        seen.add(k)
         out.append({'title': t, 'url': u, 'date': d, 'cat': c or '기타', 'summary': s or '', 'item': key})
+    return cluster(out)
+
+
+def load_cty(con):
+    """국가별 수출입 : item → ym → cty → [국가명, 수출 kg, 수입 kg] (수집 전이면 빈 dict)"""
+    out = defaultdict(lambda: defaultdict(dict))
+    try:
+        rows = con.execute('SELECT item,ym,cty,cty_nm,exp_kg,imp_kg FROM trade_cty').fetchall()
+    except Exception:
+        return {}
+    for item, ym, cty, nm, ek, ik in rows:
+        d = out[item][ym].setdefault(cty, [nm or cty, 0.0, 0.0])
+        d[1] += ek or 0
+        d[2] += ik or 0
     return out
+
+
+def cty_card(key, CT, ref):
+    """최근 12개월 상대국별 수입 · 수출 (상위 6개국 + 그 밖) · 전년 같은 기간 대비"""
+    S = (CT or {}).get(key) or {}
+    if not S or not ref:
+        return ''
+    m12 = [ym_add(ref, -k) for k in range(12)]
+    p12 = [ym_add(ref, -k) for k in range(12, 24)]
+    o = []
+    for f, fl, col, lt in ((2, '수입', IMP, IMP_L), (1, '수출', EXP, EXP_L)):
+        cur, prv, nm = defaultdict(float), defaultdict(float), {}
+        for ym in m12:
+            for c, v in (S.get(ym) or {}).items():
+                cur[c] += v[f] / 1000; nm[c] = v[0]
+        for ym in p12:
+            for c, v in (S.get(ym) or {}).items():
+                prv[c] += v[f] / 1000
+        tot = sum(cur.values())
+        if tot <= 0:
+            continue
+        top = sorted(cur.items(), key=lambda kv: -kv[1])[:6]
+        rest = tot - sum(v for _, v in top)
+        labels = ['%s %s%%' % (nm[c], fmt(v / tot * 100, 1)) for c, v in top] + (['그 밖' ] if rest > 0.05 else [])
+        vals = [v for _, v in top] + ([rest] if rest > 0.05 else [])
+        nd = nd_for(vals)
+        ser = [{'name': fl, 'color': col, 'light': lt, 'hl': [0], 'values': vals}]
+        rows = ''.join('<tr><td class="l">%s</td>%s%s</tr>' % (esc(nm[c]), numtd(fmt(v, nd), 4), numtd(arrow(pct(v, prv.get(c))) if prv.get(c) else '-', 4))
+                       for c, v in top)
+        o.append('<div class="card"><div class="sec">%s BY COUNTRY</div><div class="h2">상대국별 %s량 · 최근 12개월</div>'
+                 '<div class="cap">단위 : 톤 · %s ~ %s 합계 %s톤 · 라벨은 비중</div>%s%s</div>'
+                 % ('IMPORT' if f == 2 else 'EXPORT', fl, dots(m12[-1]), dots(ref), fmt(tot, nd),
+                    '<div class="ch-d">%s</div><div class="ch-m">%s</div>' % (hbars(labels, ser, nd, w=560), hbars(labels, ser, nd, w=360)),
+                    fold('국가별 전년 같은 기간 대비 펼치기', '<div class="tw"><table class="t"><thead><tr><th class="l">상대국</th>'
+                         '<th>최근 12개월<br>(톤)</th><th>전년 같은<br>기간 대비</th></tr></thead><tbody>%s</tbody></table></div>' % rows)))
+    return ('<div class="grid">%s</div>' % ''.join(o)) if o else ''
 
 
 def load_krei(con):
@@ -481,7 +570,7 @@ def pick_headline(lab, trade=None, K=None, news=None, today=None):
             age = (today.replace(tzinfo=None) - datetime.strptime(K['ym'] + '-04', '%Y-%m-%d')).days if today else 0
         except Exception:
             pass
-        stale = -2 if age > 75 else 0
+        stale = -min(3.0, max(0, age - 14) / 7 * 0.5)          # 공표 2주가 지나면 주마다 0.5점씩 낮춤
         for h in K['heads']:
             t = h['head']
             fc = ('전망' in t or '듯' in t)
@@ -494,19 +583,20 @@ def pick_headline(lab, trade=None, K=None, news=None, today=None):
             cands.append((sc, pri, cat, '농경연 임업관측 %s' % ko_ym(K['ym']), t2))
     for n in (news or [])[:15]:
         try:
-            if today and (today.replace(tzinfo=None) - datetime.strptime(n['date'], '%Y-%m-%d')).days > 10:
-                continue
+            nage = (today.replace(tzinfo=None) - datetime.strptime(n['date'], '%Y-%m-%d')).days if today else 0
         except Exception:
-            pass
+            nage = 0
+        if nage > 10:
+            continue
         txt = n['title'] + ' ' + (n.get('summary') or '')
         sc = 1.0 + min(score(txt), 10) * 0.45 + (1.0 if re.search(r'정책|대책|지원|시행|발표|추진|개정', n['title']) else 0) \
-            + (1.5 if STRONG.search(n['title']) else 0)
+            + (1.5 if STRONG.search(n['title']) else 0) + (1.0 if nage <= 1 else 0.4 if nage <= 3 else 0) \
+            + min(n.get('dup', 0), 6) * 0.25                    # 여러 매체가 다룬 기사일수록 무게
         cands.append((sc, 2, '정책 · 이슈 뉴스', '뉴스 %s' % n['date'][5:].replace('-', '.'), n['title']))
     if not cands:
         return None
     cands.sort(key=lambda c: (c[0], c[1]), reverse=True)
-    sc, _, cat, src, txt = cands[0]
-    return cat, src, txt, sc
+    return [(cat, src, txt, sc) for sc, _, cat, src, txt in cands]
 
 
 # ── 표기 도우미 ──────────────────────────────────────────────
@@ -557,9 +647,11 @@ def verify(doc):
             errs.append('빈 수치 라벨')
         elif not NUM.match(tag):
             errs.append('수치 라벨 형식 오류 : %r' % tag)
-    for bad in ('—', '–', '>None<', 'nan<', '>nan', 'NaN'):
+    for bad in ('—', '–', '>None<', 'nan<', '>nan'):
         if bad in doc:
             errs.append('금지 문자열 %r' % bad)
+    if re.search(r'>[^<]*\bNaN\b[^<]*<', doc):              # 화면 글자에만 (주소 속 글자는 제외)
+        errs.append('금지 문자열 NaN')
     for v in re.findall(r'<div class="kv[^"]*">([^<]*)<small>', doc):
         if v != '-' and not NUM.match(v):
             errs.append('KPI 수치 형식 오류 : %r' % v)
@@ -659,10 +751,11 @@ def news_list(key, items, today, show=SHOW_NEWS, item_chip=False):
             k = n['item'] if n['item'] in LAB else 'all'
             chip = '<span class="chip i" style="background:%s">%s</span>' % (pal(k)[0], esc(LAB.get(n['item'], '정책')))
         new = n['date'] in fresh
+        dup = ('<span class="dupn">비슷한 기사 %d건</span>' % n['dup']) if n.get('dup') else ''
         li.append('<li%s><span class="d%s">%s</span><span class="tt">%s<span class="chip">%s</span>'
-                  '<a href="%s" target="_blank" rel="noopener">%s</a></span></li>'
+                  '<a href="%s" target="_blank" rel="noopener">%s</a>%s</span></li>'
                   % (' class="ex"' if i >= show else '', ' new' if new else '', n['date'][5:].replace('-', '.'), chip,
-                     esc(n['cat']), esc(n['url']), esc(n['title'])))
+                     esc(n['cat']), esc(n['url']), esc(n['title']), dup))
     if len(items[:40]) > show:
         more = ('<label class="mbtn" for="nm-%s"><span class="o">기사 더보기 (%d건)</span><span class="c">접기</span></label>'
                 % (key, len(items[:40]) - show))
@@ -682,7 +775,7 @@ def part(no, title, sub=''):
 
 def news_card(key, lab, news, today):
     return ('<div class="card span"><div class="sec">NEWS</div><div class="h2">%s 최근 뉴스</div>'
-            '<div class="cap">최근 %d일 · 제목에 품목 핵심어가 있는 기사만 · 최신순 · 붉은 날짜는 오늘 · 어제 기사</div>%s</div>'
+            '<div class="cap">최근 %d일 · 제목에 품목 핵심어가 있는 기사만 · 같은 내용은 1건으로 묶음 · 붉은 날짜는 오늘 · 어제 기사</div>%s</div>'
             % (esc(lab), NEWS_DAYS, news_list(key, news, today)))
 
 
@@ -899,7 +992,7 @@ def item_hero(key, lab, pk):
                ('<div class="src">출처 · %s</div>' % esc(src)) if src else '', icon(key, 104)))
 
 
-def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today):
+def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today, CT=None):
     """품목 탭 : 머리 → ① 주요 수치 → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     key, lab = it['key'], it['label']
     c, t0, dcol = pal(key)
@@ -979,6 +1072,7 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today):
                  % (rng, rng, legend(sy), dual([('%d년' % yy, '') for yy in yrs], sy, nd, w=1180, h=250,
                                                mob_labels=['%d년' % yy for yy in yrs])))
         o.append('</div>')
+        o.append(cty_card(key, CT, ref))
         o.append(ts_cards(key, KT, kind='trade'))
         rows = [ym_add(ref, -k) for k in range(0, 24) if ym_add(ref, -k) >= min(S)]
         cols = []
@@ -1033,13 +1127,21 @@ def board_card(it, T, ref, PD, pk, nnew):
                hl, dl, spw, lab))
 
 
-def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today):
+def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None):
     """종합 탭 : 브리핑 → ① 주요 수치(품목 보드) → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     PD = PD or {}
     o = ['<section class="pane p-all" style="%s">' % pvars('all')]
     cand = [(k, v) for k, v in (PICK or {}).items() if v]
     best = max(cand, key=lambda kv: kv[1][3], default=None)
     date = '%s (%s)' % (today.strftime('%Y.%m.%d'), WD[today.weekday()])
+
+    def board_pick(k):
+        """오늘의 핵심 이슈로 올린 품목은 보드에 두 번째 이슈를 보여 줘 같은 문장이 반복되지 않게 함"""
+        ps = (PICKS or {}).get(k) or []
+        if best and k == best[0] and len(ps) > 1:
+            return ps[1]
+        return (PICK or {}).get(k)
+
     if best:
         bk, bv = best
         o.append('<div class="brief"><div class="bl"><div class="eyebrow"><span class="dt">%s</span>임산물 수급 데일리 브리핑 · 오늘의 핵심 이슈</div>'
@@ -1058,12 +1160,12 @@ def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today):
     ply0 = max([prod_latest(it['key'], PD)[0] or 0 for it in ITEMS]) or None
     o.append(part(1, '주요 수치', ('품목별 핵심 이슈 · 생산 %s년 · 수출입 %s년 %d월 누계 · 카드를 누르면 품목 상세' % (ply0, y, m)) if (ply0 and m) else ''))
     o.append('<div class="board">%s</div>' % ''.join(
-        board_card(it, T, ref, PD, (PICK or {}).get(it['key']), fresh_count(news[it['key']], today)) for it in ITEMS))
+        board_card(it, T, ref, PD, board_pick(it['key']), fresh_count(news[it['key']], today)) for it in ITEMS))
 
     # ② 최근 뉴스 · 동향
     o.append(part(2, '최근 뉴스 · 동향', '임업 정책 · 품목 뉴스 · 농경연 임업관측'))
     o.append('<div class="g2"><div class="card"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
-             '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 최신순 · 붉은 날짜는 오늘 · 어제 기사</div>%s</div>%s</div>'
+             '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 같은 내용은 1건으로 묶고 기부 · 행사 기사는 뺌 · 붉은 날짜는 오늘 · 어제</div>%s</div>%s</div>'
              % (NEWS_DAYS, news_list('all', allnews, today, 10, item_chip=True), krei_overview(K)))
 
     # ③ 생산량 : 품목별 최근 5년 전국 생산량 + 추이 + 1위 주산지
@@ -1150,6 +1252,15 @@ def main():
     news = {it['key']: load_news(con, it['key'], today) for it in ITEMS}
     allnews = load_news(con, 'policy', today) + [n for it in ITEMS for n in news[it['key']]]
     allnews.sort(key=lambda n: n['date'], reverse=True)
+    merged = []
+    for n in allnews:                                   # 품목 · 정책에 같은 기사가 겹치면 대표 1건으로
+        for r in merged:
+            if abs((datetime.strptime(r['date'], '%Y-%m-%d') - datetime.strptime(n['date'], '%Y-%m-%d')).days) <= 7 and similar(r['_tk'], n['_tk']):
+                r['dup'] = r.get('dup', 0) + 1 + n.get('dup', 0)
+                break
+        else:
+            merged.append(dict(n))
+    allnews = merged
 
     keys = ['all'] + [it['key'] for it in ITEMS]
     tog = []
@@ -1163,12 +1274,14 @@ def main():
     K = load_krei(con)
     KT = load_krei_ts(con)
     PD = load_prod_db(con)
-    PICK = {}
+    PICK, PICKS = {}, {}
     for it in ITEMS:
-        PICK[it['key']] = pick_headline(it['label'], trade_cand(it['key'], it['label'], T, ref), K.get(it['key']),
-                                        news[it['key']], today)
-    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today)]
-    body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK, today) for it in ITEMS]
+        PICKS[it['key']] = pick_headline(it['label'], trade_cand(it['key'], it['label'], T, ref), K.get(it['key']),
+                                         news[it['key']], today) or []
+        PICK[it['key']] = PICKS[it['key']][0] if PICKS[it['key']] else None
+    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS)]
+    CT = load_cty(con)
+    body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK, today, CT) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
     ntoday = fresh_count(allnews, today)
     tabs = '<nav class="tabs">%s</nav>' % ''.join(
