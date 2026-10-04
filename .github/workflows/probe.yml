@@ -2,7 +2,7 @@ name: probe
 on:
   push:
     branches: [main]
-    paths: ['radar/probe_kfss.py', '.github/workflows/probe.yml']
+    paths: ['radar/dump_econ_txt.py', '.github/workflows/probe.yml']
 permissions:
   contents: write
 jobs:
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - run: python radar/probe_kfss.py || true
+      - run: sudo apt-get install -y -q poppler-utils > /dev/null && python radar/dump_econ_txt.py || true
       - run: |
           git config user.name "forest-radar-bot"; git config user.email "actions@users.noreply.github.com"
-          git add -f data/probe_kfss.txt && git commit -m "probe kfss" && git pull --rebase -q origin main && git push || echo none
+          git add -f data/econ_txt && git commit -m "임가경제조사 · 소득조사 보고서 텍스트 보관" && git pull --rebase -q origin main && git push || echo none
