@@ -184,8 +184,15 @@ def lines(xs, series, nd=0, w=1180, h=260, tick_every=12, fs=11.5):
     for t in ticks:
         o.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" class="grid"/>' % (L, L + pw, Y(t), Y(t)))
         o.append('<text class="tk" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>' % (w - 4, Y(t) + 4, fs - 1, fmt(t, nd)))
+    ticks_x = [i for i, ym in enumerate(xs) if ym.endswith('-01') or i == 0]
+    if ticks_x and xs[0][5:] != '01' and len(ticks_x) > 1 and X(ticks_x[1]) - X(0) < fs * 3.6:
+        ticks_x = ticks_x[1:]                                # 첫 달 연도와 다음 1월 연도가 붙으면 첫 것은 뺌
+    step = 1
+    while len(ticks_x) > 1 and (X(ticks_x[min(step, len(ticks_x) - 1)]) - X(ticks_x[0])) < fs * 2.6:
+        step += 1                                            # 좁은 화면 : 연도 글자가 겹치지 않게 건너뜀
+    keep = set(ticks_x[::-1][::step])                        # 최근 연도는 항상 표시
     for i, ym in enumerate(xs):
-        if ym.endswith('-01') or i == 0:
+        if i in keep:
             o.append('<line x1="%.1f" x2="%.1f" y1="%.1f" y2="%.1f" class="xt"/>' % (X(i), X(i), T + ph, T + ph + 4))
             o.append('<text class="x" x="%.1f" y="%.1f" style="font-size:%.1fpx">%s</text>' % (X(i), T + ph + 18, fs, ym[:4]))
     ends, starts = [], []

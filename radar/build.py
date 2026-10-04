@@ -21,7 +21,8 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import KST, ROOT, DB, db, fmt, pct, fmt_pct, rnd
-from items import ITEMS, POLICY, score
+from items import ITEMS, POLICY, ECON, score
+import econ_parse
 from charts import dual, hbars, legend, esc, lines, spark
 from art import PAL, icon, ridge, hill
 
@@ -131,6 +132,7 @@ svg text{font-family:'PretendardSub','Pretendard','Malgun Gothic',sans-serif}
 .g2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start;margin-bottom:16px}
 .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:18px 22px 20px;min-width:0}
 .span{grid-column:1/-1}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .sec{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:1.4px;color:var(--c)}
 .sec:before{content:'';width:10px;height:10px;background:var(--c);border-radius:0 70% 0 70%;flex:none}
 .h2{font-size:19px;font-weight:800;letter-spacing:-.6px;margin:5px 0 2px;word-break:keep-all}
@@ -992,7 +994,7 @@ def item_hero(key, lab, pk):
                ('<div class="src">출처 · %s</div>' % esc(src)) if src else '', icon(key, 104)))
 
 
-def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today, CT=None):
+def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today, CT=None, E=None):
     """품목 탭 : 머리 → ① 주요 수치 → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     key, lab = it['key'], it['label']
     c, t0, dcol = pal(key)
@@ -1048,6 +1050,7 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today, CT=None):
     if pc:
         o.append(part(3, '생산량', '산림청 임산물생산조사 · 전국 추이 · 시도 · 주산지'))
         o.append('<div class="grid">%s</div>' % pc)
+        o.append(item_econ_card(key, E))
 
     # ④ 수출입
     o.append(part(4 if pc else 3, '수출입', '관세청 수출입실적 · 농경연 월보 수출입 표'))
@@ -1094,6 +1097,142 @@ def item_pane(it, T, forms, P, ref, news, K, KT, PD, PICK, today, CT=None):
     return ''.join(o)
 
 
+# ── 임가 경제 (임가경제조사 · 경제 뉴스) ──────────────────────────────
+TYPE_KEY = {'밤 재배업': 'chestnut', '감 재배업': 'persimmon', '버섯 재배업': 'shiitake', '수실류 재배업': 'walnut'}
+ITEM_TYPE = {'chestnut': '밤 재배업', 'persimmon': '감 재배업', 'shiitake': '버섯 재배업'}
+
+
+def load_econ():
+    try:
+        ys = econ_parse.years()
+        if not ys:
+            return None
+        return {'s': econ_parse.series(), 'x': econ_parse.cross(ys[-1]), 'y': ys[-1]}
+    except Exception as ex:
+        print('임가경제조사 읽기 실패 :', ex)
+        return None
+
+
+def man(v):
+    """천 원 → 만 원 (정수)"""
+    return fmt(v / 10, 0)
+
+
+def econ_section(E, enews, today, no):
+    if not E and not enews:
+        return ''
+    o = [part(no, '임가 경제', '산림청 임가경제조사(연 1회) · 임가 소득 · 경제 뉴스')]
+    if E and E['s'].get('income'):
+        S, ly = E['s'], max(E['s']['income'])
+        ys = [y for y in sorted(S['income']) if y > ly - 11]
+        g = lambda k, y: (S.get(k) or {}).get(y)
+        p = lambda k: pct(g(k, ly), g(k, ly - 1)) if g(k, ly - 1) else None
+        dep = lambda y: g('forest', y) / g('income', y) * 100 if g('forest', y) and g('income', y) else None
+        sp = lambda k, c, kind='bar': spark([g(k, y) for y in ys], c, light(c), kind=kind)
+        cap = '%d~%d년' % (ys[0], ly)
+        kp = [kpi('임가소득 (%d년)' % ly, man(g('income', ly)), '만 원', '전년 대비 %s' % arrow(p('income')), 'p', sp('income', '#1F3D2B'), cap),
+              kpi('임업소득', man(g('forest', ly)), '만 원', '전년 대비 %s' % arrow(p('forest')), 'p', sp('forest', '#5E7F4F'),
+                  '임업의존도 %s%%' % fmt(dep(ly), 1)),
+              kpi('이전소득', man(g('transfer', ly)), '만 원', '전년 대비 %s' % arrow(p('transfer')), '', sp('transfer', '#8A968D'), '공적보조금 등'),
+              kpi('가계지출', man(g('expense', ly)), '만 원', '전년 대비 %s' % arrow(p('expense')), '', sp('expense', '#B8742A'),
+                  '잉여액 %s만 원' % man(g('surplus', ly)) if g('surplus', ly) is not None else ''),
+              kpi('임가부채', man(g('debt', ly)), '만 원', '전년 대비 %s' % arrow(p('debt')), 'e', sp('debt', '#B8742A'),
+                  '임업용 %s만 원' % man(g('debt_f', ly)) if g('debt_f', ly) else ''),
+              kpi('임가자산', man(g('asset', ly)), '만 원', '전년 대비 %s' % arrow(p('asset')), '', sp('asset', '#1F3D2B', 'line'), cap)]
+        o.append('<div class="kpis" style="margin-bottom:16px">%s</div>' % ''.join(kp))
+        o.append('<div class="grid">')
+        # 소득 구성 추이
+        xs = ['%d-01' % y for y in ys]
+        comp = [('income', '임가소득', '#1F3D2B'), ('nonforest', '임업외소득', '#8A968D'), ('transfer', '이전소득', '#7FA06E'),
+                ('forest', '임업소득', '#B8742A'), ('irregular', '비경상소득', '#D9B38C')]
+        ser = [{'name': lab, 'color': c, 'values': [(g(k, y) / 10 if g(k, y) is not None else None) for y in ys]} for k, lab, c in comp if S.get(k)]
+        o.append('<div class="card span"><div class="sec">FOREST HOUSEHOLD INCOME</div><div class="h2">임가소득 %s만 원, 임업소득 비중은 %s%%로 %s</div>'
+                 '<div class="cap">단위 : 만 원 · 가구당 연간 · %d~%d년 · 임가소득 = 임업소득 + 임업외소득 + 이전소득 + 비경상소득</div>%s%s</div>'
+                 % (man(g('income', ly)), fmt(dep(ly), 1), '%d년 이후 가장 낮음' % ys[0] if dep(ly) == min(d for d in map(dep, ys) if d) else
+                    ('전년보다 낮아짐' if dep(ly - 1) and dep(ly) < dep(ly - 1) else '전년보다 높아짐'), ys[0], ly, legend(ser),
+                    '<div class="ch-d">%s</div><div class="ch-m">%s</div>' % (lines(xs, ser, 0, h=270), lines(xs, ser, 0, w=360, h=250, fs=10.5))))
+        # 임가 · 농가 · 어가
+        yc = [y for y in ys if g('farm', y)]
+        if len(yc) >= 2:
+            sc = [{'name': '임가', 'color': '#1F3D2B', 'light': '#C3D1BE', 'values': [g('income', y) / 10 for y in yc]},
+                  {'name': '농가', 'color': '#B8742A', 'light': '#EBD6BC', 'values': [g('farm', y) / 10 for y in yc]},
+                  {'name': '어가', 'color': '#5C7C99', 'light': '#C9D6E2', 'values': [g('fish', y) / 10 for y in yc]}]
+            o.append('<div class="card"><div class="sec">COMPARISON</div><div class="h2">임가소득은 농가의 %s%%, 어가의 %s%%</div>'
+                     '<div class="cap">단위 : 만 원 · %d년 가구소득 · 농가 · 어가는 통계청 농가 · 어가경제조사</div>%s%s</div>'
+                     % (fmt(g('income', ly) / g('farm', ly) * 100, 1), fmt(g('income', ly) / g('fish', ly) * 100, 1), ly, legend(sc),
+                        dual([('%d년' % y, '') for y in yc], [dict(x, light=x['light'], hl=list(range(len(yc)))) for x in sc], 0,
+                             mob_labels=['%d년' % y for y in yc])))
+        # 임업 총수입 · 경영비
+        if S.get('revenue') and S.get('cost'):
+            sr = [{'name': '임업총수입', 'color': '#1F3D2B', 'light': '#C3D1BE', 'values': [g('revenue', y) / 10 for y in ys[-6:]]},
+                  {'name': '임업경영비', 'color': '#B8742A', 'light': '#EBD6BC', 'values': [g('cost', y) / 10 for y in ys[-6:]]}]
+            o.append('<div class="card"><div class="sec">REVENUE · COST</div><div class="h2">임업총수입 %s만 원, 경영비 %s만 원</div>'
+                     '<div class="cap">단위 : 만 원 · 임업소득 = 임업총수입 - 임업경영비 · %d년 임업소득률 %s%%</div>%s%s</div>'
+                     % (man(g('revenue', ly)), man(g('cost', ly)), ly, fmt(g('forest', ly) / g('revenue', ly) * 100, 1), legend(sr),
+                        dual([('%d년' % y, '') for y in ys[-6:]], sr, 0, mob_labels=['%d년' % y for y in ys[-6:]])))
+        o.append('</div>')
+        # 특성별 단면
+        X = E['x']
+        if X.get('type'):
+            d = X['type']
+            rows = sorted([(c, d['임가소득'][j], d['임업소득'][j]) for j, c in enumerate(d['cols']) if j > 0], key=lambda r: -r[1])
+            cols = [pal(TYPE_KEY[c])[0] if c in TYPE_KEY else '#A9BBA2' for c, _, _ in rows]
+            labs = [c.replace(' · ', '·') for c, _, _ in rows]
+            s1 = [{'name': '임가소득', 'color': '#1F3D2B', 'colors': cols, 'hl': list(range(len(rows))), 'values': [r[1] / 10 for r in rows]}]
+            nat_i = d['임가소득'][0]
+            tb = ''.join('<tr><td class="l">%s</td>%s%s%s%s</tr>' % (esc(c), numtd(man(a), 5), numtd(man(b), 5),
+                                                                    numtd(fmt(b / a * 100, 1) if a else '-', 4),
+                                                                    numtd(fmt(d['부채/자산'][d['cols'].index(c)], 1) if '부채/자산' in d else '-', 4))
+                         for c, a, b in [(d['cols'][0], d['임가소득'][0], d['임업소득'][0])] + rows)
+            o.append('<div class="grid"><div class="col"><div class="card"><div class="sec">BY BUSINESS TYPE · %d</div><div class="h2">경영 업종별 임가소득</div>'
+                     '<div class="cap">단위 : 만 원 · 전국 평균 %s만 원 · 막대 색은 레이더 품목(밤 · 감 · 버섯) 업종</div>%s%s</div>'
+                     % (E['y'], man(nat_i), '<div class="ch-d">%s</div><div class="ch-m">%s</div>' % (hbars(labs, s1, 0, w=560), hbars(labs, s1, 0, w=360)),
+                        fold('업종별 임업소득 · 의존도 표 펼치기', '<div class="tw"><table class="t"><thead><tr><th class="l">업종</th><th>임가소득<br>(만 원)</th>'
+                             '<th>임업소득<br>(만 원)</th><th>임업의존도<br>(%%)</th><th>부채/자산<br>(%%)</th></tr></thead><tbody>%s</tbody></table></div>' % tb)))
+            o.append(econ_news(enews, today) + '</div>')
+            sides = []
+            for k, ttl in (('age', '경영주 연령별'), ('region', '지역별')):
+                if not X.get(k):
+                    continue
+                d = X[k]
+                body = ''.join('<tr><td class="l">%s</td>%s%s%s</tr>' % (esc(c), numtd(man(d['임가소득'][j]), 5), numtd(man(d['임업소득'][j]), 5),
+                                                                          numtd(fmt(d['임업의존도'][j], 1) if '임업의존도' in d else '-', 4))
+                               for j, c in enumerate(d['cols']))
+                sides.append('<div class="h2" style="font-size:16px;margin-top:%s">%s</div><div class="tw"><table class="t"><thead><tr><th class="l">구분</th>'
+                             '<th>임가소득<br>(만 원)</th><th>임업소득<br>(만 원)</th><th>임업의존도<br>(%%)</th></tr></thead><tbody>%s</tbody></table></div>'
+                             % ('2px' if not sides else '18px', ttl, body))
+            o.append('<div class="card"><div class="sec">BY AGE · REGION · %d</div>%s<div class="cap" style="margin-top:8px">'
+                     '지역 · 연령 간 차이는 가구 구조 · 업종이 달라 표본오차를 감안해 읽어야 함</div></div></div>' % (E['y'], ''.join(sides)))
+    if not (E and (E.get('x') or {}).get('type')):
+        o.append('<div class="grid"><div class="span">%s</div></div>' % econ_news(enews, today))
+    return ''.join(o)
+
+
+def econ_news(enews, today):
+    return ('<div class="card"><div class="sec">NEWS</div><div class="h2">임가 소득 · 경제 뉴스</div>'
+            '<div class="cap">최근 %d일 · 임가소득 · 임업소득 · 직불금 · 경영비 · 산림 예산 기사 · 같은 내용은 1건으로 묶음</div>%s</div>'
+            % (NEWS_DAYS, news_list('econ', enews, today, 8)))
+
+
+def item_econ_card(key, E):
+    """밤 · 감 · 버섯 재배 임가의 소득 (임가경제조사 경영 업종별)"""
+    t = ITEM_TYPE.get(key)
+    if not E or not t or not (E['x'] or {}).get('type') or t not in E['x']['type']['cols']:
+        return ''
+    d = E['x']['type']
+    j = d['cols'].index(t)
+    v = lambda r, k=j: d[r][k] if r in d else None
+    cells = [('임가소득', man(v('임가소득')), '만 원', '전국 평균 %s만 원' % man(v('임가소득', 0))),
+             ('임업소득', man(v('임업소득')), '만 원', '임업의존도 %s%%' % fmt(v('임업의존도'), 1) if v('임업의존도') is not None else ''),
+             ('가계지출', man(v('가계지출')), '만 원', '전국 평균 %s만 원' % man(v('가계지출', 0))),
+             ('부채 / 자산', fmt(v('부채/자산'), 1) if v('부채/자산') is not None else '-', '%', '부채 %s만 원' % man(v('임가부채')))]
+    gap = pct(v('임가소득'), v('임가소득', 0))
+    head = '%s 임가소득 %s만 원, 전국 평균보다 %s%% %s' % (t.replace(' 재배업', ' 재배'), man(v('임가소득')), fmt(abs(gap), 1), '많음' if gap >= 0 else '적음')
+    return ('<div class="grid"><div class="card span"><div class="sec">HOUSEHOLD ECONOMY · %d</div><div class="h2">%s</div>'
+            '<div class="cap">산림청 임가경제조사 %d년 경영 업종별 주요지표 · 가구당 연간</div><div class="kpis" style="grid-template-columns:repeat(4,minmax(0,1fr));margin:6px 0 0">%s</div></div></div>'
+            % (E['y'], head, E['y'], ''.join(kpi(a, b, c, d_) for a, b, c, d_ in cells)))
+
+
 # ── 종합 탭 ────────────────────────────────────────────────
 def board_card(it, T, ref, PD, pk, nnew):
     key, lab = it['key'], it['label']
@@ -1127,7 +1266,7 @@ def board_card(it, T, ref, PD, pk, nnew):
                hl, dl, spw, lab))
 
 
-def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None):
+def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None, E=None, enews=None):
     """종합 탭 : 브리핑 → ① 주요 수치(품목 보드) → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     PD = PD or {}
     o = ['<section class="pane p-all" style="%s">' % pvars('all')]
@@ -1231,6 +1370,7 @@ def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None):
                      '<div class="cap">단위 : 톤 · %s ~ %s 합계 · 막대는 품목색</div>%s</div>'
                      % (sec, title, dots(last12[0]), dots(ref), hbars([LAB[k] for k, _ in arr], ser, nd, w=560)))
         o.append('</div>')
+    o.append(econ_section(E, enews or [], today, 5 if prow else 4))
     o.append('</section>')
     return ''.join(o)
 
@@ -1279,9 +1419,11 @@ def main():
         PICKS[it['key']] = pick_headline(it['label'], trade_cand(it['key'], it['label'], T, ref), K.get(it['key']),
                                          news[it['key']], today) or []
         PICK[it['key']] = PICKS[it['key']][0] if PICKS[it['key']] else None
-    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS)]
+    E = load_econ()
+    enews = load_news(con, 'econ', today)
+    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS, E, enews)]
     CT = load_cty(con)
-    body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK, today, CT) for it in ITEMS]
+    body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK, today, CT, E) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
     ntoday = fresh_count(allnews, today)
     tabs = '<nav class="tabs">%s</nav>' % ''.join(
@@ -1308,7 +1450,7 @@ def main():
            '<div class="team"><span class="t1">품목별 수출입 · 가격 · 전망 · 뉴스 데일리</span><span class="t2">임산물 수급 레이더</span></div>'
            '<a class="maplink" href="map/">임산물 생산지도 ›</a><div class="fresh">%s</div></div>%s</header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
-           '한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
+           '한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사 · 임가경제조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 매일 07:00 자동 · 수출입은 최근 14개월 재수집으로 잠정치 수정 반영 · 새 임업관측 · 생산조사는 공표 뒤 첫 실행에 반영 · '
            '월별 수치는 HS 부호 합산(밤 · 표고버섯은 냉동 · 조제품 포함, 농경연 관측 월보와 같은 범위)%s<br>'
            '<b>(주)서던포스트</b> · 최근 뉴스 수집 %s · 최근 수출입 수집 %s</footer></main></body></html>'

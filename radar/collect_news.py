@@ -17,7 +17,7 @@ from email.utils import parsedate_to_datetime
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from common import KST, db
-from items import ITEMS, POLICY, relevant, classify
+from items import ITEMS, POLICY, ECON, relevant, classify
 
 GOOGLE = 'https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko'
 NAVER = 'https://openapi.naver.com/v1/search/news.json?query={q}&display=100&start={s}&sort=date'
@@ -112,7 +112,7 @@ def main():
     since = datetime.now(KST) - timedelta(days=a.days)
     cid, secret = os.environ.get('NAVER_ID'), os.environ.get('NAVER_SECRET')
     total = 0
-    for cfg in ITEMS + [POLICY]:
+    for cfg in ITEMS + [POLICY, ECON]:
         got = []
         for q in cfg['news']:
             if cid and secret:
@@ -132,7 +132,7 @@ def main():
         print('[%s] 후보 %d건 · 품목 기사 %d건 · 신규 %d건' % (cfg['label'], len(got), len(ok), n))
     # 규칙이 바뀌면 이미 쌓인 기사도 다시 걸러냄
     removed = 0
-    for cfg in ITEMS + [POLICY]:
+    for cfg in ITEMS + [POLICY, ECON]:
         for url, title in con.execute('SELECT url,title FROM news WHERE item=?', (cfg['key'],)).fetchall():
             if not relevant(title, cfg):
                 con.execute('DELETE FROM news WHERE url=? AND item=?', (url, cfg['key']))

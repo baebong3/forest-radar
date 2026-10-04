@@ -61,6 +61,7 @@ jobs:
           sudo apt-get install -y -q poppler-utils > /dev/null
           python radar/collect_prod.py
           python radar/dump_prod_txt.py || echo 보고서 텍스트 보관 실패
+          python radar/dump_econ_txt.py || echo 임가경제조사 텍스트 보관 실패
 
       - name: Build page
         run: |
@@ -71,7 +72,7 @@ jobs:
         run: |
           git config user.name  "forest-radar-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/prod_debug 2>/dev/null || git add index.html data/radar.db docs/index.html docs/map data/prod_txt
+          git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt data/prod_debug 2>/dev/null || git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt
           if git diff --cached --quiet; then
             echo "변경 없음"
           else
