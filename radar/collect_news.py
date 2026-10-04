@@ -109,11 +109,14 @@ def main():
         print('seed 적재 %d건' % n)
         return
 
-    since = datetime.now(KST) - timedelta(days=a.days)
+    since0 = datetime.now(KST) - timedelta(days=a.days)
     cid, secret = os.environ.get('NAVER_ID'), os.environ.get('NAVER_SECRET')
     total = 0
     for cfg in ITEMS + [POLICY, ECON]:
         got = []
+        since = since0
+        if con.execute('SELECT COUNT(*) FROM news WHERE item=?', (cfg['key'],)).fetchone()[0] < 10:
+            since = datetime.now(KST) - timedelta(days=30)        # 새로 추가한 분야는 한 달치를 먼저 채움
         for q in cfg['news']:
             if cid and secret:
                 try:
