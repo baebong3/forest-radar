@@ -37,26 +37,35 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Collect news
+        timeout-minutes: 8
+        continue-on-error: true
         env:
           NAVER_ID: ${{ secrets.NAVER_ID }}
           NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
         run: python radar/collect_news.py --days ${{ github.event.inputs.days || '3' }}
 
       - name: Collect trade (관세청)
+        timeout-minutes: 10
+        continue-on-error: true
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: python radar/collect_trade.py --start ${{ github.event.inputs.start || '2016-01' }}
 
       - name: Collect trade by country (관세청 국가별)
+        timeout-minutes: 8
         continue-on-error: true
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: python radar/collect_trade_cty.py
 
       - name: Collect KREI 임업관측
+        timeout-minutes: 8
+        continue-on-error: true
         run: python radar/collect_krei.py
 
       - name: Collect 임산물생산조사 (연 1회 공표분)
+        timeout-minutes: 10
+        continue-on-error: true
         run: |
           sudo apt-get install -y -q poppler-utils > /dev/null
           python radar/collect_prod.py
