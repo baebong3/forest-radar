@@ -74,6 +74,7 @@ def from_board(url):
     return out
 
 
+FAILS = 0
 ART_DEBUG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'press_article_debug.html')
 
 
@@ -81,9 +82,14 @@ def full_title(url, short):
     """목록 제목이 잘린 경우(… / ...) 본문 쪽에서 전체 제목을 읽음 - 못 읽으면 목록 제목 그대로"""
     if not re.search(r'(\.\.\.|…)\s*$', short):
         return short
+    global FAILS
+    if FAILS >= 2:                                    # 본문 쪽이 응답하지 않으면 이번 실행에서는 더 시도하지 않음
+        return short
     try:
-        h = get(url, timeout=20).decode('utf-8', 'ignore')
-    except Exception:
+        h = get(url, timeout=10).decode('utf-8', 'ignore')
+    except Exception as ex:
+        FAILS += 1
+        print('  본문 읽기 실패', str(ex)[:60])
         return short
     if not os.path.exists(ART_DEBUG):
         try:
@@ -129,18 +135,18 @@ def main():
         if con.execute('SELECT 1 FROM news WHERE item=? AND (url=? OR title=?)', ('press', r['url'], r['title'])).fetchone():
             continue
         r['title'] = full_title(r['url'], r['title'])
-        time.sleep(0.3)
         con.execute('INSERT INTO news(url,item,title,media,date,summary,category,source,collected_at) VALUES(?,?,?,?,?,?,?,?,?)',
                     (r['url'], 'press', r['title'], r.get('org', '산림청'), r['date'], r['summary'], classify(r['title'] + ' ' + r['summary']),
                      'kfs', now))
         n += 1
+        con.commit()
     fixed = 0
-    for url, t in con.execute("SELECT url,title FROM news WHERE item='press' AND (title LIKE '%...' OR title LIKE '%…')").fetchall()[:80]:
+    for url, t in con.execute("SELECT url,title FROM news WHERE item='press' AND (title LIKE '%...' OR title LIKE '%…')").fetchall()[:30]:
         t2 = full_title(url, t)
         if t2 != t:
             con.execute("UPDATE news SET title=? WHERE item='press' AND url=?", (t2, url))
             fixed += 1
-        time.sleep(0.3)
+            con.commit()
     notes.append('잘린 제목 보완 %d건' % fixed)
     con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('press_src', ' · '.join(notes)[:300]))
     con.execute('INSERT OR REPLACE INTO meta(k,v) VALUES(?,?)', ('press_run', now))

@@ -45,7 +45,7 @@ jobs:
         run: python radar/collect_news.py --days ${{ github.event.inputs.days || '3' }}
 
       - name: Collect 산림청 보도자료
-        timeout-minutes: 5
+        timeout-minutes: 8
         continue-on-error: true
         run: python radar/collect_press.py
 
