@@ -83,7 +83,7 @@ def full_title(url, short):
     if not re.search(r'(\.\.\.|…)\s*$', short):
         return short
     global FAILS
-    if FAILS >= 2:                                    # 본문 쪽이 응답하지 않으면 이번 실행에서는 더 시도하지 않음
+    if FAILS >= 5:                                    # 본문 쪽이 응답하지 않으면 이번 실행에서는 더 시도하지 않음
         return short
     try:
         h = get(url, timeout=10).decode('utf-8', 'ignore')
