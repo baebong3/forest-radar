@@ -260,8 +260,8 @@ button{font:inherit;color:inherit}
   .vr{display:none}.lg-sp{height:20px}.lg-kf{height:27px}.nav{margin-left:0}
 }
 </style></head><body>
-<header class="mast"><div class="in"><div class="logos"><img class="lg-sp" src="../assets/logo_southernpost.png" alt="서던포스트">
-<span class="x">×</span><img class="lg-kf" src="../assets/logo_kofpi.png" alt="한국임업진흥원"></div><div class="vr"></div>
+<header class="mast"><div class="in"><div class="logos"><img class="lg-kf" src="../assets/logo_kofpi.png" alt="한국임업진흥원">
+<span class="x">×</span><img class="lg-sp" src="../assets/logo_southernpost.png" alt="서던포스트"></div><div class="vr"></div>
 <div class="team"><span class="t1">산림청 임산물생산조사 · 시군구 주 생산지 순위</span><span class="t2">임산물 생산지도</span></div>
 <nav class="nav"><a href="../">수급 레이더</a><a class="on" href="./">생산지도</a></nav></div><div class="ribbon"></div></header>
 <main class="wrap"><div class="lay">

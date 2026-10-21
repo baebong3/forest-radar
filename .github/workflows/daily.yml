@@ -44,6 +44,11 @@ jobs:
           NAVER_SECRET: ${{ secrets.NAVER_SECRET }}
         run: python radar/collect_news.py --days ${{ github.event.inputs.days || '3' }}
 
+      - name: Collect 산림청 보도자료
+        timeout-minutes: 5
+        continue-on-error: true
+        run: python radar/collect_press.py
+
       - name: Collect trade (관세청)
         timeout-minutes: 10
         continue-on-error: true

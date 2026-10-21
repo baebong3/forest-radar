@@ -1233,6 +1233,24 @@ def item_econ_card(key, E):
             % (E['y'], head, E['y'], ''.join(kpi(a, b, c, d_) for a, b, c, d_ in cells)))
 
 
+def press_card(press, today):
+    """산림청 보도자료 (최근 60일, 최신순)"""
+    if not press:
+        return ''
+    fresh = {today.strftime('%Y-%m-%d'), (today - timedelta(days=1)).strftime('%Y-%m-%d')}
+    li = []
+    for i, n in enumerate(press[:30]):
+        li.append('<li%s><span class="d%s">%s</span><span class="tt"><span class="chip">%s</span>'
+                  '<a href="%s" target="_blank" rel="noopener">%s</a></span></li>'
+                  % (' class="ex"' if i >= 6 else '', ' new' if n['date'] in fresh else '', n['date'][5:].replace('-', '.'),
+                     esc(n['cat']), esc(n['url']), esc(n['title'])))
+    more = ('<label class="mbtn" for="nm-press"><span class="o">보도자료 더보기 (%d건)</span><span class="c">접기</span></label>'
+            % (len(press[:30]) - 6)) if len(press) > 6 else ''
+    return ('<div class="grid"><div class="card span press"><div class="sec">KOREA FOREST SERVICE</div><div class="h2">산림청 보도자료</div>'
+            '<div class="cap">최근 60일 · 최신순 · 붉은 날짜는 오늘 · 어제 배포분 · 제목을 누르면 원문</div>'
+            '<input class="more" type="checkbox" id="nm-press"><ul class="nl">%s</ul>%s</div></div>' % (''.join(li), more))
+
+
 # ── 종합 탭 ────────────────────────────────────────────────
 def board_card(it, T, ref, PD, pk, nnew):
     key, lab = it['key'], it['label']
@@ -1266,7 +1284,7 @@ def board_card(it, T, ref, PD, pk, nnew):
                hl, dl, spw, lab))
 
 
-def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None, E=None, enews=None):
+def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None, E=None, enews=None, press=None):
     """종합 탭 : 브리핑 → ① 주요 수치(품목 보드) → ② 최근 뉴스 · 동향 → ③ 생산량 → ④ 수출입"""
     PD = PD or {}
     o = ['<section class="pane p-all" style="%s">' % pvars('all')]
@@ -1302,7 +1320,8 @@ def summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS=None, E=Non
         board_card(it, T, ref, PD, board_pick(it['key']), fresh_count(news[it['key']], today)) for it in ITEMS))
 
     # ② 최근 뉴스 · 동향
-    o.append(part(2, '최근 뉴스 · 동향', '임업 정책 · 품목 뉴스 · 농경연 임업관측'))
+    o.append(part(2, '최근 뉴스 · 동향', '산림청 보도자료 · 임업 정책 · 품목 뉴스 · 농경연 임업관측'))
+    o.append(press_card(press or [], today))
     o.append('<div class="g2"><div class="card"><div class="sec">NEWS</div><div class="h2">임업 · 임산물 최근 뉴스</div>'
              '<div class="cap">최근 %d일 · 임업 정책과 5개 품목 기사 통합 · 같은 내용은 1건으로 묶고 기부 · 행사 기사는 뺌 · 붉은 날짜는 오늘 · 어제</div>%s</div>%s</div>'
              % (NEWS_DAYS, news_list('all', allnews, today, 10, item_chip=True), krei_overview(K)))
@@ -1421,7 +1440,8 @@ def main():
         PICK[it['key']] = PICKS[it['key']][0] if PICKS[it['key']] else None
     E = load_econ()
     enews = load_news(con, 'econ', today)
-    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS, E, enews)]
+    press = load_news(con, 'press', today, days=60)
+    body = [summary_pane(T, P, ref, allnews, K, PICK, PD, news, today, PICKS, E, enews, press)]
     CT = load_cty(con)
     body += [item_pane(it, T, forms, P, ref, news[it['key']], K, KT, PD, PICK, today, CT, E) for it in ITEMS]
     radios = ''.join('<input class="tg" type="radio" name="tg" id="t-%s"%s>' % (k, ' checked' if k == 'all' else '') for k in keys)
@@ -1438,6 +1458,7 @@ def main():
         ('', '임업관측', ('%s년 %d월호' % (kym[:4], int(kym[5:]))) if kym else '-'),
         ('', '생산조사', ('%d년' % ply0) if ply0 else '-'),
         (' class="nw"', '새 뉴스', '%s건' % fmt(ntoday)),
+        ('', '보도자료', press[0]['date'][5:].replace('-', '.') if press else '-'),
         ('', '갱신', today.strftime('%m.%d %H:%M'))))
     ribbon = '<div class="ribbon">%s</div>' % ''.join('<i style="background:%s"></i>' % pal(k)[0] for k in keys)
     err = ('<br>수출입 수집 알림 : %s' % esc(meta['trade_err'])) if meta.get('trade_err') else ''
@@ -1445,12 +1466,12 @@ def main():
            '<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">'
            '<title>임산물 수급 레이더</title>'
            '<meta name="description" content="밤 · 호두 · 대추 · 표고버섯 · 떫은감 월별 수출입, 연간 생산량, 임업관측, 최근 뉴스">%s</head><body>'
-           '<header class="mast"><div class="in"><div class="logos"><img class="lg-sp" src="assets/logo_southernpost.png" alt="서던포스트">'
-           '<span class="x">×</span><img class="lg-kf" src="assets/logo_kofpi.png" alt="한국임업진흥원"></div><div class="vr"></div>'
+           '<header class="mast"><div class="in"><div class="logos"><img class="lg-kf" src="assets/logo_kofpi.png" alt="한국임업진흥원">'
+           '<span class="x">×</span><img class="lg-sp" src="assets/logo_southernpost.png" alt="서던포스트"></div><div class="vr"></div>'
            '<div class="team"><span class="t1">품목별 수출입 · 가격 · 전망 · 뉴스 데일리</span><span class="t2">임산물 수급 레이더</span></div>'
            '<a class="maplink" href="map/">임산물 생산지도 ›</a><div class="fresh">%s</div></div>%s</header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
-           '한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사 · 임가경제조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
+           '산림청 보도자료(정책브리핑) · 한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사 · 임가경제조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 매일 07:00 자동 · 수출입은 최근 14개월 재수집으로 잠정치 수정 반영 · 새 임업관측 · 생산조사는 공표 뒤 첫 실행에 반영 · '
            '월별 수치는 HS 부호 합산(밤 · 표고버섯은 냉동 · 조제품 포함, 농경연 관측 월보와 같은 범위)%s<br>'
            '<b>(주)서던포스트</b> · 최근 뉴스 수집 %s · 최근 수출입 수집 %s</footer></main></body></html>'
