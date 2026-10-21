@@ -86,7 +86,7 @@ jobs:
         run: |
           git config user.name  "forest-radar-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt data/prod_debug 2>/dev/null || git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt
+          git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt data/prod_debug data/press_debug.html 2>/dev/null || git add index.html data/radar.db docs/index.html docs/map data/prod_txt data/econ_txt
           if git diff --cached --quiet; then
             echo "변경 없음"
           else

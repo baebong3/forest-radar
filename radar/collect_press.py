@@ -20,8 +20,7 @@ from items import classify
 
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124', 'Accept-Language': 'ko-KR'}
 RSS = ['https://www.korea.kr/rss/dept_kfs.xml', 'https://www.korea.kr/rss/dept_kfs.xml?type=press']
-BOARD = ['https://www.forest.go.kr/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036&mn=NKFS_06_09_01',
-         'https://www.forest.go.kr/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036']
+BOARD = ['https://www.forest.go.kr/kfsweb/cop/bbs/selectBoardList.do?bbsId=BBSMSTR_1036&mn=NKFS_04_02_01']
 
 
 def get(url, timeout=30):
@@ -50,9 +49,16 @@ def from_rss(url):
     return out
 
 
+DEBUG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'press_debug.html')
+
+
 def from_board(url):
     h = get(url).decode('utf-8', 'ignore')
     out = []
+    try:
+        open(DEBUG, 'w', encoding='utf-8').write(h[:400000])        # 서식 점검용 (목록을 못 읽을 때 원인 확인)
+    except Exception:
+        pass
     for tr in re.findall(r'<tr[^>]*>(.*?)</tr>', h, re.S):
         a = re.search(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', tr, re.S)
         d = re.search(r'(20\d\d)[-.](\d\d)[-.](\d\d)', tr)
