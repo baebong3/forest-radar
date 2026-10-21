@@ -329,13 +329,13 @@ def cluster(rows):
 
 def load_news(con, key, today, days=NEWS_DAYS):
     since = (today - timedelta(days=days)).strftime('%Y-%m-%d')
-    rows = con.execute('SELECT title,url,date,category,summary FROM news WHERE item=? AND date>=? '
+    rows = con.execute('SELECT title,url,date,category,summary,media FROM news WHERE item=? AND date>=? '
                        'ORDER BY date DESC, collected_at DESC', (key, since)).fetchall()
     out = []
-    for t, u, d, c, s in rows:
+    for t, u, d, c, s, md in rows:
         if LOWV.search(t) and not KEEPV.search(t):
             continue
-        out.append({'title': t, 'url': u, 'date': d, 'cat': c or '기타', 'summary': s or '', 'item': key})
+        out.append({'title': t, 'url': u, 'date': d, 'cat': c or '기타', 'summary': s or '', 'item': key, 'media': md or ''})
     return cluster(out)
 
 
@@ -1240,14 +1240,15 @@ def press_card(press, today):
     fresh = {today.strftime('%Y-%m-%d'), (today - timedelta(days=1)).strftime('%Y-%m-%d')}
     li = []
     for i, n in enumerate(press[:30]):
-        li.append('<li%s><span class="d%s">%s</span><span class="tt"><span class="chip">%s</span>'
+        org = (n.get('media') or '산림청').replace('본청', '산림청')
+        li.append('<li%s><span class="d%s">%s</span><span class="tt"><span class="chip%s">%s</span>'
                   '<a href="%s" target="_blank" rel="noopener">%s</a></span></li>'
-                  % (' class="ex"' if i >= 6 else '', ' new' if n['date'] in fresh else '', n['date'][5:].replace('-', '.'),
-                     esc(n['cat']), esc(n['url']), esc(n['title'])))
+                  % (' class="ex"' if i >= 8 else '', ' new' if n['date'] in fresh else '', n['date'][5:].replace('-', '.'),
+                     ' i" style="background:#1F3D2B' if org == '산림청' else '', esc(org), esc(n['url']), esc(n['title'])))
     more = ('<label class="mbtn" for="nm-press"><span class="o">보도자료 더보기 (%d건)</span><span class="c">접기</span></label>'
-            % (len(press[:30]) - 6)) if len(press) > 6 else ''
+            % (len(press[:30]) - 8)) if len(press) > 8 else ''
     return ('<div class="grid"><div class="card span press"><div class="sec">KOREA FOREST SERVICE</div><div class="h2">산림청 보도자료</div>'
-            '<div class="cap">최근 60일 · 최신순 · 붉은 날짜는 오늘 · 어제 배포분 · 제목을 누르면 원문</div>'
+            '<div class="cap">산림청 누리집 보도자료 · 본청과 지방산림청 · 국립산림과학원 등 소속기관 배포분 · 최근 60일 · 붉은 날짜는 오늘 · 어제 배포</div>'
             '<input class="more" type="checkbox" id="nm-press"><ul class="nl">%s</ul>%s</div></div>' % (''.join(li), more))
 
 
@@ -1471,7 +1472,7 @@ def main():
            '<div class="team"><span class="t1">품목별 수출입 · 가격 · 전망 · 뉴스 데일리</span><span class="t2">임산물 수급 레이더</span></div>'
            '<a class="maplink" href="map/">임산물 생산지도 ›</a><div class="fresh">%s</div></div>%s</header>%s<main class="wrap">%s%s'
            '<footer class="foot"><b>자료</b> 관세청 수출입무역통계(공공데이터포털 「품목별 수출입실적」 API, 중량 · 금액 월별) · '
-           '산림청 보도자료(정책브리핑) · 한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사 · 임가경제조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
+           '산림청 보도자료(누리집) · 한국농촌경제연구원 임업관측 월보(매월 초) · 산림청 임산물생산조사 · 임가경제조사(연간) · 네이버 뉴스 · Google 뉴스<br>'
            '<b>갱신</b> 매일 07:00 자동 · 수출입은 최근 14개월 재수집으로 잠정치 수정 반영 · 새 임업관측 · 생산조사는 공표 뒤 첫 실행에 반영 · '
            '월별 수치는 HS 부호 합산(밤 · 표고버섯은 냉동 · 조제품 포함, 농경연 관측 월보와 같은 범위)%s<br>'
            '<b>(주)서던포스트</b> · 최근 뉴스 수집 %s · 최근 수출입 수집 %s</footer></main></body></html>'
